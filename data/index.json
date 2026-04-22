@@ -1,5 +1,11 @@
 {
-  "periods": [],
-  "brands": ["슬룸"],
-  "last_updated": ""
+  "periods": [
+    "2026-01",
+    "2026-02",
+    "2026-03"
+  ],
+  "brands": [
+    "슬룸"
+  ],
+  "last_updated": "2026-04-22"
 }
