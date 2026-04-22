@@ -3,7 +3,7 @@
   "period_label": "2026년 1월",
   "brand": "슬룸",
   "generated_at": "2026-04-22",
-  "note": "슬룸 브랜드 출고량 기준(36,531건). 테스트 태그 제외 후 상담 6,985건. 문의유형: 태그 있는 1767건(26%) 분류. 상품별 IPV: description 매핑 570건(8.3%) 기준. 채널별 IPV: 채널별 상담 데이터 없어 전체 IPV 동일 적용.",
+  "note": "슬룸 출고량 36,531건 (올릿리테일+슬룸KW필터). description 매핑 커버리지 ~49.2%. 상품별 IPV는 추정값(실제보다 낮음).",
   "summary": {
     "total_shipments": 36531,
     "total_inquiries": 6985,
@@ -14,6 +14,12 @@
     "ipv_call": 0.43
   },
   "by_product": [
+    {
+      "name": "기타 슬룸 제품",
+      "shipments": 16217,
+      "inquiries": 0,
+      "ipv": 0.0
+    },
     {
       "name": "목베개 플러스",
       "shipments": 8781,
@@ -183,7 +189,7 @@
   "by_inquiry_type_alf": {
     "total": 5062,
     "ratio_of_chat": 74.1,
-    "alf_unresolved": 24,
+    "alf_unresolved": 0,
     "alf_error": 15
   },
   "by_channel": [
@@ -259,29 +265,54 @@
     "total_defect": 652,
     "return_reasons": [
       {
-        "reason": "사유 미기재",
-        "count": 323,
-        "ratio": 43.1
-      },
-      {
         "reason": "100% 환불 이벤트",
-        "count": 213,
-        "ratio": 28.4
+        "count": 153,
+        "ratio": 20.4
       },
       {
-        "reason": "불량·결함 반품",
-        "count": 122,
-        "ratio": 16.3
+        "reason": "단순 변심",
+        "count": 149,
+        "ratio": 19.9
       },
       {
-        "reason": "변심 반품",
-        "count": 90,
-        "ratio": 12.0
+        "reason": "통증·불편 반품",
+        "count": 148,
+        "ratio": 19.8
       },
       {
-        "reason": "오주문 반품",
-        "count": 1,
-        "ratio": 0.1
+        "reason": "사유 미기재",
+        "count": 111,
+        "ratio": 14.8
+      },
+      {
+        "reason": "소음 불량",
+        "count": 62,
+        "ratio": 8.3
+      },
+      {
+        "reason": "기타",
+        "count": 47,
+        "ratio": 6.3
+      },
+      {
+        "reason": "EMS 불량",
+        "count": 33,
+        "ratio": 4.4
+      },
+      {
+        "reason": "온열 불량",
+        "count": 32,
+        "ratio": 4.3
+      },
+      {
+        "reason": "작동·진동 불량",
+        "count": 11,
+        "ratio": 1.5
+      },
+      {
+        "reason": "기타 불량",
+        "count": 3,
+        "ratio": 0.4
       }
     ],
     "defect_types": [
