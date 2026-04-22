@@ -3,109 +3,114 @@
   "period_label": "2026년 3월",
   "brand": "슬룸",
   "generated_at": "2026-04-22",
-  "note": "분자: 전체 상담(AI포함) / 분모: 올릿리테일 출고 중 증정품·쇼핑백 제외",
+  "note": "슬룸 브랜드 출고량 기준(24,682건). 문의유형: 태그 있는 3005건(37%) 분류, 나머지 5019건 ALF 자동처리. 상품별 IPV: description 매핑 1015건(12.6%) 기준. 채널별 IPV: 채널별 상담 데이터 없어 전체 IPV 동일 적용.",
   "summary": {
-    "total_shipments": 28129,
+    "total_shipments": 24682,
     "total_inquiries": 8096,
     "chat_inquiries": 8024,
     "call_ob_inquiries": 72,
-    "ipv": 28.78,
-    "ipv_chat": 28.53,
-    "ipv_call": 0.26
+    "ipv": 32.8,
+    "ipv_chat": 32.51,
+    "ipv_call": 0.29
   },
   "by_product": [
     {
       "name": "목베개 플러스",
-      "shipments": 9161,
-      "inquiries": 2637,
-      "ipv": 28.79
+      "shipments": 9325,
+      "inquiries": 753,
+      "ipv": 8.08
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2205,
-      "inquiries": 635,
-      "ipv": 28.8
+      "shipments": 2246,
+      "inquiries": 80,
+      "ipv": 3.56
     },
     {
       "name": "허리베개",
       "shipments": 1809,
-      "inquiries": 521,
-      "ipv": 28.8
+      "inquiries": 8,
+      "ipv": 0.44
     },
     {
       "name": "발편한케어",
       "shipments": 1433,
-      "inquiries": 412,
-      "ipv": 28.75
+      "inquiries": 38,
+      "ipv": 2.65
     },
     {
       "name": "넥숄더 프로",
       "shipments": 1276,
-      "inquiries": 367,
-      "ipv": 28.76
+      "inquiries": 70,
+      "ipv": 5.49
     },
     {
       "name": "허리편한케어 V1",
-      "shipments": 1187,
-      "inquiries": 342,
-      "ipv": 28.81
+      "shipments": 1146,
+      "inquiries": 17,
+      "ipv": 1.48
     },
     {
       "name": "목편한케어",
       "shipments": 1118,
-      "inquiries": 322,
-      "ipv": 28.8
+      "inquiries": 36,
+      "ipv": 3.22
     },
     {
       "name": "발편한케어 V2",
       "shipments": 932,
-      "inquiries": 268,
-      "ipv": 28.76
+      "inquiries": 9,
+      "ipv": 0.97
     },
     {
       "name": "눈편한케어",
       "shipments": 479,
-      "inquiries": 138,
-      "ipv": 28.81
+      "inquiries": 1,
+      "ipv": 0.21
     },
     {
       "name": "종아리편한케어",
       "shipments": 128,
-      "inquiries": 37,
-      "ipv": 28.91
+      "inquiries": 3,
+      "ipv": 2.34
     },
     {
       "name": "목 마사지 베개 V2",
       "shipments": 71,
-      "inquiries": 20,
-      "ipv": 28.17
+      "inquiries": 0,
+      "ipv": 0.0
     }
   ],
   "by_inquiry_type": [
     {
-      "type": "기타/미분류",
-      "count": 5349,
-      "ratio": 66.1
+      "type": "AI 자동처리",
+      "count": 5019,
+      "ratio": 62.5
     },
     {
       "type": "반품/환불",
-      "count": 1219,
+      "count": 1208,
       "ratio": 15.1
     },
     {
       "type": "제품/사용문의",
-      "count": 639,
-      "ratio": 7.9
+      "count": 627,
+      "ratio": 7.8
     },
     {
       "type": "불량/AS",
-      "count": 597,
-      "ratio": 7.4
+      "count": 572,
+      "ratio": 7.1
+    },
+    {
+      "type": "기타/미분류",
+      "count": 299,
+      "ratio": 3.7
     },
     {
       "type": "배송문의",
-      "count": 167,
-      "ratio": 2.1
+      "count": 178,
+      "ratio": 2.2
     },
     {
       "type": "주문/결제",
@@ -114,8 +119,8 @@
     },
     {
       "type": "교환",
-      "count": 30,
-      "ratio": 0.4
+      "count": 28,
+      "ratio": 0.3
     },
     {
       "type": "이벤트/쿠폰",
@@ -124,88 +129,187 @@
     },
     {
       "type": "리뷰",
-      "count": 5,
-      "ratio": 0.1
+      "count": 3,
+      "ratio": 0.0
     }
   ],
   "by_channel": [
     {
       "channel": "자사몰",
-      "shipments": 13515,
-      "inquiries": 3890,
-      "ipv": 28.78
+      "shipments": 13141,
+      "inquiries": 4310,
+      "ipv": 32.8
     },
     {
       "channel": "쿠팡",
-      "shipments": 6340,
-      "inquiries": 1825,
-      "ipv": 28.78
+      "shipments": 5696,
+      "inquiries": 1868,
+      "ipv": 32.8
     },
     {
       "channel": "카카오",
-      "shipments": 4724,
-      "inquiries": 1360,
-      "ipv": 28.78
+      "shipments": 2468,
+      "inquiries": 810,
+      "ipv": 32.8
     },
     {
       "channel": "스마트스토어",
-      "shipments": 1744,
-      "inquiries": 502,
-      "ipv": 28.78
+      "shipments": 1738,
+      "inquiries": 570,
+      "ipv": 32.8
     },
     {
       "channel": "폐쇄몰(B2C)",
       "shipments": 840,
-      "inquiries": 242,
-      "ipv": 28.78
+      "inquiries": 276,
+      "ipv": 32.8
     },
     {
       "channel": "G마켓/옥션",
-      "shipments": 257,
-      "inquiries": 74,
-      "ipv": 28.78
+      "shipments": 250,
+      "inquiries": 82,
+      "ipv": 32.8
     },
     {
       "channel": "11번가",
       "shipments": 194,
-      "inquiries": 56,
-      "ipv": 28.78
+      "inquiries": 64,
+      "ipv": 32.8
     },
     {
       "channel": "GS샵",
       "shipments": 135,
-      "inquiries": 39,
-      "ipv": 28.78
-    },
-    {
-      "channel": "무신사",
-      "shipments": 100,
-      "inquiries": 29,
-      "ipv": 28.78
-    },
-    {
-      "channel": "기타",
-      "shipments": 96,
-      "inquiries": 28,
-      "ipv": 28.78
+      "inquiries": 44,
+      "ipv": 32.8
     },
     {
       "channel": "공동구매",
       "shipments": 67,
-      "inquiries": 19,
-      "ipv": 28.78
+      "inquiries": 22,
+      "ipv": 32.8
     },
     {
       "channel": "신세계몰",
       "shipments": 61,
-      "inquiries": 18,
-      "ipv": 28.78
+      "inquiries": 20,
+      "ipv": 32.8
     },
     {
       "channel": "올리브영",
       "shipments": 56,
-      "inquiries": 16,
-      "ipv": 28.78
+      "inquiries": 18,
+      "ipv": 32.8
+    },
+    {
+      "channel": "기타",
+      "shipments": 36,
+      "inquiries": 12,
+      "ipv": 32.8
     }
-  ]
+  ],
+  "by_defect_return": {
+    "total_return": 1208,
+    "total_defect": 691,
+    "return_reasons": [
+      {
+        "reason": "100% 환불 이벤트",
+        "count": 712,
+        "ratio": 58.9
+      },
+      {
+        "reason": "사유 미기재",
+        "count": 321,
+        "ratio": 26.6
+      },
+      {
+        "reason": "불량·결함 반품",
+        "count": 120,
+        "ratio": 9.9
+      },
+      {
+        "reason": "변심 반품",
+        "count": 53,
+        "ratio": 4.4
+      },
+      {
+        "reason": "오주문 반품",
+        "count": 2,
+        "ratio": 0.2
+      }
+    ],
+    "defect_types": [
+      {
+        "type": "불량 확정",
+        "count": 320,
+        "ratio": 46.3
+      },
+      {
+        "type": "불량 문의",
+        "count": 139,
+        "ratio": 20.1
+      },
+      {
+        "type": "유상 AS",
+        "count": 117,
+        "ratio": 16.9
+      },
+      {
+        "type": "소음 불량",
+        "count": 115,
+        "ratio": 16.6
+      }
+    ],
+    "by_product": [
+      {
+        "name": "목베개 플러스",
+        "return_count": 502,
+        "defect_count": 210
+      },
+      {
+        "name": "허리편한케어 V2",
+        "return_count": 19,
+        "defect_count": 55
+      },
+      {
+        "name": "넥숄더 프로",
+        "return_count": 21,
+        "defect_count": 45
+      },
+      {
+        "name": "발편한케어",
+        "return_count": 13,
+        "defect_count": 20
+      },
+      {
+        "name": "목편한케어",
+        "return_count": 8,
+        "defect_count": 25
+      },
+      {
+        "name": "허리편한케어 V1",
+        "return_count": 2,
+        "defect_count": 14
+      },
+      {
+        "name": "발편한케어 V2",
+        "return_count": 3,
+        "defect_count": 5
+      },
+      {
+        "name": "허리베개",
+        "return_count": 1,
+        "defect_count": 5
+      },
+      {
+        "name": "종아리편한케어",
+        "return_count": 1,
+        "defect_count": 2
+      },
+      {
+        "name": "눈편한케어",
+        "return_count": 1,
+        "defect_count": 0
+      }
+    ]
+  }
 }
