@@ -326,6 +326,14 @@
     .kpi-change.down   { color: var(--good); }
     .kpi-change.neutral{ color: var(--text-light); }
     .kpi-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+      text-transform: uppercase; color: var(--navy);
+      border-left: 3px solid var(--navy);
+      padding: 3px 0 3px 10px; margin-bottom: 14px;
+      opacity: 0.7;
+    }
+    .mb-28 { margin-bottom: 28px; }
 
     /* ══════════ GRIDS ══════════ */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
@@ -548,23 +556,50 @@
     <div class="page-header">
       <div>
         <div class="page-title">문의유형별 분석</div>
-        <div class="page-sub" id="inquiry-sub">유형별 건수 및 비중</div>
+        <div class="page-sub" id="inquiry-sub">CX 상담 유형 · ALF V2 자동처리 현황</div>
       </div>
       <div class="period-badge" id="inquiry-badge">—</div>
     </div>
+
+    <!-- ─ 섹션 레이블 ─ -->
+    <div class="section-label">CX 문의 유형별</div>
     <div class="grid-2 mb-20">
       <div class="card">
-        <div class="card-title"><span class="ct-icon">○</span> 유형별 비중</div>
+        <div class="card-title"><span class="ct-icon">○</span> CX 유형별 비중</div>
         <div class="chart-wrap"><canvas id="inquiry-donut"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="ct-icon">↗</span> 월별 유형 추이</div>
+        <div class="card-title"><span class="ct-icon">↗</span> CX 유형 월별 추이</div>
         <div class="chart-wrap"><canvas id="inquiry-trend"></canvas></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title"><span class="ct-icon">≡</span> 문의유형 상세</div>
+    <div class="card mb-28">
+      <div class="card-title"><span class="ct-icon">≡</span> CX 문의유형 상세</div>
       <div id="inquiry-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
+    </div>
+
+    <!-- ─ ALF V2 섹션 ─ -->
+    <div class="section-label">ALF V2 문의 유형별</div>
+    <div class="grid-3 mb-20">
+      <div class="card kpi-card">
+        <div class="kpi-label">ALF V2 자동처리</div>
+        <div class="kpi-value" id="alf-total">—</div>
+        <div class="kpi-sub" id="alf-ratio">전체 CHAT 대비</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">ALF 미해결 (인계)</div>
+        <div class="kpi-value" id="alf-unresolved">—</div>
+        <div class="kpi-sub" id="alf-unresolved-ratio">ALF 처리 대비</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">ALF 오류</div>
+        <div class="kpi-value" id="alf-error">—</div>
+        <div class="kpi-sub">오작동 건수</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">↗</span> ALF V2 처리량 월별 추이</div>
+      <div class="chart-wrap"><canvas id="alf-trend"></canvas></div>
     </div>
   </div>
 
@@ -935,44 +970,56 @@ function renderProduct() {
 // ────────────────────────────────────────────────────────
 function renderInquiry() {
   const d = current;
-  if (!d?.by_inquiry_type) return;
-  const label = d.period_label || d.period;
-  document.getElementById('inquiry-sub').textContent = `${label} · 유형 ${d.by_inquiry_type.length}종`;
+  if (!d?.by_inquiry_type_cx) return;
+  const label  = d.period_label || d.period;
+  const cxData = d.by_inquiry_type_cx || [];
+  const alf    = d.by_inquiry_type_alf || {};
+  const chat   = d.summary?.chat_inquiries || 1;
+
+  document.getElementById('inquiry-sub').textContent  = `${label} · CX ${cxData.length}종 / ALF V2 ${alf.total?.toLocaleString() || 0}건`;
   document.getElementById('inquiry-badge').textContent = label;
 
+  // ── CX 도넛 ─────────────────────────────────────────
   killChart('inq-donut');
   C['inq-donut'] = new Chart(document.getElementById('inquiry-donut'), {
     type: 'doughnut',
     data: {
-      labels: d.by_inquiry_type.map(x => x.type),
-      datasets: [{ data: d.by_inquiry_type.map(x => x.count), backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff' }]
+      labels: cxData.map(x => x.type),
+      datasets: [{ data: cxData.map(x => x.count),
+        backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
     },
     options: {
-      responsive: true, cutout: '60%',
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, usePointStyle: true } } }
+      responsive: true, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${cxData[ctx.dataIndex].ratio}%)` } }
+      }
     }
   });
 
+  // ── CX 추이 (ALF V2 처리 제외) ────────────────────
   killChart('inq-trend');
   if (allData.length > 1) {
-    const types = [...new Set(allData.flatMap(x => (x.by_inquiry_type || []).map(t => t.type)))];
+    const types = [...new Set(allData.flatMap(x =>
+      (x.by_inquiry_type_cx || []).map(t => t.type)
+    ))].filter(t => t !== 'ALF V2 처리');
     C['inq-trend'] = new Chart(document.getElementById('inquiry-trend'), {
       type: 'line',
       data: {
         labels: allData.map(x => x.period_label || x.period),
         datasets: types.map((type, i) => ({
           label: type,
-          data: allData.map(x => (x.by_inquiry_type || []).find(t => t.type === type)?.count || 0),
+          data: allData.map(x => (x.by_inquiry_type_cx || []).find(t => t.type === type)?.count || 0),
           borderColor: PALETTE.series[i % PALETTE.series.length],
-          backgroundColor: 'transparent',
-          borderWidth: 2, pointRadius: 4, tension: 0.3
+          backgroundColor: PALETTE.series[i % PALETTE.series.length] + '18',
+          borderWidth: 2.5, pointRadius: 5, tension: 0.3, fill: false
         }))
       },
       options: {
         responsive: true,
         plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } } },
         scales: {
-          y: { beginAtZero: true, grid: { color: '#EEECe8' } },
+          y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: 'CX 상담 건수' } },
           x: { grid: { display: false } }
         }
       }
@@ -982,11 +1029,12 @@ function renderInquiry() {
       `<div class="state-box" style="padding:32px;"><div class="s-icon" style="font-size:32px;">📅</div><p>2개월 이상 누적되면<br>추이를 볼 수 있습니다.</p></div>`;
   }
 
-  const sorted = [...d.by_inquiry_type].sort((a, b) => b.count - a.count);
+  // ── CX 상세 테이블 ───────────────────────────────────
+  const sorted = [...cxData].sort((a, b) => b.count - a.count);
   document.getElementById('inquiry-table-wrap').innerHTML = `
     <table class="data-table">
       <thead><tr>
-        <th>문의유형</th><th class="r">건수</th><th class="r">비중</th>
+        <th>문의유형</th><th class="r">건수</th><th class="r">CX 내 비중</th>
       </tr></thead>
       <tbody>${sorted.map((x, i) => `
         <tr>
@@ -1003,193 +1051,46 @@ function renderInquiry() {
         </tr>`).join('')}
       </tbody>
     </table>`;
-}
 
-// ────────────────────────────────────────────────────────
-//  CHANNEL
-// ────────────────────────────────────────────────────────
-function renderChannel() {
-  const d = current;
-  if (!d?.by_defect_return) return;
-  const dr    = d.by_defect_return;
-  const label = d.period_label || d.period;
-  document.getElementById('channel-sub').textContent  = `${label} · 반품 ${dr.total_return}건 / 불량 ${dr.total_defect}건`;
-  document.getElementById('channel-badge').textContent = label;
+  // ── ALF V2 KPI ──────────────────────────────────────
+  const alfTotal = alf.total || 0;
+  document.getElementById('alf-total').textContent            = alfTotal.toLocaleString() + '건';
+  document.getElementById('alf-ratio').textContent            = `전체 CHAT ${alf.ratio_of_chat || 0}%`;
+  document.getElementById('alf-unresolved').textContent       = (alf.alf_unresolved || 0) + '건';
+  document.getElementById('alf-unresolved-ratio').textContent =
+    alfTotal ? `ALF 중 ${((alf.alf_unresolved||0)/alfTotal*100).toFixed(1)}%` : '';
+  document.getElementById('alf-error').textContent            = (alf.alf_error || 0) + '건';
 
-  const chat = d.summary.chat_inquiries;
-
-  // KPI
-  const eventItem = dr.return_reasons.find(r => r.reason === '100% 환불 이벤트');
-  document.getElementById('dr-return-total').textContent = dr.total_return.toLocaleString() + '건';
-  document.getElementById('dr-return-ratio').textContent = `전체 CHAT ${((dr.total_return/chat)*100).toFixed(1)}%`;
-  document.getElementById('dr-defect-total').textContent = dr.total_defect.toLocaleString() + '건';
-  document.getElementById('dr-defect-ratio').textContent = `전체 CHAT ${((dr.total_defect/chat)*100).toFixed(1)}%`;
-  document.getElementById('dr-event-total').textContent  = eventItem ? eventItem.count.toLocaleString() + '건' : '0건';
-  document.getElementById('dr-event-ratio').textContent  = eventItem ? `반품 중 ${eventItem.ratio}%` : '반품 중 0%';
-
-  // 반품 사유 도넛
-  const RETURN_COLORS = ['#A83228','#C5523A','#D97B4A','#E8A96A','#9BA3AE'];
-  killChart('dr-ret');
-  C['dr-ret'] = new Chart(document.getElementById('dr-return-donut'), {
-    type: 'doughnut',
-    data: {
-      labels: dr.return_reasons.map(r => r.reason),
-      datasets: [{ data: dr.return_reasons.map(r => r.count),
-        backgroundColor: RETURN_COLORS, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-    },
-    options: {
-      responsive: true, cutout: '62%',
-      plugins: {
-        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14, font: { size: 12 } } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}건 (${dr.return_reasons[ctx.dataIndex].ratio}%)` } }
-      }
-    }
-  });
-
-  // 불량 유형 도넛
-  const DEFECT_COLORS = ['#002353','#1a4a8a','#ADA59B','#7a8a9a','#c0bab4'];
-  killChart('dr-def');
-  C['dr-def'] = new Chart(document.getElementById('dr-defect-donut'), {
-    type: 'doughnut',
-    data: {
-      labels: dr.defect_types.map(t => t.type),
-      datasets: [{ data: dr.defect_types.map(t => t.count),
-        backgroundColor: DEFECT_COLORS, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-    },
-    options: {
-      responsive: true, cutout: '62%',
-      plugins: {
-        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14, font: { size: 12 } } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}건 (${dr.defect_types[ctx.dataIndex].ratio}%)` } }
-      }
-    }
-  });
-
-  // 월별 추이 (allData 기반)
-  const months      = allData.map(m => m.period_label);
-  const retCounts   = allData.map(m => m.by_defect_return?.total_return  || 0);
-  const defCounts   = allData.map(m => m.by_defect_return?.total_defect  || 0);
-  const eventCounts = allData.map(m => {
-    const ev = m.by_defect_return?.return_reasons?.find(r => r.reason === '100% 환불 이벤트');
-    return ev ? ev.count : 0;
-  });
-  killChart('dr-trend');
-  C['dr-trend'] = new Chart(document.getElementById('dr-trend-chart'), {
+  // ── ALF V2 월별 추이 ─────────────────────────────────
+  killChart('alf-trend');
+  C['alf-trend'] = new Chart(document.getElementById('alf-trend'), {
     type: 'bar',
-    data: {
-      labels: months,
-      datasets: [
-        { label: '반품·환불', data: retCounts,   backgroundColor: 'rgba(168,50,40,0.75)',  borderRadius: 5 },
-        { label: '불량·AS',   data: defCounts,   backgroundColor: 'rgba(0,35,83,0.55)',    borderRadius: 5 },
-        { label: '100% 환불이벤트', data: eventCounts, backgroundColor: 'rgba(233,169,106,0.85)', borderRadius: 5 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 14 } } },
-      scales: {
-        x: { stacked: false, grid: { display: false } },
-        y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '상담 건수' } }
-      }
-    }
-  });
-
-  // 상품별 반품·불량 바
-  const prods = dr.by_product;
-  killChart('dr-prod');
-  C['dr-prod'] = new Chart(document.getElementById('dr-product-chart'), {
-    type: 'bar',
-    data: {
-      labels: prods.map(p => p.name),
-      datasets: [
-        { label: '반품',  data: prods.map(p => p.return_count), backgroundColor: 'rgba(168,50,40,0.75)', borderRadius: 4 },
-        { label: '불량',  data: prods.map(p => p.defect_count), backgroundColor: 'rgba(0,35,83,0.55)',   borderRadius: 4 }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 14 } } },
-      scales: {
-        x: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: 'description 매핑 건수 (실제보다 낮을 수 있음)' } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-// ────────────────────────────────────────────────────────
-//  HISTORY
-// ────────────────────────────────────────────────────────
-function renderHistory() {
-  killChart('history');
-  C['history'] = new Chart(document.getElementById('history-chart'), {
-    type: 'line',
     data: {
       labels: allData.map(x => x.period_label || x.period),
       datasets: [
-        {
-          label: 'IPV (%)',
-          data: allData.map(x => x.summary.ipv),
-          borderColor: PALETTE.navy, backgroundColor: 'rgba(0,35,83,0.06)',
-          borderWidth: 2.5, fill: true,
-          pointBackgroundColor: allData.map(x => x.summary.ipv >= 10 ? PALETTE.bad : x.summary.ipv >= 6 ? PALETTE.warn : PALETTE.good),
-          pointRadius: 6, tension: 0.35, yAxisID: 'y'
-        },
-        {
-          label: '출고량',
-          data: allData.map(x => x.summary.total_shipments),
-          borderColor: PALETTE.greige, backgroundColor: 'transparent',
-          borderWidth: 2, borderDash: [5, 3],
-          pointRadius: 4, tension: 0.35, yAxisID: 'y2'
-        }
+        { label: 'ALF V2 자동처리',
+          data: allData.map(x => x.by_inquiry_type_alf?.total || 0),
+          backgroundColor: 'rgba(0,35,83,0.55)', borderRadius: 5 },
+        { label: 'ALF 미해결',
+          data: allData.map(x => x.by_inquiry_type_alf?.alf_unresolved || 0),
+          backgroundColor: 'rgba(168,50,40,0.75)', borderRadius: 5 },
+        { label: 'ALF 오류',
+          data: allData.map(x => x.by_inquiry_type_alf?.alf_error || 0),
+          backgroundColor: 'rgba(154,106,31,0.75)', borderRadius: 5 }
       ]
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } } },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } }
+      },
       scales: {
-        y:  { beginAtZero: true, position: 'left',  grid: { color: '#EEECe8' }, ticks: { callback: v => v + '%' } },
-        y2: { beginAtZero: true, position: 'right', grid: { display: false } },
-        x:  { grid: { display: false } }
+        y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '상담 건수' } },
+        x: { grid: { display: false } }
       }
     }
   });
-
-  document.getElementById('history-table-wrap').innerHTML = `
-    <table class="data-table">
-      <thead><tr>
-        <th>기간</th><th class="r">출고량</th><th class="r">문의수</th>
-        <th class="r">IPV</th><th>전월 대비</th>
-      </tr></thead>
-      <tbody>${[...allData].reverse().map((x, i, arr) => {
-        const p = arr[i + 1];
-        const delta = p ? x.summary.ipv - p.summary.ipv : null;
-        return `<tr>
-          <td style="font-weight:600;color:var(--navy);">${x.period_label || x.period}</td>
-          <td class="r">${x.summary.total_shipments.toLocaleString()}</td>
-          <td class="r">${x.summary.total_inquiries.toLocaleString()}</td>
-          <td class="r">${ipvBadge(x.summary.ipv)}</td>
-          <td>${changeChip(delta)}</td>
-        </tr>`;
-      }).join('')}
-      </tbody>
-    </table>`;
 }
-
-// ── Navigation ───────────────────────────────
-document.querySelectorAll('.nav-item[data-page]').forEach(el => {
-  el.addEventListener('click', e => {
-    e.preventDefault();
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    el.classList.add('active');
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(`page-${el.dataset.page}`).classList.add('active');
-  });
-});
-
-// ── Boot ─────────────────────────────────────
-loadData();
 </script>
 </body>
 </html>
