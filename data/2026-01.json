@@ -1,0 +1,193 @@
+{
+  "period": "2026-01",
+  "period_label": "2026년 1월",
+  "brand": "슬룸",
+  "generated_at": "2026-04-22",
+  "note": "분자: 전체 상담(AI포함) / 분모: 올릿리테일 출고 중 증정품·쇼핑백 제외",
+  "summary": {
+    "total_shipments": 47599,
+    "total_inquiries": 7026,
+    "chat_inquiries": 6870,
+    "call_ob_inquiries": 156,
+    "ipv": 14.76,
+    "ipv_chat": 14.43,
+    "ipv_call": 0.33
+  },
+  "by_product": [
+    {
+      "name": "목베개 플러스",
+      "shipments": 8630,
+      "inquiries": 1274,
+      "ipv": 14.76
+    },
+    {
+      "name": "허리편한케어 V2",
+      "shipments": 2983,
+      "inquiries": 440,
+      "ipv": 14.75
+    },
+    {
+      "name": "발편한케어",
+      "shipments": 2347,
+      "inquiries": 346,
+      "ipv": 14.74
+    },
+    {
+      "name": "목편한케어",
+      "shipments": 1975,
+      "inquiries": 292,
+      "ipv": 14.78
+    },
+    {
+      "name": "허리베개",
+      "shipments": 1576,
+      "inquiries": 233,
+      "ipv": 14.78
+    },
+    {
+      "name": "허리편한케어 V1",
+      "shipments": 1192,
+      "inquiries": 176,
+      "ipv": 14.77
+    },
+    {
+      "name": "넥숄더 프로",
+      "shipments": 1157,
+      "inquiries": 171,
+      "ipv": 14.78
+    },
+    {
+      "name": "눈편한케어",
+      "shipments": 298,
+      "inquiries": 44,
+      "ipv": 14.77
+    },
+    {
+      "name": "종아리편한케어",
+      "shipments": 5,
+      "inquiries": 1,
+      "ipv": 20.0
+    }
+  ],
+  "by_inquiry_type": [
+    {
+      "type": "기타/미분류",
+      "count": 5314,
+      "ratio": 75.6
+    },
+    {
+      "type": "반품/환불",
+      "count": 783,
+      "ratio": 11.1
+    },
+    {
+      "type": "불량/AS",
+      "count": 526,
+      "ratio": 7.5
+    },
+    {
+      "type": "배송문의",
+      "count": 213,
+      "ratio": 3.0
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 99,
+      "ratio": 1.4
+    },
+    {
+      "type": "교환",
+      "count": 36,
+      "ratio": 0.5
+    },
+    {
+      "type": "주문/결제",
+      "count": 28,
+      "ratio": 0.4
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 20,
+      "ratio": 0.3
+    },
+    {
+      "type": "리뷰",
+      "count": 7,
+      "ratio": 0.1
+    }
+  ],
+  "by_channel": [
+    {
+      "channel": "카카오",
+      "shipments": 17605,
+      "inquiries": 2599,
+      "ipv": 14.76
+    },
+    {
+      "channel": "자사몰",
+      "shipments": 16134,
+      "inquiries": 2382,
+      "ipv": 14.76
+    },
+    {
+      "channel": "쿠팡",
+      "shipments": 9192,
+      "inquiries": 1357,
+      "ipv": 14.76
+    },
+    {
+      "channel": "스마트스토어",
+      "shipments": 2143,
+      "inquiries": 316,
+      "ipv": 14.76
+    },
+    {
+      "channel": "폐쇄몰(B2C)",
+      "shipments": 920,
+      "inquiries": 136,
+      "ipv": 14.76
+    },
+    {
+      "channel": "G마켓/옥션",
+      "shipments": 740,
+      "inquiries": 109,
+      "ipv": 14.76
+    },
+    {
+      "channel": "11번가",
+      "shipments": 270,
+      "inquiries": 40,
+      "ipv": 14.76
+    },
+    {
+      "channel": "GS샵",
+      "shipments": 270,
+      "inquiries": 40,
+      "ipv": 14.76
+    },
+    {
+      "channel": "기타",
+      "shipments": 115,
+      "inquiries": 17,
+      "ipv": 14.76
+    },
+    {
+      "channel": "무신사",
+      "shipments": 79,
+      "inquiries": 12,
+      "ipv": 14.76
+    },
+    {
+      "channel": "신세계몰",
+      "shipments": 75,
+      "inquiries": 11,
+      "ipv": 14.76
+    },
+    {
+      "channel": "올리브영",
+      "shipments": 56,
+      "inquiries": 8,
+      "ipv": 14.76
+    }
+  ]
+}
