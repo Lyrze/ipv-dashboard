@@ -213,6 +213,22 @@
       color: var(--text-muted);
       margin-top: 3px;
     }
+
+    /* ── 데이터 한계 안내 배너 ── */
+    .data-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: rgba(154,106,31,0.07);
+      border: 1px solid rgba(154,106,31,0.22);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #7a5318;
+      line-height: 1.6;
+    }
+    .data-notice .dn-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
     .period-badge {
       font-size: 12px;
       font-weight: 600;
@@ -309,10 +325,11 @@
     .kpi-change.up     { color: var(--bad); }
     .kpi-change.down   { color: var(--good); }
     .kpi-change.neutral{ color: var(--text-light); }
+    .kpi-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
 
     /* ══════════ GRIDS ══════════ */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-    .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
     .mb-20  { margin-bottom: 20px; }
     .chart-wrap canvas { max-height: 260px; width: 100% !important; }
 
@@ -445,7 +462,7 @@
       <span class="nav-icon">◎</span><span>문의유형별</span>
     </a>
     <a class="nav-item" data-page="channel" href="#">
-      <span class="nav-icon">◑</span><span>채널별 IPV</span>
+      <span class="nav-icon">◑</span><span>불량·반품 분석</span>
     </a>
   </nav>
 
@@ -496,7 +513,7 @@
     </div>
 
     <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">▤</span> 채널별 IPV 현황</div>
+      <div class="card-title"><span class="ct-icon">◑</span> 반품·불량 현황</div>
       <div class="chart-wrap"><canvas id="channel-overview-chart"></canvas></div>
     </div>
   </div>
@@ -509,6 +526,12 @@
         <div class="page-sub" id="product-sub">상품 단위 구매 후 문의율 분석</div>
       </div>
       <div class="period-badge" id="product-badge">—</div>
+    </div>
+    <div class="data-notice">
+      <span class="dn-icon">⚠</span>
+      <span>상품별 IPV는 CS 상담 <b>description 필드 키워드 기반 추정값</b>입니다.
+      전체 상담 중 약 8~13%만 상품이 특정되므로 실제 IPV보다 낮게 표시됩니다.
+      수치보다 <b>상품 간 상대적 순위</b>를 참고용으로 활용하세요.</span>
     </div>
     <div class="card mb-20">
       <div class="card-title"><span class="ct-icon">▤</span> 상품별 IPV 순위 (높은 순)</div>
@@ -545,22 +568,57 @@
     </div>
   </div>
 
-  <!-- ── 채널별 IPV ── -->
+  <!-- ── 불량·반품 분석 ── -->
   <div class="page" id="page-channel">
     <div class="page-header">
       <div>
-        <div class="page-title">채널별 IPV</div>
-        <div class="page-sub" id="channel-sub">판매 채널별 구매 후 문의율</div>
+        <div class="page-title">불량·반품 분석</div>
+        <div class="page-sub" id="channel-sub">반품 사유 및 불량 유형 상세</div>
       </div>
       <div class="period-badge" id="channel-badge">—</div>
     </div>
-    <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">▤</span> 채널별 출고량 · IPV</div>
-      <div class="chart-wrap"><canvas id="channel-detail"></canvas></div>
+
+    <!-- 요약 KPI -->
+    <div class="grid-3 mb-20" id="dr-kpi-wrap">
+      <div class="card kpi-card">
+        <div class="kpi-label">반품·환불 상담</div>
+        <div class="kpi-value" id="dr-return-total">—</div>
+        <div class="kpi-sub" id="dr-return-ratio">전체 CHAT 대비</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">불량·AS 상담</div>
+        <div class="kpi-value" id="dr-defect-total">—</div>
+        <div class="kpi-sub" id="dr-defect-ratio">전체 CHAT 대비</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">100% 환불 이벤트</div>
+        <div class="kpi-value" id="dr-event-total">—</div>
+        <div class="kpi-sub" id="dr-event-ratio">반품 중 비중</div>
+      </div>
     </div>
+
+    <!-- 반품 사유 + 불량 유형 도넛 -->
+    <div class="grid-2 mb-20">
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">○</span> 반품 사유 분포</div>
+        <div class="chart-wrap"><canvas id="dr-return-donut"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">○</span> 불량 유형 분포</div>
+        <div class="chart-wrap"><canvas id="dr-defect-donut"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 월별 추이 -->
+    <div class="card mb-20">
+      <div class="card-title"><span class="ct-icon">↗</span> 반품·불량 월별 추이</div>
+      <div class="chart-wrap"><canvas id="dr-trend-chart"></canvas></div>
+    </div>
+
+    <!-- 상품별 반품+불량 -->
     <div class="card">
-      <div class="card-title"><span class="ct-icon">≡</span> 채널별 상세</div>
-      <div id="channel-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
+      <div class="card-title"><span class="ct-icon">≡</span> 상품별 반품·불량 건수</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="dr-product-chart"></canvas></div>
     </div>
   </div>
 
@@ -775,26 +833,32 @@ function renderOverview() {
     });
   }
 
-  // 채널 막대
+  // 반품·불량 현황 (overview 탭)
   killChart('ch-ov');
-  if (d.by_channel?.length) {
+  const dr = d.by_defect_return;
+  if (dr) {
+    const retReasons  = dr.return_reasons || [];
+    const defTypes    = dr.defect_types   || [];
+    const allLabels   = [...retReasons.map(r => r.reason), ...defTypes.map(t => t.type)];
+    const allCounts   = [...retReasons.map(r => r.count),  ...defTypes.map(t => t.count)];
+    const allColors   = [
+      ...retReasons.map(() => 'rgba(168,50,40,0.72)'),
+      ...defTypes.map(()   => 'rgba(0,35,83,0.58)')
+    ];
     C['ch-ov'] = new Chart(document.getElementById('channel-overview-chart'), {
       type: 'bar',
       data: {
-        labels: d.by_channel.map(x => x.channel),
-        datasets: [{
-          label: 'IPV (%)',
-          data: d.by_channel.map(x => x.ipv),
-          backgroundColor: d.by_channel.map(x => x.ipv >= 10 ? PALETTE.bad+'bb' : x.ipv >= 6 ? PALETTE.warn+'bb' : PALETTE.good+'bb'),
-          borderColor: d.by_channel.map(x => x.ipv >= 10 ? PALETTE.bad : x.ipv >= 6 ? PALETTE.warn : PALETTE.good),
-          borderWidth: 1.5, borderRadius: 6
-        }]
+        labels: allLabels,
+        datasets: [{ label: '상담 건수', data: allCounts,
+          backgroundColor: allColors, borderRadius: 5, borderWidth: 0 }]
       },
       options: {
-        responsive: true, plugins: { legend: { display: false } },
+        responsive: true,
+        plugins: { legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.raw.toLocaleString()}건` } } },
         scales: {
-          y: { beginAtZero: true, grid: { color: '#EEECe8' }, ticks: { callback: v => v + '%' } },
-          x: { grid: { display: false } }
+          y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '건수' } },
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } }
         }
       }
     });
@@ -946,71 +1010,112 @@ function renderInquiry() {
 // ────────────────────────────────────────────────────────
 function renderChannel() {
   const d = current;
-  if (!d?.by_channel) return;
+  if (!d?.by_defect_return) return;
+  const dr    = d.by_defect_return;
   const label = d.period_label || d.period;
-  document.getElementById('channel-sub').textContent = `${label} · 채널 ${d.by_channel.length}개`;
+  document.getElementById('channel-sub').textContent  = `${label} · 반품 ${dr.total_return}건 / 불량 ${dr.total_defect}건`;
   document.getElementById('channel-badge').textContent = label;
 
-  const sorted = [...d.by_channel].sort((a, b) => b.ipv - a.ipv);
+  const chat = d.summary.chat_inquiries;
 
-  killChart('ch-detail');
-  C['ch-detail'] = new Chart(document.getElementById('channel-detail'), {
+  // KPI
+  const eventItem = dr.return_reasons.find(r => r.reason === '100% 환불 이벤트');
+  document.getElementById('dr-return-total').textContent = dr.total_return.toLocaleString() + '건';
+  document.getElementById('dr-return-ratio').textContent = `전체 CHAT ${((dr.total_return/chat)*100).toFixed(1)}%`;
+  document.getElementById('dr-defect-total').textContent = dr.total_defect.toLocaleString() + '건';
+  document.getElementById('dr-defect-ratio').textContent = `전체 CHAT ${((dr.total_defect/chat)*100).toFixed(1)}%`;
+  document.getElementById('dr-event-total').textContent  = eventItem ? eventItem.count.toLocaleString() + '건' : '0건';
+  document.getElementById('dr-event-ratio').textContent  = eventItem ? `반품 중 ${eventItem.ratio}%` : '반품 중 0%';
+
+  // 반품 사유 도넛
+  const RETURN_COLORS = ['#A83228','#C5523A','#D97B4A','#E8A96A','#9BA3AE'];
+  killChart('dr-ret');
+  C['dr-ret'] = new Chart(document.getElementById('dr-return-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: dr.return_reasons.map(r => r.reason),
+      datasets: [{ data: dr.return_reasons.map(r => r.count),
+        backgroundColor: RETURN_COLORS, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}건 (${dr.return_reasons[ctx.dataIndex].ratio}%)` } }
+      }
+    }
+  });
+
+  // 불량 유형 도넛
+  const DEFECT_COLORS = ['#002353','#1a4a8a','#ADA59B','#7a8a9a','#c0bab4'];
+  killChart('dr-def');
+  C['dr-def'] = new Chart(document.getElementById('dr-defect-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: dr.defect_types.map(t => t.type),
+      datasets: [{ data: dr.defect_types.map(t => t.count),
+        backgroundColor: DEFECT_COLORS, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14, font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}건 (${dr.defect_types[ctx.dataIndex].ratio}%)` } }
+      }
+    }
+  });
+
+  // 월별 추이 (allData 기반)
+  const months      = allData.map(m => m.period_label);
+  const retCounts   = allData.map(m => m.by_defect_return?.total_return  || 0);
+  const defCounts   = allData.map(m => m.by_defect_return?.total_defect  || 0);
+  const eventCounts = allData.map(m => {
+    const ev = m.by_defect_return?.return_reasons?.find(r => r.reason === '100% 환불 이벤트');
+    return ev ? ev.count : 0;
+  });
+  killChart('dr-trend');
+  C['dr-trend'] = new Chart(document.getElementById('dr-trend-chart'), {
     type: 'bar',
     data: {
-      labels: sorted.map(x => x.channel),
+      labels: months,
       datasets: [
-        {
-          label: '출고량',
-          data: sorted.map(x => x.shipments),
-          backgroundColor: 'rgba(0,35,83,0.45)',
-          borderColor: PALETTE.navy,
-          borderWidth: 1.5, borderRadius: 5,
-          yAxisID: 'y'
-        },
-        {
-          type: 'line',
-          label: 'IPV (%)',
-          data: sorted.map(x => x.ipv),
-          borderColor: PALETTE.bad,
-          backgroundColor: 'transparent',
-          borderWidth: 2.5,
-          pointBackgroundColor: sorted.map(x => x.ipv >= 10 ? PALETTE.bad : x.ipv >= 6 ? PALETTE.warn : PALETTE.good),
-          pointRadius: 6, pointHoverRadius: 8,
-          tension: 0.2, yAxisID: 'y2'
-        }
+        { label: '반품·환불', data: retCounts,   backgroundColor: 'rgba(168,50,40,0.75)',  borderRadius: 5 },
+        { label: '불량·AS',   data: defCounts,   backgroundColor: 'rgba(0,35,83,0.55)',    borderRadius: 5 },
+        { label: '100% 환불이벤트', data: eventCounts, backgroundColor: 'rgba(233,169,106,0.85)', borderRadius: 5 }
       ]
     },
     options: {
       responsive: true,
       plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 14 } } },
       scales: {
-        y:  { beginAtZero: true, position: 'left',  grid: { color: '#EEECe8' }, title: { display: true, text: '출고량' } },
-        y2: { beginAtZero: true, position: 'right', grid: { display: false }, ticks: { callback: v => v + '%' }, title: { display: true, text: 'IPV (%)' } },
-        x:  { grid: { display: false } }
+        x: { stacked: false, grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '상담 건수' } }
       }
     }
   });
 
-  const prevD = allData.length > 1 ? allData[allData.findIndex(x => x.period === d.period) - 1] : null;
-  document.getElementById('channel-table-wrap').innerHTML = `
-    <table class="data-table">
-      <thead><tr>
-        <th>채널</th><th class="r">출고량</th><th class="r">문의수</th>
-        <th class="r">IPV</th><th>전월 대비</th>
-      </tr></thead>
-      <tbody>${sorted.map(x => {
-        const p = prevD?.by_channel?.find(c => c.channel === x.channel);
-        const delta = p ? x.ipv - p.ipv : null;
-        return `<tr>
-          <td style="font-weight:500;">${x.channel}</td>
-          <td class="r">${x.shipments.toLocaleString()}</td>
-          <td class="r">${x.inquiries.toLocaleString()}</td>
-          <td class="r">${ipvBadge(x.ipv)}</td>
-          <td>${changeChip(delta)}</td>
-        </tr>`;
-      }).join('')}
-      </tbody>
-    </table>`;
+  // 상품별 반품·불량 바
+  const prods = dr.by_product;
+  killChart('dr-prod');
+  C['dr-prod'] = new Chart(document.getElementById('dr-product-chart'), {
+    type: 'bar',
+    data: {
+      labels: prods.map(p => p.name),
+      datasets: [
+        { label: '반품',  data: prods.map(p => p.return_count), backgroundColor: 'rgba(168,50,40,0.75)', borderRadius: 4 },
+        { label: '불량',  data: prods.map(p => p.defect_count), backgroundColor: 'rgba(0,35,83,0.55)',   borderRadius: 4 }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 14 } } },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: 'description 매핑 건수 (실제보다 낮을 수 있음)' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
 }
 
 // ────────────────────────────────────────────────────────
