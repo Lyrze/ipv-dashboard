@@ -727,6 +727,24 @@ const chartDefaults = {
 Chart.defaults.font.family = chartDefaults.font.family;
 Chart.defaults.color = chartDefaults.color;
 
+
+// ── 네비게이션 페이지 전환 ────────────────────
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = this.dataset.page;
+
+    // active 클래스 토글
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+
+    // 페이지 전환
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pg = document.getElementById('page-' + target);
+    if (pg) pg.classList.add('active');
+  });
+});
+
 // ── Load ─────────────────────────────────────
 async function loadData() {
   try {
@@ -1090,6 +1108,178 @@ function renderInquiry() {
       }
     }
   });
+}
+
+
+// ────────────────────────────────────────────────────────
+//  CHANNEL (불량·반품 분석)
+// ────────────────────────────────────────────────────────
+function renderChannel() {
+  const d = current;
+  if (!d) return;
+  const dr = d.by_defect_return || {};
+  const label = d.period_label || d.period;
+  const chatTotal = d.summary?.chat_inquiries || 1;
+
+  document.getElementById('channel-sub').textContent = `${label} · 반품 ${(dr.total_return||0).toLocaleString()}건 / 불량 ${(dr.total_defect||0).toLocaleString()}건`;
+
+  // KPI
+  const retTotal = dr.total_return || 0;
+  const defTotal = dr.total_defect || 0;
+  const eventCnt = (dr.return_reasons||[]).find(r=>r.reason==='100% 환불 이벤트')?.count || 0;
+  document.getElementById('dr-return-total').textContent = retTotal.toLocaleString() + '건';
+  document.getElementById('dr-return-ratio').textContent = `전체 CHAT ${chatTotal ? (retTotal/chatTotal*100).toFixed(1) : 0}%`;
+  document.getElementById('dr-defect-total').textContent = defTotal.toLocaleString() + '건';
+  document.getElementById('dr-defect-ratio').textContent = `전체 CHAT ${chatTotal ? (defTotal/chatTotal*100).toFixed(1) : 0}%`;
+  document.getElementById('dr-event-total').textContent = eventCnt.toLocaleString() + '건';
+  document.getElementById('dr-event-ratio').textContent = `반품 중 ${retTotal ? (eventCnt/retTotal*100).toFixed(1) : 0}%`;
+
+  // 반품 사유 도넛
+  killChart('dr-return-donut');
+  const rr = (dr.return_reasons || []).filter(r => r.count > 0);
+  if (rr.length) {
+    C['dr-return-donut'] = new Chart(document.getElementById('dr-return-donut'), {
+      type: 'doughnut',
+      data: {
+        labels: rr.map(r => r.reason),
+        datasets: [{ data: rr.map(r => r.count),
+          backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+      },
+      options: { responsive: true, cutout: '60%',
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${rr[ctx.dataIndex].ratio}%)` } }
+        }
+      }
+    });
+  }
+
+  // 불량 유형 도넛
+  killChart('dr-defect-donut');
+  const dt = (dr.defect_types || []).filter(t => t.count > 0);
+  if (dt.length) {
+    C['dr-defect-donut'] = new Chart(document.getElementById('dr-defect-donut'), {
+      type: 'doughnut',
+      data: {
+        labels: dt.map(t => t.type),
+        datasets: [{ data: dt.map(t => t.count),
+          backgroundColor: [PALETTE.bad, PALETTE.warn, PALETTE.navy, PALETTE.navyMid, PALETTE.navyLt, PALETTE.greige],
+          borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+      },
+      options: { responsive: true, cutout: '60%',
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${dt[ctx.dataIndex].ratio}%)` } }
+        }
+      }
+    });
+  }
+
+  // 반품 사유 추이 (월별)
+  killChart('dr-trend');
+  if (allData.length > 1) {
+    const reasons = [...new Set(allData.flatMap(x => (x.by_defect_return?.return_reasons||[]).map(r=>r.reason)))];
+    C['dr-trend'] = new Chart(document.getElementById('dr-trend-chart'), {
+      type: 'line',
+      data: {
+        labels: allData.map(x => x.period_label || x.period),
+        datasets: reasons.map((reason, i) => ({
+          label: reason,
+          data: allData.map(x => (x.by_defect_return?.return_reasons||[]).find(r=>r.reason===reason)?.count || 0),
+          borderColor: PALETTE.series[i % PALETTE.series.length],
+          backgroundColor: PALETTE.series[i % PALETTE.series.length] + '20',
+          borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false
+        }))
+      },
+      options: { responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8, usePointStyle: true } } },
+        scales: { y: { beginAtZero: true, grid: { color: '#EEECe8' } }, x: { grid: { display: false } } }
+      }
+    });
+  }
+
+  // 상품별 반품+불량 막대
+  killChart('dr-product');
+  const bp = (dr.by_product || []).slice(0, 8);
+  if (bp.length) {
+    C['dr-product'] = new Chart(document.getElementById('dr-product-chart'), {
+      type: 'bar',
+      data: {
+        labels: bp.map(p => p.name),
+        datasets: [
+          { label: '반품', data: bp.map(p => p.return_count), backgroundColor: 'rgba(168,50,40,0.7)', borderRadius: 4 },
+          { label: '불량', data: bp.map(p => p.defect_count), backgroundColor: 'rgba(154,106,31,0.7)', borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, indexAxis: 'y',
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } } },
+        scales: { x: { beginAtZero: true, grid: { color: '#EEECe8' } }, y: { grid: { display: false } } }
+      }
+    });
+  }
+}
+
+// ────────────────────────────────────────────────────────
+//  HISTORY (월별 누적)
+// ────────────────────────────────────────────────────────
+function renderHistory() {
+  if (!allData.length) return;
+
+  // IPV 추이 라인 차트
+  killChart('history');
+  C['history'] = new Chart(document.getElementById('history-chart'), {
+    type: 'line',
+    data: {
+      labels: allData.map(x => x.period_label || x.period),
+      datasets: [
+        { label: '전체 IPV', data: allData.map(x => x.summary.ipv),
+          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad + '15',
+          borderWidth: 2.5, pointRadius: 6, pointBackgroundColor: PALETTE.bad, tension: 0.3, fill: true },
+        { label: 'CHAT IPV', data: allData.map(x => x.summary.ipv_chat),
+          borderColor: PALETTE.navy, backgroundColor: 'transparent',
+          borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false, borderDash: [4,3] },
+        { label: 'CALL IPV', data: allData.map(x => x.summary.ipv_call),
+          borderColor: PALETTE.greige, backgroundColor: 'transparent',
+          borderWidth: 1.5, pointRadius: 3, tension: 0.3, fill: false, borderDash: [2,3] }
+      ]
+    },
+    options: { responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(2)}%` } }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#EEECe8' },
+             title: { display: true, text: 'IPV (%)' },
+             ticks: { callback: v => v + '%' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 월별 요약 테이블
+  const rows = [...allData].reverse().map(x => {
+    const prev = allData[allData.indexOf(x) - 1];
+    const delta = prev ? (x.summary.ipv - prev.summary.ipv) : null;
+    return `<tr>
+      <td style="font-weight:600;">${x.period_label || x.period}</td>
+      <td class="r">${x.summary.total_shipments.toLocaleString()}</td>
+      <td class="r">${x.summary.total_inquiries.toLocaleString()}</td>
+      <td class="r">${x.summary.chat_inquiries.toLocaleString()}</td>
+      <td class="r">${x.summary.call_ob_inquiries}</td>
+      <td class="r">${ipvBadge(x.summary.ipv)}</td>
+      <td class="r">${changeChip(delta)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('history-table-wrap').innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th>기간</th><th class="r">출고량</th><th class="r">총 상담</th>
+        <th class="r">CHAT</th><th class="r">CALL</th><th class="r">IPV</th><th class="r">전월 대비</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 // ── 초기 실행
