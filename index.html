@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPV 대시보드</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sidebar-bg: #0f172a;
+      --sidebar-text: #94a3b8;
+      --sidebar-active: #3b82f6;
+      --sidebar-active-bg: rgba(59,130,246,0.12);
+      --sidebar-width: 220px;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --blue: #3b82f6;
+      --green: #10b981;
+      --red: #ef4444;
+      --orange: #f59e0b;
+      --purple: #8b5cf6;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── 사이드바 ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .sidebar-logo .logo-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+    }
+    .sidebar-logo .logo-sub {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 3px;
+    }
+
+    .sidebar-section-label {
+      padding: 20px 20px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #475569;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      margin: 2px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--sidebar-text);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #cbd5e1; }
+    .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .period-selector {
+      font-size: 11px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    #period-select {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+    #period-select option { background: #1e293b; color: #cbd5e1; }
+
+    /* ── 메인 컨텐츠 ── */
+    .main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 28px 32px;
+      min-height: 100vh;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── KPI 카드 그리드 ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .kpi-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-bottom: 10px; }
+    .kpi-value { font-size: 28px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; line-height: 1; }
+    .kpi-unit { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-left: 2px; }
+    .kpi-change {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .kpi-change.up { color: var(--red); }
+    .kpi-change.down { color: var(--green); }
+    .kpi-change.neutral { color: var(--text-secondary); }
+    .kpi-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .kpi-icon.blue { background: rgba(59,130,246,0.1); }
+    .kpi-icon.green { background: rgba(16,185,129,0.1); }
+    .kpi-icon.red { background: rgba(239,68,68,0.1); }
+    .kpi-icon.orange { background: rgba(245,158,11,0.1); }
+
+    /* ── 차트 그리드 ── */
+    .chart-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .chart-grid-1 { margin-bottom: 24px; }
+
+    .chart-wrap { position: relative; }
+    .chart-wrap canvas { max-height: 260px; }
+
+    /* ── 테이블 ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: #f8fafc;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table th.right, .data-table td.right { text-align: right; }
+    .data-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-primary);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #f8fafc; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-red { background: rgba(239,68,68,0.1); color: var(--red); }
+    .badge-green { background: rgba(16,185,129,0.1); color: var(--green); }
+    .badge-blue { background: rgba(59,130,246,0.1); color: var(--blue); }
+    .badge-orange { background: rgba(245,158,11,0.1); color: var(--orange); }
+
+    .ipv-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .ipv-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--blue);
+      transition: width 0.4s ease;
+    }
+    .ipv-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    /* ── 빈 상태 ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; line-height: 1.6; }
+
+    /* ── 로딩 ── */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .sidebar .nav-item span { display: none; }
+      .sidebar-logo .logo-title, .sidebar-logo .logo-sub,
+      .sidebar-section-label, .sidebar-footer { display: none; }
+      .main { margin-left: 60px; padding: 20px 16px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── 트렌드 배지 ── */
+    .trend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .trend-chip.up { background: rgba(239,68,68,0.1); color: var(--red); }
+    .trend-chip.down { background: rgba(16,185,129,0.1); color: var(--green); }
+    .trend-chip.neutral { background: rgba(100,116,139,0.1); color: var(--text-secondary); }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ 사이드바 ══════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-title">📊 IPV 대시보드</div>
+    <div class="logo-sub">구매 후 문의율 분석</div>
+  </div>
+
+  <div class="sidebar-section-label">분석</div>
+  <a class="nav-item active" data-page="overview" href="#">
+    <span class="icon">🏠</span><span>통합 지표</span>
+  </a>
+  <a class="nav-item" data-page="product" href="#">
+    <span class="icon">📦</span><span>상품별 IPV</span>
+  </a>
+  <a class="nav-item" data-page="inquiry" href="#">
+    <span class="icon">💬</span><span>문의유형별</span>
+  </a>
+  <a class="nav-item" data-page="channel" href="#">
+    <span class="icon">📢</span><span>채널별 IPV</span>
+  </a>
+
+  <div class="sidebar-section-label">데이터</div>
+  <a class="nav-item" data-page="history" href="#">
+    <span class="icon">📅</span><span>월별 누적</span>
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="period-selector">기준 기간</div>
+    <select id="period-select">
+      <option value="">데이터 없음</option>
+    </select>
+  </div>
+</aside>
+
+<!-- ══════════ 메인 ══════════ -->
+<main class="main">
+
+  <!-- 통합 지표 -->
+  <div class="page active" id="page-overview">
+    <div class="page-header">
+      <div class="page-title">통합 지표</div>
+      <div class="page-subtitle" id="overview-subtitle">데이터를 불러오는 중...</div>
+    </div>
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="loading">데이터를 불러오는 중...</div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="card">
+        <div class="card-title">📈 월별 IPV 추이</div>
+        <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🥧 문의유형 분포</div>
+        <div class="chart-wrap"><canvas id="inquiry-pie-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="card chart-grid-1">
+      <div class="card-title">📢 채널별 IPV (현재 기간)</div>
+      <div class="chart-wrap"><canvas id="channel-bar-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 상품별 IPV -->
+  <div class="page" id="page-product">
+    <div class="page-header">
+      <div class="page-title">상품별 IPV</div>
+      <div class="page-subtitle" id="product-subtitle">상품 단위 구매 후 문의율</div>
+    </div>
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">📦 상품별 IPV 순위</div>
+      <div class="chart-wrap"><canvas id="product-bar-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 상품별 상세 데이터</div>
+      <div id="product-table-wrap">
+        <div class="loading">데이터 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 문의유형별 -->
+  <div class="page" id="page-inquiry">
+    <div class="page-header">
+      <div class="page-title">문의유형별 분석</div>
+      <div class="page-subtitle" id="inquiry-subtitle">문의 유형별 건수 및 비중</div>
+    </div>
+    <div class="chart-grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">🥧 문의유형 비중</div>
+        <div class="chart-wrap"><canvas id="inquiry-donut-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 월별 문의유형 추이</div>
+        <div class="chart-wrap"><canvas id="inquiry-trend-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 문의유형 상세</div>
+      <div id="inquiry-table-wrap">
+        <div class="loading">데이터 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 채널별 IPV -->
+  <div class="page" id="page-channel">
+    <div class="page-header">
+      <div class="page-title">채널별 IPV</div>
+      <div class="page-subtitle" id="channel-subtitle">판매 채널별 구매 후 문의율</div>
+    </div>
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">📢 채널별 IPV 비교</div>
+      <div class="chart-wrap"><canvas id="channel-detail-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 채널별 상세 데이터</div>
+      <div id="channel-table-wrap">
+        <div class="loading">데이터 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 월별 누적 -->
+  <div class="page" id="page-history">
+    <div class="page-header">
+      <div class="page-title">월별 누적 데이터</div>
+      <div class="page-subtitle">전체 기간 IPV 이력</div>
+    </div>
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">📈 전체 기간 IPV 추이</div>
+      <div class="chart-wrap"><canvas id="history-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 월별 요약</div>
+      <div id="history-table-wrap">
+        <div class="loading">데이터 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════
+//  데이터 로딩
+// ══════════════════════════════════════════
+const BASE = location.href.includes('github.io')
+  ? location.origin + '/' + location.pathname.split('/')[1]
+  : '.';
+
+let allData = [];      // 전체 기간 데이터 배열
+let currentData = null; // 현재 선택된 기간 데이터
+let charts = {};       // 차트 인스턴스 캐시
+
+async function loadData() {
+  try {
+    const idxRes = await fetch(`${BASE}/data/index.json?t=${Date.now()}`);
+    if (!idxRes.ok) throw new Error('index.json not found');
+    const idx = await idxRes.json();
+
+    if (!idx.periods || idx.periods.length === 0) {
+      showEmptyState();
+      return;
+    }
+
+    // 각 기간 데이터 로드
+    const promises = idx.periods.map(p =>
+      fetch(`${BASE}/data/${p}.json?t=${Date.now()}`).then(r => r.json())
+    );
+    allData = await Promise.all(promises);
+    allData.sort((a, b) => a.period.localeCompare(b.period));
+
+    // 셀렉트 박스 채우기
+    const sel = document.getElementById('period-select');
+    sel.innerHTML = allData.map(d =>
+      `<option value="${d.period}">${d.period_label || d.period}</option>`
+    ).join('');
+    sel.value = allData[allData.length - 1].period;
+
+    currentData = allData[allData.length - 1];
+    renderAll();
+  } catch(e) {
+    console.error(e);
+    showEmptyState();
+  }
+}
+
+function showEmptyState() {
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="empty-state" style="grid-column:1/-1;">
+      <div class="empty-icon">📂</div>
+      <h3>아직 데이터가 없습니다</h3>
+      <p>Claude에게 입출고 xlsx + 채널톡 xlsx 파일을 전달하면<br>
+      자동으로 데이터가 업로드되고 대시보드가 갱신됩니다.</p>
+    </div>`;
+}
+
+document.getElementById('period-select').addEventListener('change', function() {
+  currentData = allData.find(d => d.period === this.value);
+  if (currentData) renderAll();
+});
+
+// ══════════════════════════════════════════
+//  공통 유틸
+// ══════════════════════════════════════════
+const COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function ipvColor(ipv) {
+  if (ipv >= 10) return '#ef4444';
+  if (ipv >= 6)  return '#f59e0b';
+  return '#10b981';
+}
+
+function ipvBadge(ipv) {
+  const cls = ipv >= 10 ? 'badge-red' : ipv >= 6 ? 'badge-orange' : 'badge-green';
+  return `<span class="badge ${cls}">${ipv.toFixed(2)}%</span>`;
+}
+
+function changeChip(val) {
+  if (val === null || val === undefined) return '<span class="trend-chip neutral">-</span>';
+  const sign = val > 0 ? '+' : '';
+  const cls = val > 0 ? 'up' : val < 0 ? 'down' : 'neutral';
+  const arrow = val > 0 ? '▲' : val < 0 ? '▼' : '─';
+  return `<span class="trend-chip ${cls}">${arrow} ${sign}${val.toFixed(2)}%p</span>`;
+}
+
+// ══════════════════════════════════════════
+//  렌더링 메인
+// ══════════════════════════════════════════
+function renderAll() {
+  renderOverview();
+  renderProduct();
+  renderInquiry();
+  renderChannel();
+  renderHistory();
+}
+
+// ─── 통합 지표 ───
+function renderOverview() {
+  const d = currentData;
+  if (!d) return;
+
+  const label = d.period_label || d.period;
+  document.getElementById('overview-subtitle').textContent = `${label} 기준 · 브랜드: ${d.brand}`;
+
+  const prev = allData.length > 1
+    ? allData[allData.findIndex(x => x.period === d.period) - 1]
+    : null;
+  const prevIpv = prev ? prev.summary.ipv : null;
+  const ipvChange = prevIpv !== null ? d.summary.ipv - prevIpv : null;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-icon blue">📦</div>
+      <div class="kpi-label">총 출고량</div>
+      <div class="kpi-value">${d.summary.total_shipments.toLocaleString()}<span class="kpi-unit">건</span></div>
+      <div class="kpi-change neutral">해당 기간 출고 합계</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon orange">💬</div>
+      <div class="kpi-label">총 문의건수</div>
+      <div class="kpi-value">${d.summary.total_inquiries.toLocaleString()}<span class="kpi-unit">건</span></div>
+      <div class="kpi-change neutral">CS 인입 문의 합계</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon ${d.summary.ipv >= 6 ? 'red' : 'green'}">📊</div>
+      <div class="kpi-label">IPV (구매 후 문의율)</div>
+      <div class="kpi-value" style="color:${ipvColor(d.summary.ipv)}">${d.summary.ipv.toFixed(2)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-change ${ipvChange === null ? 'neutral' : ipvChange > 0 ? 'up' : 'down'}">
+        ${ipvChange === null ? '전월 데이터 없음' : (ipvChange > 0 ? '▲' : '▼') + ' 전월 대비 ' + Math.abs(ipvChange).toFixed(2) + '%p'}
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon purple">📅</div>
+      <div class="kpi-label">누적 분석 기간</div>
+      <div class="kpi-value">${allData.length}<span class="kpi-unit">개월</span></div>
+      <div class="kpi-change neutral">${allData[0]?.period_label || allData[0]?.period} ~ ${allData[allData.length-1]?.period_label || allData[allData.length-1]?.period}</div>
+    </div>`;
+
+  // 월별 IPV 추이 차트
+  destroyChart('trend');
+  charts['trend'] = new Chart(document.getElementById('trend-chart'), {
+    type: 'line',
+    data: {
+      labels: allData.map(x => x.period_label || x.period),
+      datasets: [{
+        label: 'IPV (%)',
+        data: allData.map(x => x.summary.ipv),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        borderWidth: 2.5,
+        pointBackgroundColor: allData.map(x => ipvColor(x.summary.ipv)),
+        pointRadius: 5,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v + '%' },
+          grid: { color: '#f1f5f9' }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 문의유형 파이
+  destroyChart('inquiry-pie');
+  if (d.by_inquiry_type && d.by_inquiry_type.length > 0) {
+    charts['inquiry-pie'] = new Chart(document.getElementById('inquiry-pie-chart'), {
+      type: 'doughnut',
+      data: {
+        labels: d.by_inquiry_type.map(x => x.type),
+        datasets: [{
+          data: d.by_inquiry_type.map(x => x.count),
+          backgroundColor: COLORS,
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '62%',
+        plugins: {
+          legend: { position: 'right', labels: { font: { size: 11 }, padding: 12 } }
+        }
+      }
+    });
+  }
+
+  // 채널별 막대
+  destroyChart('channel-bar');
+  if (d.by_channel && d.by_channel.length > 0) {
+    charts['channel-bar'] = new Chart(document.getElementById('channel-bar-chart'), {
+      type: 'bar',
+      data: {
+        labels: d.by_channel.map(x => x.channel),
+        datasets: [{
+          label: 'IPV (%)',
+          data: d.by_channel.map(x => x.ipv),
+          backgroundColor: d.by_channel.map(x => ipvColor(x.ipv) + 'cc'),
+          borderColor: d.by_channel.map(x => ipvColor(x.ipv)),
+          borderWidth: 1.5,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+}
+
+// ─── 상품별 IPV ───
+function renderProduct() {
+  const d = currentData;
+  if (!d || !d.by_product) return;
+
+  document.getElementById('product-subtitle').textContent =
+    `${d.period_label || d.period} · 상품 ${d.by_product.length}종`;
+
+  const sorted = [...d.by_product].sort((a, b) => b.ipv - a.ipv);
+
+  destroyChart('product-bar');
+  charts['product-bar'] = new Chart(document.getElementById('product-bar-chart'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(x => x.name.length > 20 ? x.name.slice(0, 20) + '…' : x.name),
+      datasets: [{
+        label: 'IPV (%)',
+        data: sorted.map(x => x.ipv),
+        backgroundColor: sorted.map(x => ipvColor(x.ipv) + 'cc'),
+        borderColor: sorted.map(x => ipvColor(x.ipv)),
+        borderWidth: 1.5,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+        y: { grid: { display: false }, ticks: { font: { size: 12 } } }
+      }
+    }
+  });
+
+  const maxIpv = Math.max(...sorted.map(x => x.ipv));
+  document.getElementById('product-table-wrap').innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>순위</th><th>상품명</th>
+          <th class="right">출고량</th><th class="right">문의수</th>
+          <th class="right">IPV</th><th>IPV 시각화</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map((x, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${x.name}</td>
+            <td class="right">${x.shipments.toLocaleString()}</td>
+            <td class="right">${x.inquiries.toLocaleString()}</td>
+            <td class="right">${ipvBadge(x.ipv)}</td>
+            <td>
+              <div class="ipv-bar-wrap">
+                <div class="ipv-bar-bg">
+                  <div class="ipv-bar" style="width:${(x.ipv/maxIpv*100).toFixed(1)}%;background:${ipvColor(x.ipv)};"></div>
+                </div>
+                <span style="font-size:11px;color:var(--text-secondary);min-width:38px;text-align:right;">${x.ipv.toFixed(2)}%</span>
+              </div>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─── 문의유형별 ───
+function renderInquiry() {
+  const d = currentData;
+  if (!d || !d.by_inquiry_type) return;
+
+  document.getElementById('inquiry-subtitle').textContent =
+    `${d.period_label || d.period} · 문의유형 ${d.by_inquiry_type.length}종`;
+
+  destroyChart('inquiry-donut');
+  charts['inquiry-donut'] = new Chart(document.getElementById('inquiry-donut-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: d.by_inquiry_type.map(x => x.type),
+      datasets: [{
+        data: d.by_inquiry_type.map(x => x.count),
+        backgroundColor: COLORS,
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14 } } }
+    }
+  });
+
+  // 월별 문의유형 추이 (누적 데이터 있을 때)
+  destroyChart('inquiry-trend');
+  if (allData.length > 1) {
+    const types = [...new Set(allData.flatMap(x => (x.by_inquiry_type || []).map(t => t.type)))];
+    charts['inquiry-trend'] = new Chart(document.getElementById('inquiry-trend-chart'), {
+      type: 'line',
+      data: {
+        labels: allData.map(x => x.period_label || x.period),
+        datasets: types.map((type, i) => ({
+          label: type,
+          data: allData.map(x => {
+            const found = (x.by_inquiry_type || []).find(t => t.type === type);
+            return found ? found.count : 0;
+          }),
+          borderColor: COLORS[i % COLORS.length],
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.3
+        }))
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  } else {
+    document.getElementById('inquiry-trend-chart').parentElement.innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--text-secondary);font-size:13px;">2개월 이상의 데이터가 쌓이면 추이를 볼 수 있습니다.</div>';
+  }
+
+  document.getElementById('inquiry-table-wrap').innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>문의유형</th><th class="right">건수</th><th class="right">비중</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${d.by_inquiry_type.sort((a,b) => b.count - a.count).map((x, i) => `
+          <tr>
+            <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${COLORS[i%COLORS.length]};margin-right:8px;"></span>${x.type}</td>
+            <td class="right">${x.count.toLocaleString()}건</td>
+            <td class="right">
+              <div class="ipv-bar-wrap" style="justify-content:flex-end;">
+                <span style="font-size:12px;font-weight:600;color:var(--text-primary);">${x.ratio.toFixed(1)}%</span>
+              </div>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─── 채널별 IPV ───
+function renderChannel() {
+  const d = currentData;
+  if (!d || !d.by_channel) return;
+
+  document.getElementById('channel-subtitle').textContent =
+    `${d.period_label || d.period} · 채널 ${d.by_channel.length}개`;
+
+  const sorted = [...d.by_channel].sort((a, b) => b.ipv - a.ipv);
+
+  destroyChart('channel-detail');
+  charts['channel-detail'] = new Chart(document.getElementById('channel-detail-chart'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(x => x.channel),
+      datasets: [
+        {
+          label: '출고량',
+          data: sorted.map(x => x.shipments),
+          backgroundColor: 'rgba(59,130,246,0.5)',
+          borderColor: '#3b82f6',
+          borderWidth: 1.5,
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          label: 'IPV (%)',
+          data: sorted.map(x => x.ipv),
+          type: 'line',
+          borderColor: '#ef4444',
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointBackgroundColor: sorted.map(x => ipvColor(x.ipv)),
+          pointRadius: 6,
+          tension: 0.2,
+          yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 12 }, padding: 12 } }
+      },
+      scales: {
+        y: { beginAtZero: true, position: 'left', grid: { color: '#f1f5f9' }, title: { display: true, text: '출고량' } },
+        y2: { beginAtZero: true, position: 'right', grid: { display: false }, ticks: { callback: v => v + '%' }, title: { display: true, text: 'IPV (%)' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  document.getElementById('channel-table-wrap').innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>채널</th><th class="right">출고량</th><th class="right">문의수</th>
+          <th class="right">IPV</th><th>전월 대비</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map(x => {
+          const prev = allData.length > 1
+            ? (allData[allData.findIndex(a => a.period === d.period) - 1]?.by_channel || []).find(c => c.channel === x.channel)
+            : null;
+          const change = prev ? x.ipv - prev.ipv : null;
+          return `
+          <tr>
+            <td>${x.channel}</td>
+            <td class="right">${x.shipments.toLocaleString()}</td>
+            <td class="right">${x.inquiries.toLocaleString()}</td>
+            <td class="right">${ipvBadge(x.ipv)}</td>
+            <td>${changeChip(change)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─── 월별 누적 ───
+function renderHistory() {
+  destroyChart('history');
+  charts['history'] = new Chart(document.getElementById('history-chart'), {
+    type: 'line',
+    data: {
+      labels: allData.map(x => x.period_label || x.period),
+      datasets: [
+        {
+          label: 'IPV (%)',
+          data: allData.map(x => x.summary.ipv),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,0.08)',
+          borderWidth: 2.5,
+          pointBackgroundColor: allData.map(x => ipvColor(x.summary.ipv)),
+          pointRadius: 6,
+          tension: 0.35,
+          fill: true,
+          yAxisID: 'y'
+        },
+        {
+          label: '출고량',
+          data: allData.map(x => x.summary.total_shipments),
+          borderColor: '#10b981',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [4, 3],
+          pointRadius: 4,
+          tension: 0.35,
+          yAxisID: 'y2'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { font: { size: 12 } } } },
+      scales: {
+        y: { beginAtZero: true, position: 'left', ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+        y2: { beginAtZero: true, position: 'right', grid: { display: false } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  document.getElementById('history-table-wrap').innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>기간</th><th class="right">출고량</th><th class="right">문의수</th>
+          <th class="right">IPV</th><th>전월 대비</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${[...allData].reverse().map((x, i, arr) => {
+          const prev = arr[i + 1];
+          const change = prev ? x.summary.ipv - prev.summary.ipv : null;
+          return `
+          <tr>
+            <td><strong>${x.period_label || x.period}</strong></td>
+            <td class="right">${x.summary.total_shipments.toLocaleString()}</td>
+            <td class="right">${x.summary.total_inquiries.toLocaleString()}</td>
+            <td class="right">${ipvBadge(x.summary.ipv)}</td>
+            <td>${changeChip(change)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ══════════════════════════════════════════
+//  네비게이션
+// ══════════════════════════════════════════
+document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    const page = el.dataset.page;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+  });
+});
+
+// ══════════════════════════════════════════
+//  초기화
+// ══════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
