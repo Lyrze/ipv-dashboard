@@ -3,7 +3,7 @@
   "period_label": "2026년 2월",
   "brand": "슬룸",
   "generated_at": "2026-04-22",
-  "note": "슬룸 브랜드 출고량 기준(27,532건). 테스트 태그 제외 후 상담 7,330건. 문의유형: 태그 있는 1913건(26%) 분류. 상품별 IPV: description 매핑 633건(8.8%) 기준. 채널별 IPV: 채널별 상담 데이터 없어 전체 IPV 동일 적용.",
+  "note": "슬룸 출고량 27,532건 (올릿리테일+슬룸KW필터). description 매핑 커버리지 ~47.5%. 상품별 IPV는 추정값(실제보다 낮음).",
   "summary": {
     "total_shipments": 27532,
     "total_inquiries": 7330,
@@ -19,6 +19,12 @@
       "shipments": 10072,
       "inquiries": 395,
       "ipv": 3.92
+    },
+    {
+      "name": "기타 슬룸 제품",
+      "shipments": 7263,
+      "inquiries": 0,
+      "ipv": 0.0
     },
     {
       "name": "허리편한케어 V2",
@@ -189,7 +195,7 @@
   "by_inquiry_type_alf": {
     "total": 5314,
     "ratio_of_chat": 73.5,
-    "alf_unresolved": 40,
+    "alf_unresolved": 0,
     "alf_error": 8
   },
   "by_channel": [
@@ -266,28 +272,58 @@
     "return_reasons": [
       {
         "reason": "100% 환불 이벤트",
-        "count": 418,
-        "ratio": 42.8
+        "count": 384,
+        "ratio": 39.3
       },
       {
         "reason": "사유 미기재",
-        "count": 310,
-        "ratio": 31.8
+        "count": 152,
+        "ratio": 15.6
       },
       {
-        "reason": "불량·결함 반품",
-        "count": 163,
-        "ratio": 16.7
+        "reason": "통증·불편 반품",
+        "count": 117,
+        "ratio": 12.0
       },
       {
-        "reason": "변심 반품",
-        "count": 83,
-        "ratio": 8.5
+        "reason": "단순 변심",
+        "count": 95,
+        "ratio": 9.7
+      },
+      {
+        "reason": "소음 불량",
+        "count": 93,
+        "ratio": 9.5
+      },
+      {
+        "reason": "기타",
+        "count": 41,
+        "ratio": 4.2
+      },
+      {
+        "reason": "EMS 불량",
+        "count": 34,
+        "ratio": 3.5
+      },
+      {
+        "reason": "온열 불량",
+        "count": 28,
+        "ratio": 2.9
+      },
+      {
+        "reason": "작동·진동 불량",
+        "count": 26,
+        "ratio": 2.7
+      },
+      {
+        "reason": "기타 불량",
+        "count": 5,
+        "ratio": 0.5
       },
       {
         "reason": "오주문 반품",
-        "count": 2,
-        "ratio": 0.2
+        "count": 1,
+        "ratio": 0.1
       }
     ],
     "defect_types": [
