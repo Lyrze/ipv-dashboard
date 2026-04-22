@@ -451,7 +451,7 @@
 <!-- ══════════════════════ SIDEBAR ══════════════════════ -->
 <aside class="sidebar">
   <div class="sidebar-brand">
-    <a class="brand-logo" href="#">
+    <a class="brand-logo" data-page="overview" style="cursor:pointer;" href="#">
       <div class="brand-mark">SL</div>
       <span class="brand-name">SLOOM</span>
     </a>
@@ -729,6 +729,15 @@ Chart.defaults.color = chartDefaults.color;
 
 
 // ── 네비게이션 페이지 전환 ────────────────────
+// 로고 클릭도 동일하게 처리
+document.querySelector('.brand-logo[data-page]').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="overview"]')?.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-overview')?.classList.add('active');
+});
+
 document.querySelectorAll('.nav-item[data-page]').forEach(item => {
   item.addEventListener('click', function(e) {
     e.preventDefault();
@@ -945,10 +954,13 @@ function renderProduct() {
       }]
     },
     options: {
-      indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+      indexAxis: 'y', responsive: true,
+      layout: { padding: { left: 0 } },
+      plugins: { legend: { display: false } },
       scales: {
         x: { beginAtZero: true, grid: { color: '#EEECe8' }, ticks: { callback: v => v + '%' } },
-        y: { grid: { display: false }, ticks: { font: { size: 12 } } }
+        y: { grid: { display: false }, ticks: { font: { size: 12 }, mirror: false },
+             afterFit(scale) { scale.width = 140; } }
       }
     }
   });
@@ -1056,7 +1068,7 @@ function renderInquiry() {
       </tr></thead>
       <tbody>${sorted.map((x, i) => `
         <tr>
-          <td><span class="color-dot" style="background:${PALETTE.series[i%PALETTE.series.length]};"></span>${x.type}</td>
+          <td><span class="color-dot" style="background:${PALETTE.series[i%PALETTE.series.length]};"></span>${x.type === '사유 미기재' ? '사유 미기재 <span style="font-size:10.5px;color:var(--text-muted);font-weight:400;">[ALF V2 상담 건으로 사유 확인 불가]</span>' : x.type}</td>
           <td class="r" style="font-weight:600;">${x.count.toLocaleString()}건</td>
           <td class="r">
             <div class="bar-wrap" style="justify-content:flex-end;">
