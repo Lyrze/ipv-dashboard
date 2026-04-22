@@ -1,0 +1,31 @@
+{
+  "period": "2026-03",
+  "period_label": "2026년 3월",
+  "brand": "슬룸",
+  "generated_at": "2026-04-22",
+  "summary": {
+    "total_shipments": 1482,
+    "total_inquiries": 89,
+    "ipv": 6.00
+  },
+  "by_product": [
+    {"name": "슬룸 매트리스 Q", "shipments": 420, "inquiries": 32, "ipv": 7.62},
+    {"name": "슬룸 매트리스 SS", "shipments": 310, "inquiries": 19, "ipv": 6.13},
+    {"name": "슬룸 베개 프리미엄", "shipments": 280, "inquiries": 14, "ipv": 5.00},
+    {"name": "슬룸 토퍼 Q", "shipments": 240, "inquiries": 16, "ipv": 6.67},
+    {"name": "슬룸 커버 세트", "shipments": 232, "inquiries": 8, "ipv": 3.45}
+  ],
+  "by_inquiry_type": [
+    {"type": "배송문의", "count": 28, "ratio": 31.5},
+    {"type": "교환/반품", "count": 27, "ratio": 30.3},
+    {"type": "불량/AS", "count": 18, "ratio": 20.2},
+    {"type": "사용방법", "count": 9, "ratio": 10.1},
+    {"type": "기타", "count": 7, "ratio": 7.9}
+  ],
+  "by_channel": [
+    {"channel": "스마트스토어", "shipments": 620, "inquiries": 40, "ipv": 6.45},
+    {"channel": "쿠팡", "shipments": 480, "inquiries": 32, "ipv": 6.67},
+    {"channel": "자사몰", "shipments": 240, "inquiries": 12, "ipv": 5.00},
+    {"channel": "11번가", "shipments": 142, "inquiries": 5, "ipv": 3.52}
+  ]
+}
