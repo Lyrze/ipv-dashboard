@@ -326,6 +326,7 @@
     .kpi-change.down   { color: var(--good); }
     .kpi-change.neutral{ color: var(--text-light); }
     .kpi-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+    .grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; }
     .section-label {
       font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
       text-transform: uppercase; color: var(--navy);
@@ -668,15 +669,43 @@
     <div class="page-header">
       <div>
         <div class="page-title">월별 누적 데이터</div>
-        <div class="page-sub">전체 기간 IPV 이력 및 트렌드</div>
+        <div class="page-sub" id="hist-sub">전체 기간 IPV 이력 및 주요 지표 변동</div>
       </div>
     </div>
+    <!-- KPI 변동 카드 -->
+    <div class="grid-4 mb-20" id="hist-kpi-row"></div>
+    <!-- IPV 추이 -->
     <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">↗</span> 전체 기간 IPV 추이</div>
+      <div class="card-title"><span class="ct-icon">↗</span> 전체 IPV 추이</div>
       <div class="chart-wrap"><canvas id="history-chart"></canvas></div>
     </div>
+    <!-- 주력 SKU 문의 건수 추이 + CX 유형 변동 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="mb-20">
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">★</span> 주력 SKU 문의 건수 추이
+          <span style="font-size:10.5px;font-weight:400;color:var(--text-muted);margin-left:6px;">description 매핑 기반</span>
+        </div>
+        <div class="chart-wrap"><canvas id="hist-sku-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">◎</span> CX 문의유형 월별 변동</div>
+        <div class="chart-wrap"><canvas id="hist-cx-trend"></canvas></div>
+      </div>
+    </div>
+    <!-- 반품·불량 추이 + ALF V2 추이 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="mb-20">
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">◑</span> 반품·불량 건수 월별 추이</div>
+        <div class="chart-wrap"><canvas id="hist-dr-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">◈</span> ALF V2 처리 현황 추이</div>
+        <div class="chart-wrap"><canvas id="hist-alf-trend"></canvas></div>
+      </div>
+    </div>
+    <!-- 월별 요약 테이블 -->
     <div class="card">
-      <div class="card-title"><span class="ct-icon">≡</span> 월별 요약</div>
+      <div class="card-title"><span class="ct-icon">≡</span> 월별 종합 요약</div>
       <div id="history-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
     </div>
   </div>
@@ -1284,67 +1313,205 @@ function renderChannel() {
 // ────────────────────────────────────────────────────────
 function renderHistory() {
   if (!allData.length) return;
+  const labels = allData.map(function(x){ return x.period_label || x.period; });
 
-  // IPV 추이 라인 차트
+  // ── KPI 변동 카드 ────────────────────────────────────────
+  var last  = allData[allData.length - 1];
+  var prev  = allData.length > 1 ? allData[allData.length - 2] : null;
+  function mom(cur, pre, key) {
+    if (!pre) return null;
+    return +(cur[key] - pre[key]).toFixed(2);
+  }
+  function kpiCard(label, value, unit, delta, deltaLabel, colorFn) {
+    var sign  = delta === null ? '' : delta > 0 ? '▲ +' : delta < 0 ? '▼ ' : '─ ';
+    var color = delta === null ? 'var(--text-muted)' : colorFn(delta);
+    return '<div class="card" style="padding:18px;">' +
+      '<div style="font-size:11.5px;color:var(--text-muted);font-weight:500;margin-bottom:6px;">' + label + '</div>' +
+      '<div style="font-size:22px;font-weight:700;color:var(--navy);letter-spacing:-0.5px;">' + value + '<span style="font-size:13px;font-weight:500;margin-left:2px;">' + unit + '</span></div>' +
+      (delta !== null ? '<div style="font-size:11.5px;margin-top:5px;color:' + color + ';font-weight:500;">' + sign + Math.abs(delta) + deltaLabel + '</div>' : '') +
+    '</div>';
+  }
+  var ipvDelta = prev ? +(last.summary.ipv - prev.summary.ipv).toFixed(2) : null;
+  var shipDelta = prev ? Math.round(last.summary.total_shipments - prev.summary.total_shipments) : null;
+  var cxDelta = prev ? last.summary.chat_inquiries - prev.summary.chat_inquiries : null;
+  var alfRatioDelta = prev ? +(last.by_inquiry_type_alf.ratio_of_chat - prev.by_inquiry_type_alf.ratio_of_chat).toFixed(1) : null;
+
+  document.getElementById('hist-kpi-row').innerHTML =
+    kpiCard('IPV (구매 후 문의율)', last.summary.ipv.toFixed(2), '%', ipvDelta, '%p', function(d){ return d > 0 ? 'var(--bad)' : 'var(--good)'; }) +
+    kpiCard('슬룸 출고량', last.summary.total_shipments.toLocaleString(), '건', shipDelta, '건', function(d){ return d > 0 ? 'var(--good)' : 'var(--warn)'; }) +
+    kpiCard('총 상담 건수', last.summary.total_inquiries.toLocaleString(), '건', cxDelta, '건', function(d){ return d > 0 ? 'var(--warn)' : 'var(--good)'; }) +
+    kpiCard('ALF V2 처리율', last.by_inquiry_type_alf.ratio_of_chat + '', '%', alfRatioDelta, '%p', function(d){ return 'var(--text-muted)'; });
+
+  // ── IPV 추이 라인 ────────────────────────────────────────
   killChart('history');
   C['history'] = new Chart(document.getElementById('history-chart'), {
     type: 'line',
     data: {
-      labels: allData.map(x => x.period_label || x.period),
+      labels: labels,
       datasets: [
-        { label: '전체 IPV', data: allData.map(x => x.summary.ipv),
-          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad + '15',
+        { label: '전체 IPV', data: allData.map(function(x){ return x.summary.ipv; }),
+          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad+'15',
           borderWidth: 2.5, pointRadius: 6, pointBackgroundColor: PALETTE.bad, tension: 0.3, fill: true },
-        { label: 'CHAT IPV', data: allData.map(x => x.summary.ipv_chat),
+        { label: 'CHAT IPV', data: allData.map(function(x){ return x.summary.ipv_chat; }),
           borderColor: PALETTE.navy, backgroundColor: 'transparent',
           borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false, borderDash: [4,3] },
-        { label: 'CALL IPV', data: allData.map(x => x.summary.ipv_call),
+        { label: 'CALL IPV', data: allData.map(function(x){ return x.summary.ipv_call; }),
           borderColor: PALETTE.greige, backgroundColor: 'transparent',
           borderWidth: 1.5, pointRadius: 3, tension: 0.3, fill: false, borderDash: [2,3] }
       ]
     },
     options: { responsive: true,
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, usePointStyle: true } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(2)}%` } }
+        legend: { position: 'bottom', labels: { font:{size:12}, padding:14, usePointStyle:true } },
+        tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + ctx.raw.toFixed(2) + '%'; } } }
       },
       scales: {
-        y: { beginAtZero: true, grid: { color: '#EEECe8' },
-             title: { display: true, text: 'IPV (%)' },
-             ticks: { callback: v => v + '%' } },
-        x: { grid: { display: false } }
+        y: { beginAtZero: true, grid:{color:'#EEECe8'}, ticks:{callback:function(v){return v+'%';}} },
+        x: { grid:{display:false} }
       }
     }
   });
 
-  // 월별 요약 테이블
-  const rows = [...allData].reverse().map(x => {
-    const prev = allData[allData.indexOf(x) - 1];
-    const delta = prev ? (x.summary.ipv - prev.summary.ipv) : null;
-    return `<tr>
-      <td style="font-weight:600;">${x.period_label || x.period}</td>
-      <td class="r">${x.summary.total_shipments.toLocaleString()}</td>
-      <td class="r">${x.summary.total_inquiries.toLocaleString()}</td>
-      <td class="r">${x.summary.chat_inquiries.toLocaleString()}</td>
-      <td class="r">${x.summary.call_ob_inquiries}</td>
-      <td class="r">${ipvBadge(x.summary.ipv)}</td>
-      <td class="r">${changeChip(delta)}</td>
-    </tr>`;
+  // ── 주력 SKU 문의 건수 추이 ──────────────────────────────
+  killChart('hist-sku');
+  var skuColors = { '목베개 플러스':'#002353', '허리편한케어 V2':'#A83228', '발편한케어 V1':'#9A6A1F',
+                    '허리편한케어 V1':'#4A7ABF', '발편한케어 V2':'#2E7D5E', '목 마사지 베개 V2':'#ADA59B' };
+  var skuDatasets = KEY_SKUS_LIST.map(function(sku) {
+    return {
+      label: sku,
+      data: allData.map(function(x) {
+        var p = (x.by_product_detail||[]).find(function(d){ return d.name === sku; });
+        return p ? p.desc_matched : 0;
+      }),
+      borderColor: skuColors[sku] || PALETTE.navy,
+      backgroundColor: (skuColors[sku]||PALETTE.navy) + '20',
+      borderWidth: 2, pointRadius: 5, tension: 0.3, fill: false,
+      borderDash: (sku === '목 마사지 베개 V2' || sku === '발편한케어 V2') ? [4,3] : []
+    };
+  });
+  C['hist-sku'] = new Chart(document.getElementById('hist-sku-trend'), {
+    type: 'line', data: { labels: labels, datasets: skuDatasets },
+    options: { responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10.5}, padding:8, usePointStyle:true } },
+        tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + ctx.raw + '건'; } } } },
+      scales: {
+        y: { beginAtZero: true, grid:{color:'#EEECe8'}, title:{display:true,text:'매핑 건수'} },
+        x: { grid:{display:false} }
+      }
+    }
+  });
+
+  // ── CX 문의유형 월별 변동 (스택형 바) ────────────────────
+  killChart('hist-cx');
+  var typeOrder = ['반품/환불','불량/AS','배송문의','주문/결제','제품/사용문의','이벤트/쿠폰','교환','리뷰','기타/미분류'];
+  var cxTypes = typeOrder.filter(function(t) {
+    return allData.some(function(x){ return (x.by_inquiry_type_cx||[]).find(function(c){ return c.type===t && c.count>0; }); });
+  });
+  C['hist-cx'] = new Chart(document.getElementById('hist-cx-trend'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: cxTypes.map(function(type) {
+        return {
+          label: type,
+          data: allData.map(function(x){ var t=(x.by_inquiry_type_cx||[]).find(function(c){return c.type===type;}); return t?t.count:0; }),
+          backgroundColor: TYPE_COLORS[type]||'#ADA59B', borderRadius: 0
+        };
+      })
+    },
+    options: { responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10.5}, padding:8, usePointStyle:true } } },
+      scales: {
+        x: { stacked:true, grid:{display:false} },
+        y: { stacked:true, beginAtZero:true, grid:{color:'#EEECe8'}, title:{display:true,text:'CX 상담 건수'} }
+      }
+    }
+  });
+
+  // ── 반품·불량 추이 ────────────────────────────────────────
+  killChart('hist-dr');
+  C['hist-dr'] = new Chart(document.getElementById('hist-dr-trend'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: '반품·환불', data: allData.map(function(x){ return (x.by_defect_return||{}).total_return||0; }),
+          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad+'18',
+          borderWidth: 2.5, pointRadius: 5, tension: 0.3, fill: true },
+        { label: '불량·AS', data: allData.map(function(x){ return (x.by_defect_return||{}).total_defect||0; }),
+          borderColor: PALETTE.warn, backgroundColor: PALETTE.warn+'18',
+          borderWidth: 2, pointRadius: 5, tension: 0.3, fill: true },
+        { label: '100% 환불 이벤트', data: allData.map(function(x) {
+            var rr = ((x.by_defect_return||{}).return_reasons||[]);
+            var ev = rr.find(function(r){return r.reason==='100% 환불 이벤트';});
+            return ev ? ev.count : 0;
+          }),
+          borderColor: PALETTE.navyMid, backgroundColor: 'transparent',
+          borderWidth: 1.5, pointRadius: 4, tension: 0.3, fill: false, borderDash: [5,3] }
+      ]
+    },
+    options: { responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10.5}, padding:8, usePointStyle:true } } },
+      scales: {
+        y: { beginAtZero: true, grid:{color:'#EEECe8'}, title:{display:true,text:'건수'} },
+        x: { grid:{display:false} }
+      }
+    }
+  });
+
+  // ── ALF V2 추이 ───────────────────────────────────────────
+  killChart('hist-alf');
+  C['hist-alf'] = new Chart(document.getElementById('hist-alf-trend'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'ALF V2 자동처리', data: allData.map(function(x){ return (x.by_inquiry_type_alf||{}).total||0; }),
+          backgroundColor: 'rgba(0,35,83,0.5)', borderRadius: 4, yAxisID:'y' },
+        { label: 'ALF 처리율(%)', data: allData.map(function(x){ return (x.by_inquiry_type_alf||{}).ratio_of_chat||0; }),
+          type: 'line', borderColor: PALETTE.navyMid, backgroundColor: 'transparent',
+          borderWidth: 2, pointRadius: 5, tension: 0.3, yAxisID:'y2' }
+      ]
+    },
+    options: { responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10.5}, padding:8, usePointStyle:true } } },
+      scales: {
+        y:  { beginAtZero:true, grid:{color:'#EEECe8'}, title:{display:true,text:'처리 건수'}, position:'left' },
+        y2: { beginAtZero:true, max:100, grid:{display:false}, title:{display:true,text:'처리율 (%)'}, position:'right',
+               ticks:{callback:function(v){return v+'%';}} }
+      }
+    }
+  });
+
+  // ── 월별 요약 테이블 ──────────────────────────────────────
+  var rows = [...allData].reverse().map(function(x) {
+    var pv  = allData[allData.indexOf(x) - 1];
+    var delta = pv ? +(x.summary.ipv - pv.summary.ipv).toFixed(2) : null;
+    var dr  = x.by_defect_return || {};
+    return '<tr>' +
+      '<td style="font-weight:600;">' + (x.period_label||x.period) + '</td>' +
+      '<td class="r">' + x.summary.total_shipments.toLocaleString() + '</td>' +
+      '<td class="r">' + x.summary.total_inquiries.toLocaleString() + '</td>' +
+      '<td class="r">' + x.summary.chat_inquiries.toLocaleString() + '</td>' +
+      '<td class="r">' + (x.by_inquiry_type_alf.ratio_of_chat||0) + '%</td>' +
+      '<td class="r">' + ipvBadge(x.summary.ipv) + '</td>' +
+      '<td class="r">' + changeChip(delta) + '</td>' +
+      '<td class="r" style="font-size:11.5px;">' + (dr.total_return||0) + '</td>' +
+      '<td class="r" style="font-size:11.5px;">' + (dr.total_defect||0) + '</td>' +
+    '</tr>';
   }).join('');
 
-  document.getElementById('history-table-wrap').innerHTML = `
-    <table class="data-table">
-      <thead><tr>
-        <th>기간</th><th class="r">출고량</th><th class="r">총 상담</th>
-        <th class="r">CHAT</th><th class="r">CALL</th><th class="r">IPV</th><th class="r">전월 대비</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  document.getElementById('history-table-wrap').innerHTML =
+    '<table class="data-table"><thead><tr>' +
+    '<th>기간</th><th class="r">출고량</th><th class="r">총 상담</th><th class="r">CHAT</th>' +
+    '<th class="r">ALF율</th><th class="r">IPV</th><th class="r">전월 대비</th>' +
+    '<th class="r">반품건</th><th class="r">불량건</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
 }
 
-// ────────────────────────────────────────────────────────
-//  SKU 출시일 정보
-// ────────────────────────────────────────────────────────
+
+
+// ── SKU 출시일 · 주력 SKU 목록 · 문의유형 색상 ──────────────
 const SKU_LAUNCH = {
   '발편한케어 V2':     '2월 출시',
   '목 마사지 베개 V2': '4월 출시',
@@ -1357,9 +1524,6 @@ const TYPE_COLORS = {
   '교환':'#ADA59B','리뷰':'#2E7D8A','기타/미분류':'#9CA3AF','ALF V2 처리':'#D0CCC7',
 };
 
-// ────────────────────────────────────────────────────────
-//  renderSKUMain — 주력 SKU 분석
-// ────────────────────────────────────────────────────────
 function renderSKUMain() {
   const d = current;
   if (!d || !d.by_product_detail) return;
