@@ -332,9 +332,9 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
-          "count": 164,
-          "ratio": 76.3
+          "type": "마사지볼 작동 불량",
+          "count": 180,
+          "ratio": 83.7
         },
         {
           "type": "소음 불량",
@@ -342,17 +342,22 @@
           "ratio": 13.0
         },
         {
-          "type": "불량(사유 미상)",
-          "count": 18,
-          "ratio": 8.4
-        },
-        {
-          "type": "온열 불량",
+          "type": "온열 강도 불량",
           "count": 4,
           "ratio": 1.9
         },
         {
-          "type": "마감·외관 불량",
+          "type": "커버 제작 불량",
+          "count": 1,
+          "ratio": 0.5
+        },
+        {
+          "type": "기타 불량",
+          "count": 1,
+          "ratio": 0.5
+        },
+        {
+          "type": "외관 불량",
           "count": 1,
           "ratio": 0.5
         }
@@ -435,19 +440,24 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "리모컨 불량",
           "count": 46,
           "ratio": 82.1
-        },
-        {
-          "type": "불량(사유 미상)",
-          "count": 6,
-          "ratio": 10.7
         },
         {
           "type": "소음 불량",
           "count": 4,
           "ratio": 7.1
+        },
+        {
+          "type": "기타 불량",
+          "count": 3,
+          "ratio": 5.4
+        },
+        {
+          "type": "에어리프트 오작동",
+          "count": 3,
+          "ratio": 5.4
         }
       ],
       "defect_total": 56,
@@ -513,7 +523,7 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "작동 불량",
           "count": 19,
           "ratio": 95.0
         },
@@ -571,7 +581,7 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "리모컨 불량",
           "count": 13,
           "ratio": 92.9
         },
@@ -634,14 +644,9 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
-          "count": 4,
-          "ratio": 80.0
-        },
-        {
-          "type": "불량(사유 미상)",
-          "count": 1,
-          "ratio": 20.0
+          "type": "작동 불량",
+          "count": 5,
+          "ratio": 100.0
         }
       ],
       "defect_total": 5,
