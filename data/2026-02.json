@@ -310,9 +310,9 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
-          "count": 143,
-          "ratio": 71.5
+          "type": "마사지볼 작동 불량",
+          "count": 162,
+          "ratio": 81.0
         },
         {
           "type": "소음 불량",
@@ -320,12 +320,12 @@
           "ratio": 18.0
         },
         {
-          "type": "불량(사유 미상)",
-          "count": 20,
-          "ratio": 10.0
+          "type": "기타 불량",
+          "count": 1,
+          "ratio": 0.5
         },
         {
-          "type": "온열 불량",
+          "type": "온열 강도 불량",
           "count": 1,
           "ratio": 0.5
         }
@@ -413,7 +413,7 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "리모컨 불량",
           "count": 66,
           "ratio": 78.6
         },
@@ -423,12 +423,17 @@
           "ratio": 16.7
         },
         {
-          "type": "불량(사유 미상)",
-          "count": 3,
-          "ratio": 3.6
+          "type": "에어리프트 오작동",
+          "count": 2,
+          "ratio": 2.4
         },
         {
-          "type": "EMS 불량",
+          "type": "EMS 강도 불량",
+          "count": 1,
+          "ratio": 1.2
+        },
+        {
+          "type": "기타 불량",
           "count": 1,
           "ratio": 1.2
         }
@@ -496,7 +501,7 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "작동 불량",
           "count": 23,
           "ratio": 88.5
         },
@@ -564,14 +569,19 @@
       ],
       "defect_detail": [
         {
-          "type": "작동·진동 불량",
+          "type": "리모컨 불량",
           "count": 12,
           "ratio": 80.0
         },
         {
-          "type": "불량(사유 미상)",
-          "count": 3,
-          "ratio": 20.0
+          "type": "기타 불량",
+          "count": 2,
+          "ratio": 13.3
+        },
+        {
+          "type": "에어리프트 오작동",
+          "count": 1,
+          "ratio": 6.7
         }
       ],
       "defect_total": 15,
