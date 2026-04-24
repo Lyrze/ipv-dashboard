@@ -740,8 +740,8 @@
       <span>description 기재 건 기반 추정값. 매핑 건수가 적은 상품은 참고용으로만 활용하세요.</span>
     </div>
     <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">≡</span> 상품별 문의유형 구성 비교</div>
-      <div class="chart-wrap" style="height:320px"><canvas id="sku-all-chart"></canvas></div>
+      <div class="card-title"><span class="ct-icon">◉</span> 상품별 문의 점유율 (매핑 건수 기준)</div>
+      <div class="chart-wrap" style="height:380px"><canvas id="sku-all-chart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title"><span class="ct-icon">▦</span> 전체 SKU 요약</div>
@@ -1535,7 +1535,18 @@ function renderSKUMain() {
   const grid   = document.getElementById('sku-main-grid');
   grid.innerHTML = '';
 
-  KEY_SKUS_LIST.forEach(function(skuName) {
+  // 전체 불량 건수 (점유율 계산 분모)
+  const totalDefectAll = (d.by_defect_return && d.by_defect_return.total_defect) || 0;
+
+  // 기존 도넛 차트 모두 정리
+  Object.keys(C).forEach(function(k) {
+    if (k.indexOf('sku-main-defect-') === 0) killChart(k);
+  });
+
+  // 1차: 카드 DOM 먼저 삽입 (canvas 포함)
+  const pendingDonuts = [];
+
+  KEY_SKUS_LIST.forEach(function(skuName, idx) {
     const p      = detail.find(function(x){ return x.name === skuName; });
     const launch = SKU_LAUNCH[skuName] || null;
     const card   = document.createElement('div');
@@ -1571,19 +1582,31 @@ function renderSKUMain() {
     let defectSection = '';
     const dList = p.defect_detail || [];
     if (dList.length > 0) {
-      const defColors = ['#A83228','#9A6A1F','#1A4A8A','#4A7ABF','#2E7D5E','#ADA59B'];
-      const dRows = dList.map(function(dd, i) {
-        const c = defColors[i % defColors.length];
-        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
-          '<span style="width:110px;font-size:11px;flex-shrink:0;">' + dd.type + '</span>' +
-          '<div style="flex:1;background:#F0EEEB;border-radius:3px;height:8px;overflow:hidden;">' +
-          '<div style="width:' + dd.ratio + '%;background:' + c + ';height:100%;border-radius:3px;"></div></div>' +
-          '<span style="font-size:11px;color:var(--text-muted);min-width:52px;text-align:right;">' + dd.count + '건 ' + dd.ratio + '%</span></div>';
-      }).join('');
-      defectSection = '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #E5E2DD;">' +
-        '<div style="font-size:11.5px;font-weight:600;color:var(--navy);margin-bottom:8px;">' +
-        '🔍 불량 세부 사유 <span style="font-weight:400;color:var(--text-muted);">(' + p.defect_total + '건)</span></div>' +
-        dRows + '</div>';
+      const canvasId = 'sku-main-defect-' + idx;
+      const share = totalDefectAll > 0 ? (p.defect_total / totalDefectAll * 100) : 0;
+      const shareTxt = share.toFixed(1) + '%';
+
+      defectSection =
+        '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #E5E2DD;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:6px;flex-wrap:wrap;">' +
+            '<div style="font-size:11.5px;font-weight:600;color:var(--navy);">🔍 불량 세부 사유</div>' +
+            '<div style="font-size:10.5px;color:var(--text-muted);">전체 불량 ' + totalDefectAll.toLocaleString() + '건 중 ' +
+              '<strong style="color:var(--bad);">' + p.defect_total.toLocaleString() + '건</strong> · ' +
+              '<strong style="color:var(--bad);">' + shareTxt + ' 점유</strong></div>' +
+          '</div>' +
+          '<div style="display:flex;gap:12px;align-items:center;">' +
+            '<div style="width:130px;height:130px;flex-shrink:0;position:relative;">' +
+              '<canvas id="' + canvasId + '"></canvas>' +
+              '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">' +
+                '<div style="font-size:15px;font-weight:700;color:var(--navy);line-height:1;">' + p.defect_total + '</div>' +
+                '<div style="font-size:9px;color:var(--text-muted);margin-top:2px;">건</div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="flex:1;font-size:10.5px;"></div>' +
+          '</div>' +
+        '</div>';
+
+      pendingDonuts.push({ canvasId: canvasId, dList: dList });
     }
 
     card.innerHTML =
@@ -1596,6 +1619,51 @@ function renderSKUMain() {
       (typeRows || '<p style="font-size:12px;color:var(--text-muted);">태그 있는 문의 없음</p>') +
       defectSection;
     grid.appendChild(card);
+  });
+
+  // 2차: 카드 삽입 완료 후 도넛 차트 생성
+  const defColors = ['#A83228','#9A6A1F','#1A4A8A','#4A7ABF','#2E7D5E','#ADA59B','#6B5EA8','#2E7D8A'];
+  pendingDonuts.forEach(function(item) {
+    const el = document.getElementById(item.canvasId);
+    if (!el) return;
+    C[item.canvasId] = new Chart(el, {
+      type: 'doughnut',
+      data: {
+        labels: item.dList.map(function(x){ return x.type; }),
+        datasets: [{
+          data: item.dList.map(function(x){ return x.count; }),
+          backgroundColor: item.dList.map(function(_, i){ return defColors[i % defColors.length]; }),
+          borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { font:{size:10.5}, padding:6, boxWidth:10, usePointStyle:true,
+              generateLabels: function(chart) {
+                const data = chart.data;
+                return data.labels.map(function(lbl, i) {
+                  const cnt = data.datasets[0].data[i];
+                  const rt = item.dList[i].ratio;
+                  return {
+                    text: lbl + '  ' + cnt + '건 (' + rt + '%)',
+                    fillStyle: data.datasets[0].backgroundColor[i],
+                    strokeStyle: data.datasets[0].backgroundColor[i],
+                    pointStyle: 'circle', index: i
+                  };
+                });
+              }
+            }
+          },
+          tooltip: { callbacks: { label: function(ctx){
+            const rt = item.dList[ctx.dataIndex].ratio;
+            return ' ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + rt + '%)';
+          } } }
+        }
+      }
+    });
   });
 }
 
@@ -1615,35 +1683,68 @@ function renderSKUAll() {
   detail.forEach(function(p){ (p.by_type||[]).forEach(function(t){ allTypeSet.add(t.type); }); });
   const sortedTypes = typeOrder.filter(function(t){ return allTypeSet.has(t); });
 
+  // ── 점유율 도넛: 매핑 건(=문의 건) 기준 SKU 점유율 ──
+  const sorted = [...detail].sort(function(a,b){ return (b.desc_matched||0) - (a.desc_matched||0); });
+  const totalMatched = sorted.reduce(function(s,p){ return s + (p.desc_matched||0); }, 0);
+
+  // 상위 9개 + 나머지는 "기타"로 묶기 (보기 편하게)
+  const TOP_N = 9;
+  let donutLabels, donutCounts, donutShipments, donutIsKey;
+  if (sorted.length > TOP_N) {
+    const top = sorted.slice(0, TOP_N);
+    const rest = sorted.slice(TOP_N);
+    donutLabels    = top.map(function(p){ return p.name; }).concat(['기타 ' + rest.length + '개']);
+    donutCounts    = top.map(function(p){ return p.desc_matched; }).concat([rest.reduce(function(s,p){ return s + (p.desc_matched||0); }, 0)]);
+    donutShipments = top.map(function(p){ return p.shipments; }).concat([rest.reduce(function(s,p){ return s + (p.shipments||0); }, 0)]);
+    donutIsKey     = top.map(function(p){ return KEY_SKUS_LIST.includes(p.name); }).concat([false]);
+  } else {
+    donutLabels    = sorted.map(function(p){ return p.name; });
+    donutCounts    = sorted.map(function(p){ return p.desc_matched; });
+    donutShipments = sorted.map(function(p){ return p.shipments; });
+    donutIsKey     = sorted.map(function(p){ return KEY_SKUS_LIST.includes(p.name); });
+  }
+  const DONUT_COLORS = ['#002353','#A83228','#9A6A1F','#1A4A8A','#2E7D5E','#4A7ABF','#6B5EA8','#2E7D8A','#ADA59B','#D0CCC7'];
+
   killChart('sku-all');
   C['sku-all'] = new Chart(document.getElementById('sku-all-chart'), {
-    type: 'bar',
+    type: 'doughnut',
     data: {
-      labels: detail.map(function(p) {
-        const lbl = SKU_LAUNCH[p.name] ? ' (' + SKU_LAUNCH[p.name] + ')' : '';
-        return (KEY_SKUS_LIST.includes(p.name) ? '★ ' : '') + p.name + lbl;
-      }),
-      datasets: sortedTypes.map(function(type) {
-        return {
-          label: type,
-          data: detail.map(function(p) {
-            const t = (p.by_type||[]).find(function(x){ return x.type===type; });
-            return t ? t.count : 0;
-          }),
-          backgroundColor: TYPE_COLORS[type] || '#ADA59B',
-          borderRadius: 0,
-        };
-      })
+      labels: donutLabels,
+      datasets: [{
+        data: donutCounts,
+        backgroundColor: donutLabels.map(function(_, i){ return DONUT_COLORS[i % DONUT_COLORS.length]; }),
+        borderWidth: 2, borderColor: '#fff', hoverOffset: 8
+      }]
     },
     options: {
-      indexAxis: 'y', responsive: true,
+      responsive: true, maintainAspectRatio: false, cutout: '58%',
       plugins: {
-        legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true } },
-        tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + ctx.raw + '건'; } } }
-      },
-      scales: {
-        x: { stacked:true, beginAtZero:true, grid:{color:'#EEECe8'} },
-        y: { stacked:true, grid:{display:false}, ticks:{font:{size:11.5}}, afterFit:function(s){s.width=170;} }
+        legend: {
+          position: 'right',
+          labels: { font:{size:11.5}, padding:8, boxWidth:12, usePointStyle:true,
+            generateLabels: function(chart) {
+              const data = chart.data;
+              return data.labels.map(function(lbl, i) {
+                const cnt = data.datasets[0].data[i];
+                const pct = totalMatched ? (cnt/totalMatched*100).toFixed(1) : '0.0';
+                const star = donutIsKey[i] ? '★ ' : '';
+                return {
+                  text: star + lbl + '  ' + pct + '% (' + cnt + '건)',
+                  fillStyle: data.datasets[0].backgroundColor[i],
+                  strokeStyle: data.datasets[0].backgroundColor[i],
+                  pointStyle: 'circle', index: i
+                };
+              });
+            }
+          }
+        },
+        tooltip: { callbacks: { label: function(ctx){
+          const cnt = ctx.raw;
+          const pct = totalMatched ? (cnt/totalMatched*100).toFixed(1) : '0.0';
+          const ship = donutShipments[ctx.dataIndex];
+          return [' ' + ctx.label + ': ' + cnt.toLocaleString() + '건 (' + pct + '%)',
+                  '   출고 ' + (ship ? ship.toLocaleString() : 0) + '건'];
+        } } }
       }
     }
   });
