@@ -472,6 +472,12 @@
     <a class="nav-item" data-page="channel" href="#">
       <span class="nav-icon">◑</span><span>불량·반품 분석</span>
     </a>
+    <a class="nav-item" data-page="sku-main" href="#">
+      <span class="nav-icon">★</span><span>주력 SKU 분석</span>
+    </a>
+    <a class="nav-item" data-page="sku-all" href="#">
+      <span class="nav-icon">▦</span><span>전체 SKU 분석</span>
+    </a>
   </nav>
 
   <nav class="nav-group">
@@ -675,6 +681,46 @@
     </div>
   </div>
 
+  <!-- ── 주력 SKU 분석 ── -->
+  <div class="page" id="page-sku-main">
+    <div class="page-header">
+      <div>
+        <div class="page-title">주력 SKU 분석</div>
+        <div class="page-sub" id="sku-main-sub">6대 주력 상품 문의유형 · 불량 세부 분석</div>
+      </div>
+      <span class="period-badge" id="sku-main-badge">—</span>
+    </div>
+    <div class="data-notice">
+      <span class="dn-icon">⚠️</span>
+      <span>상품별 분석은 채널톡 상담의 <strong>description 기재 건 기반 추정값</strong>입니다 (전체의 약 8~13%). 실제 문의 구성과 차이가 있을 수 있습니다.</span>
+    </div>
+    <div id="sku-main-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;"></div>
+  </div>
+
+  <!-- ── 전체 SKU 분석 ── -->
+  <div class="page" id="page-sku-all">
+    <div class="page-header">
+      <div>
+        <div class="page-title">전체 SKU 분석</div>
+        <div class="page-sub" id="sku-all-sub">상품별 문의유형 구성 비교</div>
+      </div>
+      <span class="period-badge" id="sku-all-badge">—</span>
+    </div>
+    <div class="data-notice">
+      <span class="dn-icon">⚠️</span>
+      <span>description 기재 건 기반 추정값. 매핑 건수가 적은 상품은 참고용으로만 활용하세요.</span>
+    </div>
+    <div class="card mb-20">
+      <div class="card-title"><span class="ct-icon">≡</span> 상품별 문의유형 구성 비교</div>
+      <div class="chart-wrap" style="height:320px"><canvas id="sku-all-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">▦</span> 전체 SKU 요약</div>
+      <div id="sku-all-table"></div>
+    </div>
+  </div>
+
+
 </main>
 
 <script>
@@ -798,6 +844,8 @@ function renderAll() {
   renderInquiry();
   renderChannel();
   renderHistory();
+  renderSKUMain();
+  renderSKUAll();
 }
 
 // ────────────────────────────────────────────────────────
@@ -1293,6 +1341,173 @@ function renderHistory() {
       <tbody>${rows}</tbody>
     </table>`;
 }
+
+// ────────────────────────────────────────────────────────
+//  SKU 출시일 정보
+// ────────────────────────────────────────────────────────
+const SKU_LAUNCH = {
+  '발편한케어 V2':     '2월 출시',
+  '목 마사지 베개 V2': '4월 출시',
+};
+const KEY_SKUS_LIST = ['허리편한케어 V2','목베개 플러스','목 마사지 베개 V2',
+                  '발편한케어 V1','발편한케어 V2','허리편한케어 V1'];
+const TYPE_COLORS = {
+  '반품/환불':'#A83228','불량/AS':'#9A6A1F','배송문의':'#1A4A8A',
+  '주문/결제':'#4A7ABF','제품/사용문의':'#2E7D5E','이벤트/쿠폰':'#6B5EA8',
+  '교환':'#ADA59B','리뷰':'#2E7D8A','기타/미분류':'#9CA3AF','ALF V2 처리':'#D0CCC7',
+};
+
+// ────────────────────────────────────────────────────────
+//  renderSKUMain — 주력 SKU 분석
+// ────────────────────────────────────────────────────────
+function renderSKUMain() {
+  const d = current;
+  if (!d || !d.by_product_detail) return;
+  const label = d.period_label || d.period;
+  document.getElementById('sku-main-sub').textContent = label + ' · 주력 6 SKU 문의유형 및 불량 세부';
+  document.getElementById('sku-main-badge').textContent = label;
+
+  const detail = d.by_product_detail || [];
+  const grid   = document.getElementById('sku-main-grid');
+  grid.innerHTML = '';
+
+  KEY_SKUS_LIST.forEach(function(skuName) {
+    const p      = detail.find(function(x){ return x.name === skuName; });
+    const launch = SKU_LAUNCH[skuName] || null;
+    const card   = document.createElement('div');
+    card.className = 'card';
+    card.style.cssText = 'padding:20px;';
+
+    const launchBadge = launch
+      ? '<span style="font-size:10px;background:rgba(0,35,83,0.07);color:var(--navy);padding:2px 8px;border-radius:10px;margin-left:6px;">' + launch + '</span>'
+      : '';
+
+    if (!p || p.desc_matched === 0) {
+      card.innerHTML = '<div style="font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:12px;">' +
+        skuName + launchBadge + '</div>' +
+        '<div class="state-box" style="padding:24px 0;">' +
+        '<div class="s-icon" style="font-size:24px;">📅</div>' +
+        '<p style="font-size:12px;color:var(--text-muted);">' +
+        (launch ? launch + ' — 해당 월 데이터 없음' : '이 기간 매핑된 상담 데이터 없음') +
+        '</p></div>';
+      grid.appendChild(card);
+      return;
+    }
+
+    const types = (p.by_type || []).filter(function(t){ return t.type !== 'ALF V2 처리'; });
+    const typeRows = types.map(function(t) {
+      const color = TYPE_COLORS[t.type] || '#ADA59B';
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">' +
+        '<span style="width:90px;font-size:11.5px;flex-shrink:0;">' + t.type + '</span>' +
+        '<div style="flex:1;background:#F0EEEB;border-radius:3px;height:10px;overflow:hidden;">' +
+        '<div style="width:' + t.ratio + '%;background:' + color + ';height:100%;border-radius:3px;"></div></div>' +
+        '<span style="font-size:11px;color:var(--text-muted);min-width:52px;text-align:right;">' + t.count + '건 ' + t.ratio + '%</span></div>';
+    }).join('');
+
+    let defectSection = '';
+    const dList = p.defect_detail || [];
+    if (dList.length > 0) {
+      const defColors = ['#A83228','#9A6A1F','#1A4A8A','#4A7ABF','#2E7D5E','#ADA59B'];
+      const dRows = dList.map(function(dd, i) {
+        const c = defColors[i % defColors.length];
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
+          '<span style="width:110px;font-size:11px;flex-shrink:0;">' + dd.type + '</span>' +
+          '<div style="flex:1;background:#F0EEEB;border-radius:3px;height:8px;overflow:hidden;">' +
+          '<div style="width:' + dd.ratio + '%;background:' + c + ';height:100%;border-radius:3px;"></div></div>' +
+          '<span style="font-size:11px;color:var(--text-muted);min-width:52px;text-align:right;">' + dd.count + '건 ' + dd.ratio + '%</span></div>';
+      }).join('');
+      defectSection = '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #E5E2DD;">' +
+        '<div style="font-size:11.5px;font-weight:600;color:var(--navy);margin-bottom:8px;">' +
+        '🔍 불량 세부 사유 <span style="font-weight:400;color:var(--text-muted);">(' + p.defect_total + '건)</span></div>' +
+        dRows + '</div>';
+    }
+
+    card.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
+        '<div style="font-size:13.5px;font-weight:700;color:var(--navy);">' + skuName + launchBadge + '</div>' +
+        '<div style="text-align:right;font-size:11.5px;color:var(--text-muted);">' +
+          '<div>출고 <strong style="color:var(--navy);">' + p.shipments.toLocaleString() + '</strong>건</div>' +
+          '<div>매핑 ' + p.desc_matched + '건</div></div></div>' +
+      '<div style="font-size:11.5px;font-weight:600;color:var(--navy);margin-bottom:8px;">문의유형 구성</div>' +
+      (typeRows || '<p style="font-size:12px;color:var(--text-muted);">태그 있는 문의 없음</p>') +
+      defectSection;
+    grid.appendChild(card);
+  });
+}
+
+// ────────────────────────────────────────────────────────
+//  renderSKUAll — 전체 SKU 분석
+// ────────────────────────────────────────────────────────
+function renderSKUAll() {
+  const d = current;
+  if (!d || !d.by_product_detail) return;
+  const label  = d.period_label || d.period;
+  const detail = (d.by_product_detail || []).filter(function(p){ return p.desc_matched > 0; });
+  document.getElementById('sku-all-sub').textContent = label + ' · 전체 ' + d.by_product_detail.length + '개 상품';
+  document.getElementById('sku-all-badge').textContent = label;
+
+  const typeOrder = ['반품/환불','불량/AS','배송문의','주문/결제','제품/사용문의','이벤트/쿠폰','교환','리뷰','기타/미분류'];
+  const allTypeSet = new Set();
+  detail.forEach(function(p){ (p.by_type||[]).forEach(function(t){ allTypeSet.add(t.type); }); });
+  const sortedTypes = typeOrder.filter(function(t){ return allTypeSet.has(t); });
+
+  killChart('sku-all');
+  C['sku-all'] = new Chart(document.getElementById('sku-all-chart'), {
+    type: 'bar',
+    data: {
+      labels: detail.map(function(p) {
+        const lbl = SKU_LAUNCH[p.name] ? ' (' + SKU_LAUNCH[p.name] + ')' : '';
+        return (KEY_SKUS_LIST.includes(p.name) ? '★ ' : '') + p.name + lbl;
+      }),
+      datasets: sortedTypes.map(function(type) {
+        return {
+          label: type,
+          data: detail.map(function(p) {
+            const t = (p.by_type||[]).find(function(x){ return x.type===type; });
+            return t ? t.count : 0;
+          }),
+          backgroundColor: TYPE_COLORS[type] || '#ADA59B',
+          borderRadius: 0,
+        };
+      })
+    },
+    options: {
+      indexAxis: 'y', responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true } },
+        tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + ctx.raw + '건'; } } }
+      },
+      scales: {
+        x: { stacked:true, beginAtZero:true, grid:{color:'#EEECe8'} },
+        y: { stacked:true, grid:{display:false}, ticks:{font:{size:11.5}}, afterFit:function(s){s.width=170;} }
+      }
+    }
+  });
+
+  const hdrCols = sortedTypes.map(function(t){
+    return '<th class="r" style="font-size:10.5px;white-space:nowrap;">' + t + '</th>';
+  }).join('');
+  const tRows = detail.map(function(p) {
+    const isKey  = KEY_SKUS_LIST.includes(p.name);
+    const launch = SKU_LAUNCH[p.name]
+      ? '<span style="font-size:10px;color:var(--text-muted);margin-left:4px;">' + SKU_LAUNCH[p.name] + '</span>' : '';
+    const tCols  = sortedTypes.map(function(type) {
+      const t = (p.by_type||[]).find(function(x){ return x.type===type; });
+      return '<td class="r" style="font-size:11.5px;">' + (t ? t.count : '—') + '</td>';
+    }).join('');
+    return '<tr style="' + (isKey ? 'background:rgba(0,35,83,0.03);' : '') + '">' +
+      '<td style="font-weight:' + (isKey?'600':'400') + ';font-size:12px;">' +
+      (isKey ? '<span style="color:var(--navy);">★</span> ' : '') + p.name + launch + '</td>' +
+      '<td class="r" style="font-size:11.5px;">' + p.shipments.toLocaleString() + '</td>' +
+      '<td class="r" style="font-size:11.5px;">' + p.desc_matched + '</td>' +
+      tCols + '</tr>';
+  }).join('');
+
+  document.getElementById('sku-all-table').innerHTML =
+    '<table class="data-table"><thead><tr><th>상품명</th><th class="r">출고량</th><th class="r">매핑 건</th>' +
+    hdrCols + '</tr></thead><tbody>' + tRows + '</tbody></table>';
+}
+
 
 // ── 초기 실행
 loadData();
