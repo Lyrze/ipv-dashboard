@@ -951,21 +951,10 @@
       <div class="insight-box" id="hist-insight-dr"></div>
     </div>
 
-    <!-- PART 5. ALF V2 -->
-    <div class="card mb-20">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #F0EEEB;">
-        <div class="card-title" style="margin-bottom:0;padding:0;border:none;">
-          <span class="ct-icon">⑥</span> ALF V2 처리 현황 추이
-        </div>
-        <span style="font-size:10.5px;color:var(--text-muted);">자동 처리 건수 / 처리율(%)</span>
-      </div>
-      <div class="chart-wrap"><canvas id="hist-alf-trend"></canvas></div>
-    </div>
-
-    <!-- 월별 요약 테이블 -->
-    <div class="card">
-      <div class="card-title"><span class="ct-icon">▦</span> 월별 종합 요약 테이블</div>
-      <div id="history-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
+    <!-- legacy hidden anchors (ALF V2 추이 / 월별 종합 요약 테이블 제거) -->
+    <div style="display:none;">
+      <canvas id="hist-alf-trend"></canvas>
+      <div id="history-table-wrap"></div>
     </div>
   </div>
 
@@ -1758,52 +1747,7 @@ function renderHistory() {
     }
   });
 
-  // ── PART 5. ALF V2 추이 ────────────────────────────
-  killChart('hist-alf');
-  C['hist-alf'] = new Chart(document.getElementById('hist-alf-trend'), {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        { label: 'ALF V2 처리', data: allData.map(function(x){return (x.by_inquiry_type_alf||{}).total || 0;}),
-          backgroundColor: 'rgba(0,35,83,0.75)', borderRadius: 4, yAxisID: 'y' },
-        { label: 'ALF 처리율 (%)', data: allData.map(function(x){return (x.by_inquiry_type_alf||{}).ratio_of_chat || 0;}),
-          type: 'line', borderColor: PALETTE.bad, backgroundColor: 'transparent',
-          borderWidth: 2.5, pointRadius: 5, tension: 0.3, yAxisID: 'y1' }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } } },
-      scales: {
-        y:  { beginAtZero: true, position: 'left', grid: { color: '#EEECe8' }, title: { display: true, text: '처리 건수' } },
-        y1: { beginAtZero: true, position: 'right', grid: { display: false }, ticks: { callback: function(v){return v + '%';} }, title: { display: true, text: '처리율' } },
-        x:  { grid: { display: false } }
-      }
-    }
-  });
-
-  // ── 월별 종합 요약 테이블 ──────────────────────────────
-  var tbl = '<table class="data-table"><thead><tr>' +
-    '<th>기간</th><th class="r">출고량</th><th class="r">상담 전체</th><th class="r">CHAT</th><th class="r">CALL</th>' +
-    '<th class="r">IPV</th><th class="r">반품</th><th class="r">불량</th><th class="r">ALF 처리율</th>' +
-    '</tr></thead><tbody>';
-  allData.forEach(function(x){
-    var dr = x.by_defect_return || {};
-    tbl += '<tr>' +
-      '<td style="font-weight:600;">' + (x.period_label || x.period) + '</td>' +
-      '<td class="r">' + x.summary.total_shipments.toLocaleString() + '</td>' +
-      '<td class="r">' + x.summary.total_inquiries.toLocaleString() + '</td>' +
-      '<td class="r">' + (x.summary.chat_inquiries || 0).toLocaleString() + '</td>' +
-      '<td class="r">' + (x.summary.call_ob_inquiries || 0).toLocaleString() + '</td>' +
-      '<td class="r">' + ipvBadge(x.summary.ipv) + '</td>' +
-      '<td class="r">' + (dr.total_return || 0).toLocaleString() + '</td>' +
-      '<td class="r">' + (dr.total_defect || 0).toLocaleString() + '</td>' +
-      '<td class="r">' + ((x.by_inquiry_type_alf||{}).ratio_of_chat || 0) + '%</td>' +
-    '</tr>';
-  });
-  tbl += '</tbody></table>';
-  document.getElementById('history-table-wrap').innerHTML = tbl;
+  // ALF V2 추이 / 월별 종합 요약 테이블 — 사용자 요청으로 제거됨
 }
 
 
@@ -2035,14 +1979,12 @@ function renderSKUAll() {
       '<th class="r">매핑 상담</th>' +
       '<th class="r">IPV</th>' +
       '<th>출고 대비 IPV 시각화</th>' +
-      '<th class="r">불량</th>' +
-      '<th class="r">불량률</th>' +
       '<th class="r">반품</th>' +
       '<th class="r">반품률</th>' +
       '</tr></thead><tbody>';
 
     if (!filtered.length) {
-      tbl += '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">해당 필터 조건에 맞는 SKU가 없습니다.</td></tr>';
+      tbl += '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">해당 필터 조건에 맞는 SKU가 없습니다.</td></tr>';
     } else {
       const maxIpv = Math.max(...rows.map(r => r.ipv), 1);
       filtered.forEach((r, i) => {
@@ -2062,8 +2004,6 @@ function renderSKUAll() {
                 <span style="font-size:11.5px;color:var(--text-muted);min-width:46px;text-align:right;">${r.ipv.toFixed(2)}%</span>
               </div>
             </td>
-            <td class="r">${r.defect.toLocaleString()}</td>
-            <td class="r" style="color:${r.defRate >= 1 ? PALETTE.bad : 'inherit'};font-weight:${r.defRate >= 1 ? '700' : '500'};">${r.defRate.toFixed(2)}%</td>
             <td class="r">${r.returns.toLocaleString()}</td>
             <td class="r">${r.retRate.toFixed(2)}%</td>
           </tr>`;
