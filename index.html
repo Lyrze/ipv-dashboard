@@ -711,19 +711,10 @@
       <span class="nav-icon">◈</span><span>통합 지표</span>
     </a>
     <a class="nav-item" data-page="product" href="#">
-      <span class="nav-icon">▦</span><span>상품별 IPV</span>
+      <span class="nav-icon">▦</span><span>상품 분석</span>
     </a>
     <a class="nav-item" data-page="inquiry" href="#">
       <span class="nav-icon">◎</span><span>문의유형별</span>
-    </a>
-    <a class="nav-item" data-page="channel" href="#">
-      <span class="nav-icon">◑</span><span>불량·반품 분석</span>
-    </a>
-    <a class="nav-item" data-page="sku-main" href="#">
-      <span class="nav-icon">★</span><span>주력 SKU 분석</span>
-    </a>
-    <a class="nav-item" data-page="sku-all" href="#">
-      <span class="nav-icon">▦</span><span>전체 SKU 분석</span>
     </a>
   </nav>
 
@@ -783,12 +774,12 @@
     </div>
   </div>
 
-  <!-- ── 상품별 IPV ── -->
+  <!-- ── 상품 분석 (통합) ── -->
   <div class="page" id="page-product">
     <div class="page-header">
       <div>
-        <div class="page-title">상품별 IPV</div>
-        <div class="page-sub" id="product-sub">상품 단위 구매 후 문의율 분석</div>
+        <div class="page-title">상품 분석</div>
+        <div class="page-sub" id="product-sub">출고 대비 문의량이 높은 상품 진단</div>
       </div>
       <div class="period-badge" id="product-badge">—</div>
     </div>
@@ -798,13 +789,27 @@
       전체 상담 중 약 8~13%만 상품이 특정되므로 실제 IPV보다 낮게 표시됩니다.
       수치보다 <b>상품 간 상대적 순위</b>를 참고용으로 활용하세요.</span>
     </div>
+
+    <!-- ① 출고 대비 문의량 TOP 5 -->
     <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">▤</span> 상품별 IPV 순위 (높은 순)</div>
-      <div class="chart-wrap"><canvas id="product-chart"></canvas></div>
+      <div class="card-title" style="display:flex;align-items:center;">
+        <span class="ct-icon">🔥</span> 출고 대비 문의량 TOP 5
+        <span style="margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:500;">IPV 높은 순 / 단위: %</span>
+      </div>
+      <div id="product-top5-wrap"></div>
     </div>
+
+    <!-- ② 주력 6 SKU 카드 -->
+    <div class="section-label">주력 6 SKU 문의 비율</div>
+    <div id="sku-main-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;"></div>
+
+    <!-- ③ 전체 SKU 요약 + 필터 -->
     <div class="card">
-      <div class="card-title"><span class="ct-icon">≡</span> 상품별 상세</div>
-      <div id="product-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
+      <div class="card-title" style="display:flex;align-items:center;">
+        <span class="ct-icon">▦</span> 전체 SKU 요약 (출고 대비 문의 비율)
+        <span style="margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:500;" id="sku-all-sub-inline">—</span>
+      </div>
+      <div id="sku-all-table"></div>
     </div>
   </div>
 
@@ -813,7 +818,7 @@
     <div class="page-header">
       <div>
         <div class="page-title">문의유형별 분석</div>
-        <div class="page-sub" id="inquiry-sub">CX 상담 유형 · ALF V2 자동처리 현황</div>
+        <div class="page-sub" id="inquiry-sub">CX 상담 유형 분포</div>
       </div>
       <div class="period-badge" id="inquiry-badge">—</div>
     </div>
@@ -827,8 +832,8 @@
         </div>
         <div class="vs-kpi-row">
           <div class="vs-kpi"><div class="k-lbl">CHAT 상담</div><div class="k-val" id="inq-vs-cur-chat">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">ALF V2</div><div class="k-val" id="inq-vs-cur-alf">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">ALF 비중</div><div class="k-val" id="inq-vs-cur-alfratio">—</div></div>
+          <div class="vs-kpi"><div class="k-lbl">CX 유형 수</div><div class="k-val" id="inq-vs-cur-types">—</div></div>
+          <div class="vs-kpi"><div class="k-lbl">최다 유형</div><div class="k-val" id="inq-vs-cur-top" style="font-size:14px;">—</div></div>
         </div>
       </div>
       <div class="vs-divider"></div>
@@ -839,10 +844,15 @@
         </div>
         <div class="vs-kpi-row">
           <div class="vs-kpi"><div class="k-lbl">CHAT 상담</div><div class="k-val" id="inq-vs-cmp-chat">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">ALF V2</div><div class="k-val" id="inq-vs-cmp-alf">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">ALF 비중</div><div class="k-val" id="inq-vs-cmp-alfratio">—</div></div>
+          <div class="vs-kpi"><div class="k-lbl">CX 유형 수</div><div class="k-val" id="inq-vs-cmp-types">—</div></div>
+          <div class="vs-kpi"><div class="k-lbl">최다 유형</div><div class="k-val" id="inq-vs-cmp-top" style="font-size:14px;">—</div></div>
         </div>
       </div>
+    </div>
+    <!-- legacy hidden anchors for backwards compat -->
+    <div style="display:none;">
+      <span id="inq-vs-cur-alf"></span><span id="inq-vs-cur-alfratio"></span>
+      <span id="inq-vs-cmp-alf"></span><span id="inq-vs-cmp-alfratio"></span>
     </div>
 
     <!-- ─ CX 문의 유형 (좌우 비교) ─ -->
@@ -874,122 +884,13 @@
       <div class="chart-wrap"><canvas id="inquiry-trend"></canvas></div>
     </div>
 
-    <!-- ─ ALF V2 섹션 ─ -->
-    <div class="section-label">ALF V2 문의 처리 비교</div>
-    <div class="vs-card-pair mb-20">
-      <div class="card current">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">🤖</span> ALF V2 처리 현황<span class="vs-lbl">기준</span>
-        </div>
-        <div id="alf-vs-cur" style="padding:8px 4px;"></div>
-      </div>
-      <div class="card compare">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">🤖</span> ALF V2 처리 현황<span class="vs-lbl">비교</span>
-        </div>
-        <div id="alf-vs-cmp" style="padding:8px 4px;"></div>
-      </div>
-    </div>
-    <!-- legacy hidden KPIs for backwards compat -->
+    <!-- legacy hidden anchors for backwards compat -->
     <div style="display:none;">
       <span id="alf-total"></span><span id="alf-ratio"></span>
       <span id="alf-unresolved"></span><span id="alf-unresolved-ratio"></span>
       <span id="alf-error"></span>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="ct-icon">↗</span> ALF V2 처리량 월별 추이</div>
-      <div class="chart-wrap"><canvas id="alf-trend"></canvas></div>
-    </div>
-  </div>
-
-  <!-- ── 불량·반품 분석 ── -->
-  <div class="page" id="page-channel">
-    <div class="page-header">
-      <div>
-        <div class="page-title">불량·반품 분석</div>
-        <div class="page-sub" id="channel-sub">반품 사유 및 불량 유형 상세</div>
-      </div>
-      <div class="period-badge" id="channel-badge">—</div>
-    </div>
-
-    <!-- ─ VS 상단 요약 ─ -->
-    <div class="vs-wrap">
-      <div class="vs-col current">
-        <div class="vs-head">
-          <div class="vs-period" id="dr-vs-cur-label">—</div>
-          <span class="vs-tag">기준</span>
-        </div>
-        <div class="vs-kpi-row">
-          <div class="vs-kpi"><div class="k-lbl">반품·환불</div><div class="k-val" id="dr-vs-cur-return">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">불량·AS</div><div class="k-val" id="dr-vs-cur-defect">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">100% 환불 이벤트</div><div class="k-val" id="dr-vs-cur-event">—</div></div>
-        </div>
-      </div>
-      <div class="vs-divider"></div>
-      <div class="vs-col compare">
-        <div class="vs-head">
-          <div class="vs-period" id="dr-vs-cmp-label">비교 기간 없음</div>
-          <span class="vs-tag">비교</span>
-        </div>
-        <div class="vs-kpi-row">
-          <div class="vs-kpi"><div class="k-lbl">반품·환불</div><div class="k-val" id="dr-vs-cmp-return">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">불량·AS</div><div class="k-val" id="dr-vs-cmp-defect">—</div></div>
-          <div class="vs-kpi"><div class="k-lbl">100% 환불 이벤트</div><div class="k-val" id="dr-vs-cmp-event">—</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- legacy hidden KPIs -->
-    <div style="display:none;">
-      <span id="dr-return-total"></span><span id="dr-return-ratio"></span>
-      <span id="dr-defect-total"></span><span id="dr-defect-ratio"></span>
-      <span id="dr-event-total"></span><span id="dr-event-ratio"></span>
-    </div>
-
-    <!-- ─ 반품 사유 분포 (좌우 비교) ─ -->
-    <div class="section-label">반품 사유 분포</div>
-    <div class="vs-card-pair mb-20">
-      <div class="card current">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">○</span> 반품 사유<span class="vs-lbl" id="dr-ret-cur-tag">기준</span>
-        </div>
-        <div class="chart-wrap" style="height:260px;"><canvas id="dr-return-donut"></canvas></div>
-      </div>
-      <div class="card compare">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">○</span> 반품 사유<span class="vs-lbl" id="dr-ret-cmp-tag">비교</span>
-        </div>
-        <div class="chart-wrap" style="height:260px;" id="dr-return-cmp-wrap"><canvas id="dr-return-donut-cmp"></canvas></div>
-      </div>
-    </div>
-
-    <!-- ─ 불량 유형 분포 (좌우 비교) ─ -->
-    <div class="section-label">불량 유형 분포</div>
-    <div class="vs-card-pair mb-20">
-      <div class="card current">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">○</span> 불량 유형<span class="vs-lbl" id="dr-def-cur-tag">기준</span>
-        </div>
-        <div class="chart-wrap" style="height:260px;"><canvas id="dr-defect-donut"></canvas></div>
-      </div>
-      <div class="card compare">
-        <div class="card-title" style="display:flex;align-items:center;">
-          <span class="ct-icon">○</span> 불량 유형<span class="vs-lbl" id="dr-def-cmp-tag">비교</span>
-        </div>
-        <div class="chart-wrap" style="height:260px;" id="dr-defect-cmp-wrap"><canvas id="dr-defect-donut-cmp"></canvas></div>
-      </div>
-    </div>
-
-    <!-- 월별 추이 -->
-    <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">↗</span> 반품·불량 월별 추이 (전체 기간)</div>
-      <div class="chart-wrap"><canvas id="dr-trend-chart"></canvas></div>
-    </div>
-
-    <!-- 상품별 반품+불량 -->
-    <div class="card">
-      <div class="card-title"><span class="ct-icon">≡</span> 상품별 반품·불량 건수</div>
-      <div class="chart-wrap" style="height:260px"><canvas id="dr-product-chart"></canvas></div>
+      <div id="alf-vs-cur"></div><div id="alf-vs-cmp"></div>
+      <canvas id="alf-trend"></canvas>
     </div>
   </div>
 
@@ -1073,54 +974,11 @@
     </div>
   </div>
 
-  <!-- ── 주력 SKU 분석 ── -->
-  <div class="page" id="page-sku-main">
-    <div class="page-header">
-      <div>
-        <div class="page-title">주력 SKU 분석</div>
-        <div class="page-sub" id="sku-main-sub">6대 주력 상품 문의유형 · 불량 세부 분석</div>
-      </div>
-      <span class="period-badge" id="sku-main-badge">—</span>
-    </div>
-    <div class="data-notice">
-      <span class="dn-icon">⚠️</span>
-      <span>상품별 분석은 채널톡 상담의 <strong>description 기재 건 기반 추정값</strong>입니다 (전체의 약 8~13%). 실제 문의 구성과 차이가 있을 수 있습니다.</span>
-    </div>
-    <div id="sku-main-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;"></div>
+  <!-- (legacy hidden anchors retained for backwards compat) -->
+  <div style="display:none;">
+    <span id="sku-main-sub"></span><span id="sku-main-badge"></span>
+    <span id="sku-all-sub"></span><span id="sku-all-badge"></span>
   </div>
-
-  <!-- ── 전체 SKU 분석 ── -->
-  <div class="page" id="page-sku-all">
-    <div class="page-header">
-      <div>
-        <div class="page-title">전체 SKU 분석</div>
-        <div class="page-sub" id="sku-all-sub">상품별 문의유형 구성 비교</div>
-      </div>
-      <span class="period-badge" id="sku-all-badge">—</span>
-    </div>
-    <div class="data-notice">
-      <span class="dn-icon">⚠️</span>
-      <span>description 기재 건 기반 추정값. 매핑 건수가 적은 상품은 참고용으로만 활용하세요.</span>
-    </div>
-    <div class="card mb-20">
-      <div class="card-title"><span class="ct-icon">◉</span> 상품별 문의 점유율 (매핑 건수 기준)</div>
-      <div class="pie-side" style="grid-template-columns:260px 1fr;gap:28px;padding:8px 4px;">
-        <div class="pie-canvas-wrap" style="width:260px;height:260px;">
-          <canvas id="sku-all-chart"></canvas>
-          <div class="pie-center">
-            <div class="pc-val" id="sku-all-center-val">0</div>
-            <div class="pc-lbl">총 매핑 건</div>
-          </div>
-        </div>
-        <div class="legend-list" id="sku-all-legend"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="ct-icon">▦</span> 전체 SKU 요약</div>
-      <div id="sku-all-table"></div>
-    </div>
-  </div>
-
 
 </main>
 
@@ -1329,12 +1187,9 @@ document.getElementById('compare-select').addEventListener('change', function() 
 // ── Master render ─────────────────────────────
 function renderAll() {
   renderOverview();
-  renderProduct();
   renderInquiry();
-  renderChannel();
   renderHistory();
-  renderSKUMain();
-  renderSKUAll();
+  renderProduct();   // 통합 페이지 (TOP5 + 주력 SKU + 전체 SKU)
 }
 
 // ────────────────────────────────────────────────────────
@@ -1486,74 +1341,71 @@ function renderOverview() {
 // ────────────────────────────────────────────────────────
 function renderProduct() {
   const d = current;
-  if (!d?.by_product) return;
+  if (!d) return;
   const label = d.period_label || d.period;
-  document.getElementById('product-sub').textContent = `${label} · 상품 ${d.by_product.length}종`;
+  const cmp = compareData;
+  const cmpLabel = cmp ? (cmp.period_label || cmp.period) : null;
+
+  // ── 상단 헤더 ─────────────────────────────────
+  const totalSku = (d.by_product_detail || d.by_product || []).length;
+  document.getElementById('product-sub').textContent =
+    cmp ? `${label} vs ${cmpLabel} · 출고 대비 문의량 진단 (${totalSku}종)` : `${label} · 출고 대비 문의량 진단 (${totalSku}종)`;
   document.getElementById('product-badge').textContent = label;
 
-  const sorted = [...d.by_product].sort((a, b) => b.ipv - a.ipv);
-  const maxIpv = Math.max(...sorted.map(x => x.ipv));
+  // ════════════════════════════════════════════
+  // ① TOP 5 출고 대비 문의량 (IPV 기준)
+  // ════════════════════════════════════════════
+  const top5 = [...(d.by_product || [])].sort((a, b) => b.ipv - a.ipv).slice(0, 5);
+  const cmpByName = {};
+  if (cmp) (cmp.by_product || []).forEach(p => { cmpByName[p.name] = p; });
 
-  killChart('product');
-  C['product'] = new Chart(document.getElementById('product-chart'), {
-    type: 'bar',
-    data: {
-      labels: sorted.map(x => x.name.length > 22 ? x.name.slice(0, 22) + '…' : x.name),
-      datasets: [{
-        label: 'IPV (%)',
-        data: sorted.map(x => x.ipv),
-        backgroundColor: sorted.map(x => x.ipv >= 10 ? PALETTE.bad+'bb' : x.ipv >= 6 ? PALETTE.warn+'bb' : PALETTE.good+'bb'),
-        borderColor: sorted.map(x => x.ipv >= 10 ? PALETTE.bad : x.ipv >= 6 ? PALETTE.warn : PALETTE.good),
-        borderWidth: 1.5, borderRadius: 6
-      }]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      layout: { padding: { left: 0 } },
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { beginAtZero: true, grid: { color: '#EEECe8' }, ticks: { callback: v => v + '%' } },
-        y: { grid: { display: false },
-             ticks: { font: { size: 12 }, mirror: false, autoSkip: false },
-             afterFit(scale) { scale.width = 160; } }
-      }
-    }
-  });
-
-  // 상품 개수에 맞춰 차트 높이 동적 설정 (행당 32px + 여백)
-  const chartEl = document.getElementById('product-chart');
-  if (chartEl && chartEl.parentElement) {
-    chartEl.parentElement.style.height = Math.max(320, sorted.length * 34 + 60) + 'px';
+  const top5Wrap = document.getElementById('product-top5-wrap');
+  if (!top5.length) {
+    top5Wrap.innerHTML = '<div class="state-box" style="padding:30px;"><p style="font-size:12px;">상품 데이터가 없습니다</p></div>';
+  } else {
+    const maxIpv = Math.max(...top5.map(x => x.ipv), 1);
+    const rankMedal = ['🥇','🥈','🥉','④','⑤'];
+    top5Wrap.innerHTML = top5.map((x, i) => {
+      const color = x.ipv >= 10 ? PALETTE.bad : x.ipv >= 6 ? PALETTE.warn : PALETTE.good;
+      const cmpP = cmpByName[x.name];
+      const delta = cmpP ? (x.ipv - cmpP.ipv) : null;
+      const deltaTxt = delta == null ? ''
+        : `<span class="trend-chip ${delta>0?'up':delta<0?'down':'neutral'}" style="margin-left:8px;font-size:11px;">${delta>0?'▲ +':delta<0?'▼ ':'─ '}${Math.abs(delta).toFixed(2)}%p</span>`;
+      const widthPct = (x.ipv / maxIpv * 100).toFixed(1);
+      return `
+        <div style="display:grid;grid-template-columns:48px 1fr 90px;gap:14px;align-items:center;padding:14px 6px;border-bottom:${i < 4 ? '1px dashed #EFEDE8' : 'none'};">
+          <div style="font-size:24px;text-align:center;font-weight:700;color:${i < 3 ? color : 'var(--text-muted)'};">${rankMedal[i] || (i+1)}</div>
+          <div>
+            <div style="display:flex;align-items:center;margin-bottom:8px;">
+              <span style="font-size:14.5px;font-weight:700;color:var(--navy);letter-spacing:-0.3px;">${x.name}</span>
+              ${deltaTxt}
+              <span style="margin-left:auto;font-size:11.5px;color:var(--text-muted);">출고 ${x.shipments.toLocaleString()}건 · 문의 ${x.inquiries.toLocaleString()}건${cmpP ? ` · ${cmpLabel} ${cmpP.ipv.toFixed(2)}%`:''}</span>
+            </div>
+            <div style="position:relative;background:#F5F3EE;height:22px;border-radius:11px;overflow:hidden;">
+              <div style="width:${widthPct}%;height:100%;background:linear-gradient(90deg, ${color}cc 0%, ${color} 100%);border-radius:11px;transition:width 0.6s;"></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:22px;font-weight:800;color:${color};letter-spacing:-0.5px;">${x.ipv.toFixed(2)}<span style="font-size:13px;font-weight:600;margin-left:1px;">%</span></div>
+            <div style="font-size:10.5px;color:var(--text-muted);margin-top:1px;">IPV</div>
+          </div>
+        </div>`;
+    }).join('');
   }
 
-  document.getElementById('product-table-wrap').innerHTML = `
-    <table class="data-table">
-      <thead><tr>
-        <th style="width:40px;">순위</th>
-        <th>상품명</th>
-        <th class="r">출고량</th>
-        <th class="r">문의수</th>
-        <th class="r">IPV</th>
-        <th>IPV 시각화</th>
-      </tr></thead>
-      <tbody>${sorted.map((x, i) => `
-        <tr>
-          <td><span class="rank-no ${i < 3 ? 'top' : ''}">${i + 1}</span></td>
-          <td style="font-weight:500;">${x.name}</td>
-          <td class="r">${x.shipments.toLocaleString()}</td>
-          <td class="r">${x.inquiries.toLocaleString()}</td>
-          <td class="r">${ipvBadge(x.ipv)}</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar-track">
-                <div class="bar-fill" style="width:${(x.ipv/maxIpv*100).toFixed(1)}%;background:${x.ipv >= 10 ? PALETTE.bad : x.ipv >= 6 ? PALETTE.warn : PALETTE.good};"></div>
-              </div>
-              <span style="font-size:11.5px;color:var(--text-muted);min-width:40px;text-align:right;">${x.ipv.toFixed(2)}%</span>
-            </div>
-          </td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
+  // ════════════════════════════════════════════
+  // ② 주력 6 SKU 문의 비율 (renderSKUMain 호출)
+  // ════════════════════════════════════════════
+  if (d.by_product_detail) renderSKUMain();
+
+  // ════════════════════════════════════════════
+  // ③ 전체 SKU 요약 + 필터 (renderSKUAll 호출)
+  // ════════════════════════════════════════════
+  if (d.by_product_detail) {
+    document.getElementById('sku-all-sub-inline').textContent =
+      `${label} · 전체 ${(d.by_product_detail || []).length}개 SKU`;
+    renderSKUAll();
+  }
 }
 
 // ────────────────────────────────────────────────────────
@@ -1570,27 +1422,30 @@ function renderInquiry() {
   const cmpLabel = cmp ? (cmp.period_label || cmp.period) : null;
 
   document.getElementById('inquiry-sub').textContent  =
-    cmp ? `${label} vs ${cmpLabel} · CX ${cxData.length}종 비교` : `${label} · CX ${cxData.length}종 / ALF V2 ${alf.total?.toLocaleString() || 0}건`;
+    cmp ? `${label} vs ${cmpLabel} · CX ${cxData.length}종 비교` : `${label} · CX 상담 ${cxData.length}종`;
   document.getElementById('inquiry-badge').textContent = label;
+
+  const topCx = cxData.length ? [...cxData].sort((a,b) => b.count - a.count)[0] : null;
 
   // ── VS 상단 요약 ───────────────────────────
   document.getElementById('inq-vs-cur-label').textContent = label;
   document.getElementById('inq-vs-cur-chat').textContent  = chat.toLocaleString() + '건';
-  document.getElementById('inq-vs-cur-alf').textContent   = (alf.total || 0).toLocaleString() + '건';
-  document.getElementById('inq-vs-cur-alfratio').textContent = (alf.ratio_of_chat || 0).toFixed(1) + '%';
+  document.getElementById('inq-vs-cur-types').textContent = cxData.length + '종';
+  document.getElementById('inq-vs-cur-top').textContent   = topCx ? `${topCx.type} (${topCx.ratio}%)` : '—';
 
   if (cmp) {
-    const cAlf = cmp.by_inquiry_type_alf || {};
+    const cCx = cmp.by_inquiry_type_cx || [];
     const cChat = cmp.summary?.chat_inquiries || 0;
+    const cTop = cCx.length ? [...cCx].sort((a,b) => b.count - a.count)[0] : null;
     document.getElementById('inq-vs-cmp-label').textContent = cmpLabel;
     document.getElementById('inq-vs-cmp-chat').textContent  = cChat.toLocaleString() + '건';
-    document.getElementById('inq-vs-cmp-alf').textContent   = (cAlf.total || 0).toLocaleString() + '건';
-    document.getElementById('inq-vs-cmp-alfratio').textContent = (cAlf.ratio_of_chat || 0).toFixed(1) + '%';
+    document.getElementById('inq-vs-cmp-types').textContent = cCx.length + '종';
+    document.getElementById('inq-vs-cmp-top').textContent   = cTop ? `${cTop.type} (${cTop.ratio}%)` : '—';
   } else {
     document.getElementById('inq-vs-cmp-label').textContent = '비교 기간 없음';
     document.getElementById('inq-vs-cmp-chat').textContent  = '—';
-    document.getElementById('inq-vs-cmp-alf').textContent   = '—';
-    document.getElementById('inq-vs-cmp-alfratio').textContent = '—';
+    document.getElementById('inq-vs-cmp-types').textContent = '—';
+    document.getElementById('inq-vs-cmp-top').textContent   = '—';
   }
 
   document.getElementById('inq-cx-cur-tag').textContent = label;
@@ -1710,263 +1565,10 @@ function renderInquiry() {
       </tbody>
     </table>`;
 
-  // ── ALF V2 VS 패널 ──────────────────────────────────
-  function alfPanel(data) {
-    if (!data) {
-      return '<div class="state-box" style="padding:30px 20px;"><div class="s-icon" style="font-size:28px;">📅</div><p style="font-size:12px;">비교 기간을 선택하세요</p></div>';
-    }
-    const alfT = data.by_inquiry_type_alf || {};
-    const t = alfT.total || 0;
-    const u = alfT.alf_unresolved || 0;
-    const e = alfT.alf_error || 0;
-    const cchat = data.summary?.chat_inquiries || 1;
-    return `
-      <div class="month-stat-row" style="margin-bottom:12px;">
-        <div class="mstat"><div class="ml">ALF 자동처리</div><div class="mv">${t.toLocaleString()}</div><div class="ms">CHAT 중 ${cchat ? (t/cchat*100).toFixed(1) : 0}%</div></div>
-        <div class="mstat warn"><div class="ml">ALF 미해결</div><div class="mv">${u.toLocaleString()}</div><div class="ms">${t ? (u/t*100).toFixed(1) : 0}% 인계 필요</div></div>
-        <div class="mstat ${e > 0 ? 'warn' : ''}"><div class="ml">ALF 오류</div><div class="mv">${e.toLocaleString()}</div><div class="ms">오작동 건수</div></div>
-      </div>`;
-  }
-  document.getElementById('alf-vs-cur').innerHTML = alfPanel(d);
-  document.getElementById('alf-vs-cmp').innerHTML = alfPanel(cmp);
-
-  // legacy hidden KPIs 유지
-  const alfTotal = alf.total || 0;
-  document.getElementById('alf-total').textContent            = alfTotal.toLocaleString() + '건';
-  document.getElementById('alf-ratio').textContent            = `전체 CHAT ${alf.ratio_of_chat || 0}%`;
-  document.getElementById('alf-unresolved').textContent       = (alf.alf_unresolved || 0) + '건';
-  document.getElementById('alf-unresolved-ratio').textContent =
-    alfTotal ? `ALF 중 ${((alf.alf_unresolved||0)/alfTotal*100).toFixed(1)}%` : '';
-  document.getElementById('alf-error').textContent            = (alf.alf_error || 0) + '건';
-
-  // ── ALF V2 월별 추이 ─────────────────────────────────
-  killChart('alf-trend');
-  C['alf-trend'] = new Chart(document.getElementById('alf-trend'), {
-    type: 'bar',
-    data: {
-      labels: allData.map(x => x.period_label || x.period),
-      datasets: [
-        { label: 'ALF V2 자동처리',
-          data: allData.map(x => x.by_inquiry_type_alf?.total || 0),
-          backgroundColor: 'rgba(0,35,83,0.55)', borderRadius: 5 },
-        { label: 'ALF 미해결',
-          data: allData.map(x => x.by_inquiry_type_alf?.alf_unresolved || 0),
-          backgroundColor: 'rgba(168,50,40,0.75)', borderRadius: 5 },
-        { label: 'ALF 오류',
-          data: allData.map(x => x.by_inquiry_type_alf?.alf_error || 0),
-          backgroundColor: 'rgba(154,106,31,0.75)', borderRadius: 5 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } }
-      },
-      scales: {
-        y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '상담 건수' } },
-        x: { grid: { display: false } }
-      }
-    }
-  });
+  // ALF V2 섹션은 채널톡에서 직접 확인하므로 대시보드 표기 제외 (legacy hidden 앵커는 유지)
 }
 
 
-// ────────────────────────────────────────────────────────
-//  CHANNEL (불량·반품 분석)
-// ────────────────────────────────────────────────────────
-function renderChannel() {
-  const d = current;
-  if (!d) return;
-  const dr = d.by_defect_return || {};
-  const label = d.period_label || d.period;
-  const chatTotal = d.summary?.chat_inquiries || 1;
-  const cmp = compareData;
-  const cmpLabel = cmp ? (cmp.period_label || cmp.period) : null;
-  const cDr = cmp ? (cmp.by_defect_return || {}) : null;
-  const cChat = cmp ? (cmp.summary?.chat_inquiries || 1) : 0;
-
-  document.getElementById('channel-sub').textContent =
-    cmp ? `${label} vs ${cmpLabel} · 반품/불량 비교` : `${label} · 반품 ${(dr.total_return||0).toLocaleString()}건 / 불량 ${(dr.total_defect||0).toLocaleString()}건`;
-  document.getElementById('channel-badge').textContent = label;
-
-  // ── VS 요약 ─────────────────────────────
-  const retTotal = dr.total_return || 0;
-  const defTotal = dr.total_defect || 0;
-  const eventCnt = (dr.return_reasons||[]).find(r=>r.reason==='100% 환불 이벤트')?.count || 0;
-  document.getElementById('dr-vs-cur-label').textContent  = label;
-  document.getElementById('dr-vs-cur-return').textContent = `${retTotal.toLocaleString()}건`;
-  document.getElementById('dr-vs-cur-defect').textContent = `${defTotal.toLocaleString()}건`;
-  document.getElementById('dr-vs-cur-event').textContent  = `${eventCnt.toLocaleString()}건`;
-
-  if (cmp) {
-    const cRet = cDr.total_return || 0;
-    const cDef = cDr.total_defect || 0;
-    const cEvent = (cDr.return_reasons||[]).find(r=>r.reason==='100% 환불 이벤트')?.count || 0;
-    document.getElementById('dr-vs-cmp-label').textContent  = cmpLabel;
-    document.getElementById('dr-vs-cmp-return').textContent = `${cRet.toLocaleString()}건`;
-    document.getElementById('dr-vs-cmp-defect').textContent = `${cDef.toLocaleString()}건`;
-    document.getElementById('dr-vs-cmp-event').textContent  = `${cEvent.toLocaleString()}건`;
-  } else {
-    document.getElementById('dr-vs-cmp-label').textContent  = '비교 기간 없음';
-    document.getElementById('dr-vs-cmp-return').textContent = '—';
-    document.getElementById('dr-vs-cmp-defect').textContent = '—';
-    document.getElementById('dr-vs-cmp-event').textContent  = '—';
-  }
-
-  document.getElementById('dr-ret-cur-tag').textContent = label;
-  document.getElementById('dr-ret-cmp-tag').textContent = cmpLabel || '—';
-  document.getElementById('dr-def-cur-tag').textContent = label;
-  document.getElementById('dr-def-cmp-tag').textContent = cmpLabel || '—';
-
-  // legacy hidden KPIs
-  document.getElementById('dr-return-total').textContent = retTotal.toLocaleString() + '건';
-  document.getElementById('dr-return-ratio').textContent = `전체 CHAT ${chatTotal ? (retTotal/chatTotal*100).toFixed(1) : 0}%`;
-  document.getElementById('dr-defect-total').textContent = defTotal.toLocaleString() + '건';
-  document.getElementById('dr-defect-ratio').textContent = `전체 CHAT ${chatTotal ? (defTotal/chatTotal*100).toFixed(1) : 0}%`;
-  document.getElementById('dr-event-total').textContent = eventCnt.toLocaleString() + '건';
-  document.getElementById('dr-event-ratio').textContent = `반품 중 ${retTotal ? (eventCnt/retTotal*100).toFixed(1) : 0}%`;
-
-  // 반품 사유 도넛 (기준)
-  killChart('dr-return-donut');
-  const rr = (dr.return_reasons || []).filter(r => r.count > 0);
-  if (rr.length) {
-    C['dr-return-donut'] = new Chart(document.getElementById('dr-return-donut'), {
-      type: 'doughnut',
-      data: {
-        labels: rr.map(r => r.reason),
-        datasets: [{ data: rr.map(r => r.count),
-          backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, cutout: '60%',
-        plugins: {
-          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${rr[ctx.dataIndex].ratio}%)` } }
-        }
-      }
-    });
-  }
-
-  // 반품 사유 도넛 (비교)
-  killChart('dr-return-donut-cmp');
-  const retCmpWrap = document.getElementById('dr-return-cmp-wrap');
-  if (cmp) {
-    const crr = (cDr.return_reasons || []).filter(r => r.count > 0);
-    if (crr.length) {
-      retCmpWrap.innerHTML = '<canvas id="dr-return-donut-cmp"></canvas>';
-      C['dr-return-donut-cmp'] = new Chart(document.getElementById('dr-return-donut-cmp'), {
-        type: 'doughnut',
-        data: {
-          labels: crr.map(r => r.reason),
-          datasets: [{ data: crr.map(r => r.count),
-            backgroundColor: PALETTE.series.map(c => c + 'cc'), borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%',
-          plugins: {
-            legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
-            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${crr[ctx.dataIndex].ratio}%)` } }
-          }
-        }
-      });
-    } else {
-      retCmpWrap.innerHTML = '<div class="state-box" style="padding:40px 20px;"><p style="font-size:12px;">비교 기간 데이터 없음</p></div>';
-    }
-  } else {
-    retCmpWrap.innerHTML = '<div class="state-box" style="padding:40px 20px;"><div class="s-icon" style="font-size:32px;">📅</div><p style="font-size:12px;">비교 기간을 선택하세요</p></div>';
-  }
-
-  // 불량 유형 도넛 (기준)
-  killChart('dr-defect-donut');
-  const dt = (dr.defect_types || []).filter(t => t.count > 0);
-  if (dt.length) {
-    C['dr-defect-donut'] = new Chart(document.getElementById('dr-defect-donut'), {
-      type: 'doughnut',
-      data: {
-        labels: dt.map(t => t.type),
-        datasets: [{ data: dt.map(t => t.count),
-          backgroundColor: [PALETTE.bad, PALETTE.warn, PALETTE.navy, PALETTE.navyMid, PALETTE.navyLt, PALETTE.greige],
-          borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, cutout: '60%',
-        plugins: {
-          legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${dt[ctx.dataIndex].ratio}%)` } }
-        }
-      }
-    });
-  }
-
-  // 불량 유형 도넛 (비교)
-  killChart('dr-defect-donut-cmp');
-  const defCmpWrap = document.getElementById('dr-defect-cmp-wrap');
-  if (cmp) {
-    const cdt = (cDr.defect_types || []).filter(t => t.count > 0);
-    if (cdt.length) {
-      defCmpWrap.innerHTML = '<canvas id="dr-defect-donut-cmp"></canvas>';
-      C['dr-defect-donut-cmp'] = new Chart(document.getElementById('dr-defect-donut-cmp'), {
-        type: 'doughnut',
-        data: {
-          labels: cdt.map(t => t.type),
-          datasets: [{ data: cdt.map(t => t.count),
-            backgroundColor: [PALETTE.bad+'cc', PALETTE.warn+'cc', PALETTE.navy+'cc', PALETTE.navyMid+'cc', PALETTE.navyLt+'cc', PALETTE.greige+'cc'],
-            borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%',
-          plugins: {
-            legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
-            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${cdt[ctx.dataIndex].ratio}%)` } }
-          }
-        }
-      });
-    } else {
-      defCmpWrap.innerHTML = '<div class="state-box" style="padding:40px 20px;"><p style="font-size:12px;">비교 기간 데이터 없음</p></div>';
-    }
-  } else {
-    defCmpWrap.innerHTML = '<div class="state-box" style="padding:40px 20px;"><div class="s-icon" style="font-size:32px;">📅</div><p style="font-size:12px;">비교 기간을 선택하세요</p></div>';
-  }
-
-  // 반품 사유 추이 (월별)
-  killChart('dr-trend');
-  if (allData.length > 1) {
-    const reasons = [...new Set(allData.flatMap(x => (x.by_defect_return?.return_reasons||[]).map(r=>r.reason)))];
-    C['dr-trend'] = new Chart(document.getElementById('dr-trend-chart'), {
-      type: 'line',
-      data: {
-        labels: allData.map(x => x.period_label || x.period),
-        datasets: reasons.map((reason, i) => ({
-          label: reason,
-          data: allData.map(x => (x.by_defect_return?.return_reasons||[]).find(r=>r.reason===reason)?.count || 0),
-          borderColor: PALETTE.series[i % PALETTE.series.length],
-          backgroundColor: PALETTE.series[i % PALETTE.series.length] + '20',
-          borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false
-        }))
-      },
-      options: { responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8, usePointStyle: true } } },
-        scales: { y: { beginAtZero: true, grid: { color: '#EEECe8' } }, x: { grid: { display: false } } }
-      }
-    });
-  }
-
-  // 상품별 반품+불량 막대
-  killChart('dr-product');
-  const bp = (dr.by_product || []).slice(0, 8);
-  if (bp.length) {
-    C['dr-product'] = new Chart(document.getElementById('dr-product-chart'), {
-      type: 'bar',
-      data: {
-        labels: bp.map(p => p.name),
-        datasets: [
-          { label: '반품', data: bp.map(p => p.return_count), backgroundColor: 'rgba(168,50,40,0.7)', borderRadius: 4 },
-          { label: '불량', data: bp.map(p => p.defect_count), backgroundColor: 'rgba(154,106,31,0.7)', borderRadius: 4 }
-        ]
-      },
-      options: { responsive: true, indexAxis: 'y',
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } } },
-        scales: { x: { beginAtZero: true, grid: { color: '#EEECe8' } }, y: { grid: { display: false } } }
-      }
-    });
-  }
-}
 
 // ────────────────────────────────────────────────────────
 //  HISTORY (월별 누적)
@@ -2261,9 +1863,11 @@ function renderSKUMain() {
   const cmp = compareData;
   const cmpLabel = cmp ? (cmp.period_label || cmp.period) : null;
 
-  document.getElementById('sku-main-sub').textContent =
-    cmp ? `${label} vs ${cmpLabel} · 6대 주력 SKU 비교` : `${label} · 6대 주력 SKU 문의·불량 세부`;
-  document.getElementById('sku-main-badge').textContent = label;
+  // legacy hidden anchors
+  const subEl = document.getElementById('sku-main-sub');
+  if (subEl) subEl.textContent = cmp ? `${label} vs ${cmpLabel}` : label;
+  const badgeEl = document.getElementById('sku-main-badge');
+  if (badgeEl) badgeEl.textContent = label;
 
   const byName = {};
   (d.by_product_detail || []).forEach(p => { byName[p.name] = p; });
@@ -2286,18 +1890,21 @@ function renderSKUMain() {
       grid.appendChild(card);
       return;
     }
-    const defRate = p.shipments ? (p.defect_total / p.shipments * 100) : 0;
-    const cmpP = cmpByName[name];
-    const cmpDefRate = (cmpP && cmpP.shipments) ? (cmpP.defect_total / cmpP.shipments * 100) : null;
-    const rateDelta = (cmpDefRate != null) ? (defRate - cmpDefRate) : null;
-    const rateColor = defRate >= 1 ? PALETTE.bad : defRate >= 0.5 ? PALETTE.warn : PALETTE.good;
 
-    // 불량 사유 donut 데이터
-    const det = (p.defect_detail || []).filter(x => x.count > 0);
-    const totalDef = p.defect_total || 0;
+    // ▣ 출고 대비 문의 비율 (description 매핑 기반)
+    const inqCount = p.desc_matched || 0;
+    const inqRate  = p.shipments ? (inqCount / p.shipments * 100) : 0;
+    const cmpP = cmpByName[name];
+    const cmpInqRate = (cmpP && cmpP.shipments) ? ((cmpP.desc_matched || 0) / cmpP.shipments * 100) : null;
+    const rateDelta = (cmpInqRate != null) ? (inqRate - cmpInqRate) : null;
+    const rateColor = inqRate >= 5 ? PALETTE.bad : inqRate >= 2 ? PALETTE.warn : PALETTE.good;
+
+    // 문의 유형 분포 (by_type)
+    const types = (p.by_type || []).filter(x => x.count > 0);
+    const totalInq = inqCount;
 
     const rateId = 'sku-rate-' + idx;
-    const detId  = 'sku-det-' + idx;
+    const typeId = 'sku-type-' + idx;
 
     const launchBadge = SKU_LAUNCH[name] ? `<span style="margin-left:auto;font-size:11px;color:var(--warn);font-weight:600;">${SKU_LAUNCH[name]}</span>` : '';
 
@@ -2306,54 +1913,54 @@ function renderSKUMain() {
 
       <div class="month-stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px;">
         <div class="mstat"><div class="ml">출고량</div><div class="mv" style="font-size:18px;">${p.shipments.toLocaleString()}</div><div class="ms">${cmpP ? cmpLabel + ' ' + cmpP.shipments.toLocaleString() : '건'}</div></div>
-        <div class="mstat warn"><div class="ml">불량·AS</div><div class="mv" style="font-size:18px;">${totalDef.toLocaleString()}</div><div class="ms">${cmpP ? cmpLabel + ' ' + (cmpP.defect_total||0).toLocaleString() : '건'}</div></div>
-        <div class="mstat ${defRate >= 1 ? 'warn' : ''}"><div class="ml">불량률</div><div class="mv" style="font-size:18px;color:${rateColor};">${defRate.toFixed(2)}%</div><div class="ms">${rateDelta != null ? (rateDelta >= 0 ? '▲ +' : '▼ ') + Math.abs(rateDelta).toFixed(2) + '%p' : '—'}</div></div>
+        <div class="mstat"><div class="ml">매핑 문의</div><div class="mv" style="font-size:18px;">${totalInq.toLocaleString()}</div><div class="ms">${cmpP ? cmpLabel + ' ' + (cmpP.desc_matched||0).toLocaleString() : '건'}</div></div>
+        <div class="mstat ${inqRate >= 5 ? 'warn' : ''}"><div class="ml">문의율</div><div class="mv" style="font-size:18px;color:${rateColor};">${inqRate.toFixed(2)}%</div><div class="ms">${rateDelta != null ? (rateDelta >= 0 ? '▲ +' : '▼ ') + Math.abs(rateDelta).toFixed(2) + '%p' : '—'}</div></div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
-        <!-- 원 1: 출고 vs 불량 비율 -->
-        <div>
-          <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-align:center;letter-spacing:0.3px;">출고 대비 불량 비율</div>
-          <div class="pie-canvas-wrap" style="width:150px;height:150px;margin:0 auto;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;align-items:start;">
+        <!-- 원 1: 출고 대비 문의 비율 (도넛 + 캡션 통합) -->
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:10px;text-align:center;letter-spacing:0.3px;">출고 대비 문의 비율</div>
+          <div class="pie-canvas-wrap" style="width:150px;height:150px;position:relative;">
             <canvas id="${rateId}"></canvas>
-            <div class="pie-center">
-              <div class="pc-val" style="color:${rateColor};font-size:20px;">${defRate.toFixed(2)}%</div>
-              <div class="pc-lbl">불량률</div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">
+              <div style="color:${rateColor};font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1.1;">${inqRate.toFixed(2)}%</div>
+              <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">문의율</div>
             </div>
           </div>
-          <div style="margin-top:10px;font-size:11px;text-align:center;color:var(--text-muted);line-height:1.6;">
-            정상 출고 ${(p.shipments - totalDef).toLocaleString()}건<br>
-            <span style="color:${rateColor};font-weight:700;">불량 ${totalDef.toLocaleString()}건</span>
+          <div style="margin-top:14px;font-size:11px;text-align:center;color:var(--text-muted);line-height:1.7;width:100%;">
+            <div>정상 출고 <b style="color:var(--text);">${(p.shipments - totalInq).toLocaleString()}</b>건</div>
+            <div style="color:${rateColor};font-weight:700;margin-top:2px;">매핑 문의 ${totalInq.toLocaleString()}건</div>
           </div>
         </div>
-        <!-- 원 2: 불량 사유 분포 -->
-        <div>
-          <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-align:center;letter-spacing:0.3px;">불량 사유 분포</div>
-          <div class="pie-canvas-wrap" style="width:150px;height:150px;margin:0 auto;">
-            <canvas id="${detId}"></canvas>
-            <div class="pie-center">
-              <div class="pc-val" style="font-size:20px;">${totalDef}</div>
-              <div class="pc-lbl">건</div>
+        <!-- 원 2: 문의 유형 분포 -->
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:10px;text-align:center;letter-spacing:0.3px;">문의 유형 분포</div>
+          <div class="pie-canvas-wrap" style="width:150px;height:150px;position:relative;">
+            <canvas id="${typeId}"></canvas>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">
+              <div style="font-size:20px;font-weight:800;color:var(--navy);line-height:1.1;">${totalInq}</div>
+              <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">건</div>
             </div>
           </div>
-          <div class="legend-list" id="${detId}-lg" style="margin-top:10px;gap:5px;"></div>
+          <div class="legend-list" id="${typeId}-lg" style="margin-top:14px;gap:5px;width:100%;"></div>
         </div>
       </div>
     `;
     grid.appendChild(card);
 
-    pendingDonuts.push({ rateId, detId, defRate, det, totalDef, rateColor });
+    pendingDonuts.push({ rateId, typeId, inqRate, types, totalInq, rateColor });
   });
 
   // 도넛 생성 (DOM 삽입 후)
-  pendingDonuts.forEach(d => {
-    killChart(d.rateId);
-    C[d.rateId] = new Chart(document.getElementById(d.rateId), {
+  pendingDonuts.forEach(item => {
+    killChart(item.rateId);
+    C[item.rateId] = new Chart(document.getElementById(item.rateId), {
       type: 'doughnut',
       data: {
-        labels: ['불량', '정상'],
-        datasets: [{ data: [d.defRate, Math.max(0, 100 - d.defRate)],
-          backgroundColor: [d.rateColor, '#EEECe8'],
+        labels: ['문의', '정상'],
+        datasets: [{ data: [item.inqRate, Math.max(0, 100 - item.inqRate)],
+          backgroundColor: [item.rateColor, '#EEECe8'],
           borderWidth: 0, hoverOffset: 6 }]
       },
       options: {
@@ -2365,34 +1972,37 @@ function renderSKUMain() {
       }
     });
 
-    killChart(d.detId);
-    if (d.det.length) {
-      const colors = d.det.map((_, i) => DONUT_COLORS[i % DONUT_COLORS.length]);
-      C[d.detId] = new Chart(document.getElementById(d.detId), {
+    killChart(item.typeId);
+    if (item.types.length) {
+      const colors = item.types.map(x => TYPE_COLORS[x.type] || DONUT_COLORS[item.types.indexOf(x) % DONUT_COLORS.length]);
+      C[item.typeId] = new Chart(document.getElementById(item.typeId), {
         type: 'doughnut',
         data: {
-          labels: d.det.map(x => x.type),
-          datasets: [{ data: d.det.map(x => x.count),
+          labels: item.types.map(x => x.type),
+          datasets: [{ data: item.types.map(x => x.count),
             backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }]
         },
         options: {
           responsive: true, maintainAspectRatio: false, cutout: '65%',
           plugins: {
             legend: { display: false },
-            tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw + '건 (' + d.det[ctx.dataIndex].ratio + '%)' } }
+            tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw + '건 (' + (item.totalInq ? (ctx.raw/item.totalInq*100).toFixed(1) : 0) + '%)' } }
           }
         }
       });
       // 사이드 레전드
-      const lg = document.getElementById(d.detId + '-lg');
-      lg.innerHTML = d.det.slice(0, 5).map((x, i) => `
+      const lg = document.getElementById(item.typeId + '-lg');
+      lg.innerHTML = item.types.slice(0, 5).map((x, i) => `
         <div class="legend-item" style="padding:2px 0;">
           <div class="legend-dot" style="background:${colors[i]};width:9px;height:9px;"></div>
           <div class="legend-info">
             <div class="name" style="font-size:11.5px;">${x.type}</div>
-            <div class="val" style="font-size:10.5px;">${x.count}건 · ${x.ratio}%</div>
+            <div class="val" style="font-size:10.5px;">${x.count}건 · ${item.totalInq ? (x.count/item.totalInq*100).toFixed(1) : 0}%</div>
           </div>
         </div>`).join('');
+    } else {
+      const lg = document.getElementById(item.typeId + '-lg');
+      if (lg) lg.innerHTML = '<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:8px 0;">매핑된 문의 없음</div>';
     }
   });
 }
@@ -2409,52 +2019,11 @@ function renderSKUAll() {
   if (!d?.by_product_detail) return;
   const label = d.period_label || d.period;
 
-  document.getElementById('sku-all-sub').textContent = `${label} · 전체 ${d.by_product_detail.length}개 SKU 분석`;
-  document.getElementById('sku-all-badge').textContent = label;
-
-  // ── 도넛 (점유율) ────────────────────────────────
-  const list = [...(d.by_product_detail || [])].sort((a, b) => (b.desc_matched || 0) - (a.desc_matched || 0));
-  const top = list.slice(0, 9);
-  const rest = list.slice(9);
-  const restSum = rest.reduce((s, x) => s + (x.desc_matched || 0), 0);
-  const donutLabels = top.map(x => x.name).concat(rest.length ? ['기타 ' + rest.length + '개'] : []);
-  const donutData   = top.map(x => x.desc_matched || 0).concat(rest.length ? [restSum] : []);
-  const donutColors = donutLabels.map((_, i) => DONUT_COLORS[i % DONUT_COLORS.length]);
-  const donutTotal  = donutData.reduce((s, v) => s + v, 0);
-
-  killChart('sku-all-donut');
-  document.getElementById('sku-all-center-val').textContent = donutTotal.toLocaleString();
-  C['sku-all-donut'] = new Chart(document.getElementById('sku-all-chart'), {
-    type: 'doughnut',
-    data: {
-      labels: donutLabels,
-      datasets: [{ data: donutData, backgroundColor: donutColors, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + (donutTotal ? (ctx.raw/donutTotal*100).toFixed(1) : 0) + '%)' } }
-      }
-    }
-  });
-
-  // 커스텀 레전드
-  const lg = document.getElementById('sku-all-legend');
-  lg.innerHTML = donutLabels.map((name, i) => {
-    const cnt = donutData[i];
-    const pct = donutTotal ? (cnt / donutTotal * 100) : 0;
-    const isKey = KEY_SKUS_LIST.includes(name);
-    const ship = top[i] ? top[i].shipments : null;
-    return `
-      <div class="legend-item">
-        <div class="legend-dot" style="background:${donutColors[i]};"></div>
-        <div class="legend-info">
-          <div class="name">${isKey ? '★ ' : ''}${name}</div>
-          <div class="val">${cnt.toLocaleString()}건 · ${pct.toFixed(1)}%${ship != null ? ' <span style="color:#B4ACA2;">(출고 ' + ship.toLocaleString() + ')</span>' : ''}</div>
-        </div>
-      </div>`;
-  }).join('');
+  // legacy hidden anchors (제거된 DOM은 무시)
+  const subEl = document.getElementById('sku-all-sub');
+  if (subEl) subEl.textContent = `${label} · 전체 ${d.by_product_detail.length}개 SKU`;
+  const badgeEl = document.getElementById('sku-all-badge');
+  if (badgeEl) badgeEl.textContent = label;
 
   // ── 필터 + 요약 테이블 ────────────────────────────
   // 상품별 IPV 계산 (desc_matched + defect_total + return_total 사용)
