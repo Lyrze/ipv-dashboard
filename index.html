@@ -878,14 +878,9 @@
       <div id="inquiry-table-wrap"><div class="state-box"><div class="s-icon">⏳</div></div></div>
     </div>
 
-    <!-- ─ CX 월별 추이 ─ -->
-    <div class="card mb-28">
-      <div class="card-title"><span class="ct-icon">↗</span> CX 유형 월별 추이 (전체 기간)</div>
-      <div class="chart-wrap"><canvas id="inquiry-trend"></canvas></div>
-    </div>
-
     <!-- legacy hidden anchors for backwards compat -->
     <div style="display:none;">
+      <canvas id="inquiry-trend"></canvas>
       <span id="alf-total"></span><span id="alf-ratio"></span>
       <span id="alf-unresolved"></span><span id="alf-unresolved-ratio"></span>
       <span id="alf-error"></span>
@@ -1494,37 +1489,7 @@ function renderInquiry() {
     cmpWrap.innerHTML = '<div class="state-box" style="padding:40px 20px;"><div class="s-icon" style="font-size:32px;">📅</div><p style="font-size:12px;">비교 기간을 선택하면<br>분포 차트가 표시됩니다.</p></div>';
   }
 
-  // ── CX 추이 (ALF V2 처리 제외) ────────────────────
-  killChart('inq-trend');
-  if (allData.length > 1) {
-    const types = [...new Set(allData.flatMap(x =>
-      (x.by_inquiry_type_cx || []).map(t => t.type)
-    ))].filter(t => t !== 'ALF V2 처리');
-    C['inq-trend'] = new Chart(document.getElementById('inquiry-trend'), {
-      type: 'line',
-      data: {
-        labels: allData.map(x => x.period_label || x.period),
-        datasets: types.map((type, i) => ({
-          label: type,
-          data: allData.map(x => (x.by_inquiry_type_cx || []).find(t => t.type === type)?.count || 0),
-          borderColor: PALETTE.series[i % PALETTE.series.length],
-          backgroundColor: PALETTE.series[i % PALETTE.series.length] + '18',
-          borderWidth: 2.5, pointRadius: 5, tension: 0.3, fill: false
-        }))
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true } } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: 'CX 상담 건수' } },
-          x: { grid: { display: false } }
-        }
-      }
-    });
-  } else {
-    document.getElementById('inquiry-trend').closest('.chart-wrap').innerHTML =
-      `<div class="state-box" style="padding:32px;"><div class="s-icon" style="font-size:32px;">📅</div><p>2개월 이상 누적되면<br>추이를 볼 수 있습니다.</p></div>`;
-  }
+  // ── CX 월별 추이는 가독성 이슈로 제거됨 (월별 누적 탭에서 확인) ──
 
   // ── CX 상세 테이블 (vs 비교 열 포함) ──────────────────
   const sorted = [...cxData].sort((a, b) => b.count - a.count);
