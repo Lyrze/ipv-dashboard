@@ -757,20 +757,33 @@
       </div>
     </div>
 
+    <div class="card mb-20">
+      <div class="card-title"><span class="ct-icon">↗</span> 월별 IPV 추이</div>
+      <div class="chart-wrap" style="height:300px;"><canvas id="trend-chart"></canvas></div>
+    </div>
+
+    <!-- 문의유형 분포 — AI 포함 vs CX 태그만 비교 -->
     <div class="grid-2 mb-20">
       <div class="card">
-        <div class="card-title"><span class="ct-icon">↗</span> 월별 IPV 추이</div>
-        <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+        <div class="card-title" style="display:flex;align-items:baseline;justify-content:space-between;">
+          <span><span class="ct-icon">○</span> 문의유형 분포 — AI 상담 포함</span>
+          <span style="font-size:10.5px;color:var(--text-muted);font-weight:500;">전체 상담 통합</span>
+        </div>
+        <div class="chart-wrap" style="height:280px;"><canvas id="pie-total-chart"></canvas></div>
+        <div id="pie-total-note" style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.55;"></div>
       </div>
       <div class="card">
         <div class="card-title" style="display:flex;align-items:baseline;justify-content:space-between;">
-          <span><span class="ct-icon">○</span> 문의유형 분포</span>
-          <span style="font-size:10.5px;color:var(--text-muted);font-weight:500;">전체 상담 대비 점유율</span>
+          <span><span class="ct-icon">●</span> 문의유형 분포 — CX 매니저 태그만</span>
+          <span style="font-size:10.5px;color:var(--text-muted);font-weight:500;">사람 응대 분류 한정</span>
         </div>
-        <div class="chart-wrap" style="height:300px;"><canvas id="pie-overview-chart"></canvas></div>
-        <div id="pie-ov-note" style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.55;"></div>
+        <div class="chart-wrap" style="height:280px;"><canvas id="pie-cx-chart"></canvas></div>
+        <div id="pie-cx-note" style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.55;"></div>
       </div>
     </div>
+
+    <!-- legacy hidden -->
+    <div style="display:none;"><canvas id="pie-overview-chart"></canvas></div>
 
     <div class="grid-2 mb-20">
       <div class="card">
@@ -1298,27 +1311,24 @@ function renderOverview() {
     }
   });
 
-  // 파이차트 — 문의유형 분포 (전체 상담 점유율)
-  killChart('pie-ov');
-  if (d.by_inquiry_type?.length) {
-    // ALF V2 처리 → AI 자동처리 (사유 분류 불가) 라벨 변경
-    const LABEL_RENAME = { 'ALF V2 처리': 'AI 자동처리 (분류 불가)' };
-    // 색상: AI 자동처리는 그레이지로, 나머지는 series 팔레트
-    const otherColors = PALETTE.series.filter((_, i) => i !== 0);
-    const items = d.by_inquiry_type.map((x, i) => ({
-      type: LABEL_RENAME[x.type] || x.type,
-      count: x.count,
-      ratio: x.ratio,
-      _isAlf: x.type === 'ALF V2 처리'
-    }));
-    const totalIQ = items.reduce((s, t) => s + t.count, 0);
-    let oi = 0;
-    const colors = items.map(it => {
-      if (it._isAlf) return '#ADA59B';   // 그레이지
-      const c = otherColors[oi % otherColors.length]; oi++; return c;
-    });
+  // ── 도넛 그리기 헬퍼 ───────────────────────────
+  function drawTypeDonut(canvasId, items, totalCount, noteEl, noteText) {
+    const TYPE_COLOR_MAP = {
+      '반품/환불':     '#A83228',
+      '불량/AS':       '#9A6A1F',
+      '교환':           '#7B9BC4',
+      '배송문의':       '#4A6FA5',
+      '주문/결제':      '#5A8DBE',
+      '이벤트/쿠폰':    '#C49A6C',
+      '제품/사용문의':  '#1E6B4A',
+      '리뷰':           '#88A892',
+      '기타/미분류':    '#ADA59B',
+    };
+    killChart(canvasId);
+    if (!items || !items.length) return;
+    const colors = items.map(it => TYPE_COLOR_MAP[it.type] || '#888');
 
-    C['pie-ov'] = new Chart(document.getElementById('pie-overview-chart'), {
+    C[canvasId] = new Chart(document.getElementById(canvasId), {
       type: 'doughnut',
       data: {
         labels: items.map(it => it.type),
@@ -1331,12 +1341,12 @@ function renderOverview() {
           legend: {
             position: 'right',
             labels: {
-              font: { size: 11 }, padding: 9, usePointStyle: true, boxWidth: 8,
+              font: { size: 11 }, padding: 8, usePointStyle: true, boxWidth: 8,
               generateLabels: (chart) => {
                 const data = chart.data;
                 return data.labels.map((label, i) => {
                   const v = data.datasets[0].data[i];
-                  const pct = totalIQ ? (v / totalIQ * 100).toFixed(1) : 0;
+                  const pct = totalCount ? (v / totalCount * 100).toFixed(1) : 0;
                   return {
                     text: `${label}  ${pct}%`,
                     fillStyle: data.datasets[0].backgroundColor[i],
@@ -1349,23 +1359,34 @@ function renderOverview() {
             }
           },
           tooltip: { callbacks: { label: ctx => {
-            const pct = totalIQ ? (ctx.raw / totalIQ * 100).toFixed(1) : 0;
+            const pct = totalCount ? (ctx.raw / totalCount * 100).toFixed(1) : 0;
             return ` ${ctx.raw.toLocaleString()}건 · ${pct}%`;
           }}}
         }
       }
     });
-
-    const noteEl = document.getElementById('pie-ov-note');
-    if (noteEl) {
-      const alfItem = items.find(it => it._isAlf);
-      if (alfItem) {
-        noteEl.innerHTML = `※ <b>AI 자동처리</b>는 ALF V2가 자동 응대한 상담(태그 미부여)으로, 세부 유형 분류가 불가합니다.`;
-      } else {
-        noteEl.innerHTML = '';
-      }
-    }
+    if (noteEl) noteEl.innerHTML = noteText || '';
   }
+
+  // ── 도넛 1: AI 상담 포함 (CX 태그 + ALF 자동분류 통합) ──
+  const total = d.by_inquiry_type_total || [];
+  const totalSum = total.reduce((s, t) => s + t.count, 0);
+  const unclassMeta = d.by_inquiry_type_unclassified || {};
+  const totalNote = totalSum
+    ? `※ CX 매니저 태그 + AI 자동상담 분류 통합 / 총 <b>${totalSum.toLocaleString()}건</b>` +
+      (unclassMeta.alf_unclassified_count
+        ? ` · AI 분류 불가 <b>${unclassMeta.alf_unclassified_count.toLocaleString()}건</b>(${unclassMeta.alf_unclassified_ratio}%) 별도`
+        : '')
+    : '';
+  drawTypeDonut('pie-total-chart', total, totalSum, document.getElementById('pie-total-note'), totalNote);
+
+  // ── 도넛 2: AI 미포함 (CX 매니저 태그만 — 정확도 100%) ──
+  const cxOnly = d.by_inquiry_type_cx || [];
+  const cxSum = cxOnly.reduce((s, t) => s + t.count, 0);
+  const cxNote = cxSum
+    ? `※ CX 매니저가 직접 태그한 상담만 (사람 응대) · 총 <b>${cxSum.toLocaleString()}건</b>`
+    : '';
+  drawTypeDonut('pie-cx-chart', cxOnly, cxSum, document.getElementById('pie-cx-note'), cxNote);
 
   // ── 불량 카테고리 (불량 확정 / 불량 문의 / 유상 AS) ──
   killChart('def-cat');
