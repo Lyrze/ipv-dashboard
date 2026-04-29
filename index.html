@@ -1313,19 +1313,30 @@ function renderOverview() {
 
   // ── 도넛 그리기 헬퍼 ───────────────────────────
   function drawTypeDonut(canvasId, items, totalCount, noteEl, noteText) {
+    // V10 카테고리 색상 매핑 (가시성 좋게 톤 분리)
     const TYPE_COLOR_MAP = {
-      '반품/환불':     '#A83228',
-      '불량/AS':       '#9A6A1F',
-      '교환':           '#7B9BC4',
-      '배송문의':       '#4A6FA5',
-      '주문/결제':      '#5A8DBE',
-      '이벤트/쿠폰':    '#C49A6C',
-      '제품/사용문의':  '#1E6B4A',
-      '리뷰':           '#88A892',
-      '기타/미분류':    '#ADA59B',
+      '불량 확정':         '#A83228',
+      '불량 미확정':       '#D08070',
+      '유상 AS':           '#002353',
+      '반품/환불':         '#9A6A1F',
+      '100% 환불 이벤트':  '#C49A6C',
+      '제품/사용문의':     '#1E6B4A',
+      '배송문의':          '#4A6FA5',
+      '주문/결제':          '#5A8DBE',
+      '이벤트/쿠폰':        '#D4A66B',
+      '교환':              '#7B9BC4',
+      '리뷰':              '#88A892',
+      '기타':              '#D0CCC7',
+      '기타/미분류':       '#D0CCC7',
+      '불량/AS':           '#9A6A1F',
     };
     killChart(canvasId);
     if (!items || !items.length) return;
+    // '기타'는 도넛 분모에서 제외 (가독성)
+    const filteredItems = items.filter(it => it.type !== '기타' && it.type !== '기타/미분류');
+    const totalFiltered = filteredItems.reduce((s, it) => s + it.count, 0);
+    items = filteredItems;
+    totalCount = totalFiltered;
     const colors = items.map(it => TYPE_COLOR_MAP[it.type] || '#888');
 
     C[canvasId] = new Chart(document.getElementById(canvasId), {
@@ -1371,11 +1382,12 @@ function renderOverview() {
   // ── 도넛 1: AI 상담 포함 (CX 태그 + ALF 자동분류 통합) ──
   const total = d.by_inquiry_type_total || [];
   const totalSum = total.reduce((s, t) => s + t.count, 0);
-  const unclassMeta = d.by_inquiry_type_unclassified || {};
+  const totalEtc = (total.find(x => x.type === '기타' || x.type === '기타/미분류') || {}).count || 0;
+  const totalClassified = totalSum - totalEtc;
   const totalNote = totalSum
-    ? `※ CX 매니저 태그 + AI 자동상담 분류 통합 / 총 <b>${totalSum.toLocaleString()}건</b>` +
-      (unclassMeta.alf_unclassified_count
-        ? ` · AI 분류 불가 <b>${unclassMeta.alf_unclassified_count.toLocaleString()}건</b>(${unclassMeta.alf_unclassified_ratio}%) 별도`
+    ? `※ CX 매니저 태그 + AI 자동상담 분류 통합 / 분류 가능 <b>${totalClassified.toLocaleString()}건</b>` +
+      (totalEtc > 0
+        ? ` · 분류 불가 <b>${totalEtc.toLocaleString()}건</b>(${(totalEtc/totalSum*100).toFixed(1)}%) 도넛 제외`
         : '')
     : '';
   drawTypeDonut('pie-total-chart', total, totalSum, document.getElementById('pie-total-note'), totalNote);
@@ -1383,8 +1395,13 @@ function renderOverview() {
   // ── 도넛 2: AI 미포함 (CX 매니저 태그만 — 정확도 100%) ──
   const cxOnly = d.by_inquiry_type_cx || [];
   const cxSum = cxOnly.reduce((s, t) => s + t.count, 0);
+  const cxEtc = (cxOnly.find(x => x.type === '기타' || x.type === '기타/미분류') || {}).count || 0;
+  const cxClassified = cxSum - cxEtc;
   const cxNote = cxSum
-    ? `※ CX 매니저가 직접 태그한 상담만 (사람 응대) · 총 <b>${cxSum.toLocaleString()}건</b>`
+    ? `※ CX 매니저가 직접 태그한 상담만 (사람 응대) / 분류 가능 <b>${cxClassified.toLocaleString()}건</b>` +
+      (cxEtc > 0
+        ? ` · 분류 불가 <b>${cxEtc.toLocaleString()}건</b>(${(cxEtc/cxSum*100).toFixed(1)}%) 별도`
+        : '')
     : '';
   drawTypeDonut('pie-cx-chart', cxOnly, cxSum, document.getElementById('pie-cx-note'), cxNote);
 
