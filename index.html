@@ -433,16 +433,16 @@
     /* ══════════ DIVIDER ══════════ */
     .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 
-    /* ══════════ PIE / DONUT (report style) ══════════ */
+    /* ══════════ PIE / DONUT (V10 균형 개선) ══════════ */
     .pie-side {
       display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 20px;
+      grid-template-columns: 240px 1fr;
+      gap: 28px;
       align-items: center;
     }
     .pie-side .pie-canvas-wrap {
       position: relative;
-      width: 180px; height: 180px;
+      width: 240px; height: 240px;
       margin: 0 auto;
     }
     .pie-side .pie-center {
@@ -461,8 +461,10 @@
       margin-top: 4px; letter-spacing: 0.3px;
     }
     .legend-list {
-      display: flex; flex-direction: column;
-      gap: 9px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 18px;
+      align-content: center;
     }
     .legend-item {
       display: flex; align-items: center; gap: 10px;
@@ -975,7 +977,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-wrap" style="height:430px;"><canvas id="hist-cx-trend"></canvas></div>
+      <div class="chart-wrap" style="height:680px;"><canvas id="hist-cx-trend"></canvas></div>
     </div>
 
     <!-- PART 4. 반품·불량 추이 -->
@@ -1257,10 +1259,11 @@ function renderOverview() {
       <div class="kpi-icon-row">
         <div class="kpi-icon greige">💬</div>
       </div>
-      <div class="kpi-label">총 문의건수</div>
-      <div class="kpi-value">${d.summary.total_inquiries.toLocaleString()}<span class="kpi-unit">건</span></div>
-      <div class="kpi-change ${cls(inqDelta)}">
-        ${cmp ? `${arrow(inqDelta)} ${cmpLabel} 대비 ${sign(inqDelta)}${(inqDelta||0).toLocaleString()}건 (${sign(inqDeltaPct)}${(inqDeltaPct||0).toFixed(1)}%)` : 'CS 인입 문의 합계'}
+      <div class="kpi-label">총 문의건수 (채널톡 + 게시판/메일)</div>
+      <div class="kpi-value">${(d.summary.total_inquiries + (d.summary.board_inquiries||0)).toLocaleString()}<span class="kpi-unit">건</span></div>
+      <div class="kpi-change ${cls(inqDelta)}" style="font-size:11px;line-height:1.4;">
+        채널톡 <b>${d.summary.total_inquiries.toLocaleString()}건</b> · 게시판/메일 <b>${(d.summary.board_inquiries||0).toLocaleString()}건</b><br>
+        <span style="font-size:10px;color:var(--text-muted);">※ 게시판/메일은 유형 분류 미적용</span>
       </div>
     </div>
     <div class="kpi-card">
