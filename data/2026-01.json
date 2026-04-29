@@ -268,33 +268,43 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 374,
-          "ratio": 66.3
+          "count": 209,
+          "ratio": 37.1
         },
         {
-          "type": "배송문의",
-          "count": 42,
-          "ratio": 7.4
-        },
-        {
-          "type": "불량 확정",
-          "count": 37,
-          "ratio": 6.6
-        },
-        {
-          "type": "반품/환불",
-          "count": 32,
-          "ratio": 5.7
+          "type": "제품/사용문의",
+          "count": 77,
+          "ratio": 13.7
         },
         {
           "type": "100% 환불 이벤트",
-          "count": 29,
-          "ratio": 5.1
+          "count": 56,
+          "ratio": 9.9
         },
         {
           "type": "이벤트/쿠폰",
-          "count": 19,
-          "ratio": 3.4
+          "count": 50,
+          "ratio": 8.9
+        },
+        {
+          "type": "배송문의",
+          "count": 45,
+          "ratio": 8.0
+        },
+        {
+          "type": "반품/환불",
+          "count": 43,
+          "ratio": 7.6
+        },
+        {
+          "type": "불량 확정",
+          "count": 38,
+          "ratio": 6.7
+        },
+        {
+          "type": "불량/AS",
+          "count": 16,
+          "ratio": 2.8
         },
         {
           "type": "사용법",
@@ -302,9 +312,9 @@
           "ratio": 2.7
         },
         {
-          "type": "제품/사용문의",
-          "count": 6,
-          "ratio": 1.1
+          "type": "주문/결제",
+          "count": 4,
+          "ratio": 0.7
         },
         {
           "type": "유상 AS",
@@ -312,19 +322,14 @@
           "ratio": 0.7
         },
         {
-          "type": "주문/결제",
-          "count": 2,
-          "ratio": 0.4
+          "type": "리뷰",
+          "count": 4,
+          "ratio": 0.7
         },
         {
           "type": "교환",
           "count": 2,
           "ratio": 0.4
-        },
-        {
-          "type": "리뷰",
-          "count": 1,
-          "ratio": 0.2
         },
         {
           "type": "불량 미확정",
@@ -333,7 +338,7 @@
         }
       ],
       "defect_detail": [],
-      "defect_total": 42,
+      "defect_total": 43,
       "return_detail": [
         {
           "reason": "100% 환불 이벤트",
@@ -385,8 +390,28 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 208,
-          "ratio": 81.6
+          "count": 143,
+          "ratio": 56.1
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 22,
+          "ratio": 8.6
+        },
+        {
+          "type": "불량/AS",
+          "count": 22,
+          "ratio": 8.6
+        },
+        {
+          "type": "이벤트/쿠폰",
+          "count": 14,
+          "ratio": 5.5
+        },
+        {
+          "type": "100% 환불 이벤트",
+          "count": 12,
+          "ratio": 4.7
         },
         {
           "type": "불량 확정",
@@ -399,32 +424,22 @@
           "ratio": 3.5
         },
         {
+          "type": "반품/환불",
+          "count": 8,
+          "ratio": 3.1
+        },
+        {
           "type": "사용법",
           "count": 6,
           "ratio": 2.4
         },
         {
-          "type": "100% 환불 이벤트",
-          "count": 6,
-          "ratio": 2.4
-        },
-        {
-          "type": "이벤트/쿠폰",
-          "count": 4,
-          "ratio": 1.6
-        },
-        {
-          "type": "반품/환불",
-          "count": 4,
-          "ratio": 1.6
+          "type": "교환",
+          "count": 3,
+          "ratio": 1.2
         },
         {
           "type": "주문/결제",
-          "count": 2,
-          "ratio": 0.8
-        },
-        {
-          "type": "교환",
           "count": 2,
           "ratio": 0.8
         },
@@ -472,13 +487,18 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 73,
-          "ratio": 72.3
+          "count": 63,
+          "ratio": 62.4
         },
         {
           "type": "불량 확정",
           "count": 10,
           "ratio": 9.9
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 7,
+          "ratio": 6.9
         },
         {
           "type": "배송문의",
@@ -491,7 +511,22 @@
           "ratio": 4.0
         },
         {
+          "type": "100% 환불 이벤트",
+          "count": 3,
+          "ratio": 3.0
+        },
+        {
           "type": "반품/환불",
+          "count": 2,
+          "ratio": 2.0
+        },
+        {
+          "type": "유상 AS",
+          "count": 2,
+          "ratio": 2.0
+        },
+        {
+          "type": "불량/AS",
           "count": 2,
           "ratio": 2.0
         },
@@ -501,17 +536,7 @@
           "ratio": 2.0
         },
         {
-          "type": "100% 환불 이벤트",
-          "count": 2,
-          "ratio": 2.0
-        },
-        {
           "type": "이벤트/쿠폰",
-          "count": 1,
-          "ratio": 1.0
-        },
-        {
-          "type": "유상 AS",
           "count": 1,
           "ratio": 1.0
         },
@@ -519,15 +544,10 @@
           "type": "주문/결제",
           "count": 1,
           "ratio": 1.0
-        },
-        {
-          "type": "제품/사용문의",
-          "count": 1,
-          "ratio": 1.0
         }
       ],
       "defect_detail": [],
-      "defect_total": 11,
+      "defect_total": 12,
       "return_detail": [
         {
           "reason": "EMS 불량",
@@ -559,16 +579,21 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 34,
-          "ratio": 79.1
+          "count": 24,
+          "ratio": 55.8
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 5,
+          "ratio": 11.6
         },
         {
           "type": "반품/환불",
-          "count": 3,
-          "ratio": 7.0
+          "count": 4,
+          "ratio": 9.3
         },
         {
-          "type": "배송문의",
+          "type": "불량/AS",
           "count": 2,
           "ratio": 4.7
         },
@@ -576,6 +601,21 @@
           "type": "불량 확정",
           "count": 2,
           "ratio": 4.7
+        },
+        {
+          "type": "배송문의",
+          "count": 2,
+          "ratio": 4.7
+        },
+        {
+          "type": "교환",
+          "count": 1,
+          "ratio": 2.3
+        },
+        {
+          "type": "주문/결제",
+          "count": 1,
+          "ratio": 2.3
         },
         {
           "type": "사용법",
@@ -616,13 +656,28 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 18,
-          "ratio": 81.8
+          "count": 11,
+          "ratio": 50.0
         },
         {
           "type": "100% 환불 이벤트",
+          "count": 4,
+          "ratio": 18.2
+        },
+        {
+          "type": "불량/AS",
           "count": 2,
           "ratio": 9.1
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 2,
+          "ratio": 9.1
+        },
+        {
+          "type": "이벤트/쿠폰",
+          "count": 1,
+          "ratio": 4.5
         },
         {
           "type": "배송문의",
@@ -630,7 +685,7 @@
           "ratio": 4.5
         },
         {
-          "type": "제품/사용문의",
+          "type": "반품/환불",
           "count": 1,
           "ratio": 4.5
         }
@@ -645,8 +700,18 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 32,
-          "ratio": 72.7
+          "count": 21,
+          "ratio": 47.7
+        },
+        {
+          "type": "반품/환불",
+          "count": 7,
+          "ratio": 15.9
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 6,
+          "ratio": 13.6
         },
         {
           "type": "불량 확정",
@@ -654,12 +719,12 @@
           "ratio": 11.4
         },
         {
-          "type": "반품/환불",
-          "count": 3,
-          "ratio": 6.8
+          "type": "사용법",
+          "count": 1,
+          "ratio": 2.3
         },
         {
-          "type": "사용법",
+          "type": "불량/AS",
           "count": 1,
           "ratio": 2.3
         },
@@ -689,13 +754,23 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 46,
-          "ratio": 69.7
+          "count": 30,
+          "ratio": 45.5
         },
         {
           "type": "반품/환불",
-          "count": 6,
-          "ratio": 9.1
+          "count": 7,
+          "ratio": 10.6
+        },
+        {
+          "type": "불량/AS",
+          "count": 7,
+          "ratio": 10.6
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 5,
+          "ratio": 7.6
         },
         {
           "type": "불량 확정",
@@ -713,9 +788,19 @@
           "ratio": 4.5
         },
         {
+          "type": "이벤트/쿠폰",
+          "count": 2,
+          "ratio": 3.0
+        },
+        {
           "type": "사용법",
           "count": 2,
           "ratio": 3.0
+        },
+        {
+          "type": "100% 환불 이벤트",
+          "count": 1,
+          "ratio": 1.5
         }
       ],
       "defect_total": 8,
@@ -728,18 +813,23 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 53,
-          "ratio": 72.6
+          "count": 33,
+          "ratio": 45.2
         },
         {
           "type": "불량 확정",
-          "count": 10,
-          "ratio": 13.7
+          "count": 11,
+          "ratio": 15.1
+        },
+        {
+          "type": "불량/AS",
+          "count": 9,
+          "ratio": 12.3
         },
         {
           "type": "100% 환불 이벤트",
-          "count": 3,
-          "ratio": 4.1
+          "count": 6,
+          "ratio": 8.2
         },
         {
           "type": "유상 AS",
@@ -747,9 +837,24 @@
           "ratio": 4.1
         },
         {
+          "type": "이벤트/쿠폰",
+          "count": 3,
+          "ratio": 4.1
+        },
+        {
           "type": "반품/환불",
+          "count": 3,
+          "ratio": 4.1
+        },
+        {
+          "type": "제품/사용문의",
           "count": 2,
           "ratio": 2.7
+        },
+        {
+          "type": "교환",
+          "count": 1,
+          "ratio": 1.4
         },
         {
           "type": "사용법",
@@ -762,7 +867,7 @@
           "ratio": 1.4
         }
       ],
-      "defect_total": 13,
+      "defect_total": 14,
       "defect_detail": []
     },
     {
@@ -772,13 +877,23 @@
       "by_type": [
         {
           "type": "기타",
-          "count": 9,
-          "ratio": 64.3
+          "count": 6,
+          "ratio": 42.9
         },
         {
           "type": "불량 확정",
           "count": 3,
           "ratio": 21.4
+        },
+        {
+          "type": "이벤트/쿠폰",
+          "count": 2,
+          "ratio": 14.3
+        },
+        {
+          "type": "불량/AS",
+          "count": 1,
+          "ratio": 7.1
         },
         {
           "type": "배송문의",
@@ -800,9 +915,24 @@
       "desc_matched": 11,
       "by_type": [
         {
+          "type": "불량/AS",
+          "count": 4,
+          "ratio": 36.4
+        },
+        {
           "type": "기타",
-          "count": 10,
-          "ratio": 90.9
+          "count": 3,
+          "ratio": 27.3
+        },
+        {
+          "type": "유상 AS",
+          "count": 2,
+          "ratio": 18.2
+        },
+        {
+          "type": "이벤트/쿠폰",
+          "count": 1,
+          "ratio": 9.1
         },
         {
           "type": "배송문의",
@@ -810,13 +940,13 @@
           "ratio": 9.1
         }
       ],
-      "defect_total": 0,
+      "defect_total": 2,
       "defect_detail": []
     }
   ],
   "by_defect_return": {
     "total_return": 1092,
-    "total_defect": 485,
+    "total_defect": 487,
     "return_reasons": [
       {
         "reason": "단순 변심",
@@ -842,8 +972,8 @@
     "defect_types": [
       {
         "type": "불량 확정",
-        "count": 373,
-        "ratio": 76.9
+        "count": 371,
+        "ratio": 76.2
       },
       {
         "type": "불량 미확정",
@@ -852,8 +982,8 @@
       },
       {
         "type": "유상 AS",
-        "count": 109,
-        "ratio": 22.5
+        "count": 113,
+        "ratio": 23.2
       }
     ],
     "by_product": [
@@ -908,7 +1038,7 @@
         "defect_count": 5
       }
     ],
-    "_recalc_note": "V7: 불량 확정 = tags 불량/불량확정. 불량 미확정 = tags 불량/불량문의 + ALF 종료 안내 템플릿만. 유상 AS = tags 유상AS or 매니저 응답 \"유상\". 사용법(불량 문의 + CX 응대)은 by_inquiry_type_total의 제품/사용문의로 합산.",
+    "_recalc_note": "V7b: 4가지 케이스 + SKU 폴백 (manager > ALF요약 > 첫메시지)",
     "_meta": {
       "classified_count": 590,
       "unclassified_count": 6436,
