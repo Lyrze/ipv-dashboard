@@ -11,7 +11,9 @@
     "call_ob_inquiries": 72,
     "ipv": 32.69,
     "ipv_chat": 32.4,
-    "ipv_call": 0.29
+    "ipv_call": 0.29,
+    "board_inquiries": 1618,
+    "_inquiry_note": "채널톡 7,997건 + 게시판/메일 1,618건 (게시판/메일은 유형 분류 미적용)"
   },
   "by_product": [
     {
