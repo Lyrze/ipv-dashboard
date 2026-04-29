@@ -6,14 +6,16 @@
   "note": "슬룸 출고량 24,682건 (올릿리테일+슬룸KW필터). description 매핑 커버리지 ~61.9%. 상품별 IPV는 추정값(실제보다 낮음).",
   "summary": {
     "total_shipments": 24682,
-    "total_inquiries": 8069,
+    "total_inquiries": 9687,
     "chat_inquiries": 7997,
     "call_ob_inquiries": 72,
-    "ipv": 32.69,
+    "ipv": 39.25,
     "ipv_chat": 32.4,
     "ipv_call": 0.29,
     "board_inquiries": 1618,
-    "_inquiry_note": "채널톡 7,997건 + 게시판/메일 1,618건 (게시판/메일은 유형 분류 미적용)"
+    "_inquiry_note": "채널톡 7,997건 + 게시판/메일 1,618건 (게시판/메일은 유형 분류 미적용)",
+    "ipv_board": 6.56,
+    "_ipv_note": "IPV 합산 = 채널톡(32.4%) + OB콜(0.29%) + 게시판/메일(6.56%) = 39.25%"
   },
   "by_product": [
     {
