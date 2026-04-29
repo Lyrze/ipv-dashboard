@@ -1436,11 +1436,11 @@ function renderOverview() {
     // 메타 정보 (V7)
     const noteEl = document.getElementById('defect-cat-note');
     if (noteEl) {
-      const meta = dr._meta || {};
-      const lines = [];
-      lines.push(`총 <b>${totalCat.toLocaleString()}건</b>`);
-      lines.push(`<span style="color:#A83228;">불량 확정</span> · <span style="color:#857B70;">미확정 (불량 Y/N 미확인)</span> · <span style="color:#002353;">유상 AS</span>`);
-      noteEl.innerHTML = lines.join(' · ');
+      noteEl.innerHTML =
+        `총 <b>${totalCat.toLocaleString()}건</b><br>` +
+        `<span style="color:#A83228;">● 불량 확정</span> CX 응대 후 AS 접수 · ` +
+        `<span style="color:#857B70;">● 불량 미확정</span> 불량 문의지만 불량 Y/N 미확정 (ALF 자동응대) · ` +
+        `<span style="color:#002353;">● 유상 AS</span> 6개월~1년 경과 전체 포함 (무상 교환 정책 외 유상 처리, 불량 아닐 수 있음)`;
     }
   }
 
