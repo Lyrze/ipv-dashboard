@@ -867,5 +867,57 @@
         "defect_count": 1
       }
     ]
+  },
+  "by_inquiry_type_total": [
+    {
+      "type": "반품/환불",
+      "count": 2503,
+      "ratio": 42.7
+    },
+    {
+      "type": "불량/AS",
+      "count": 1388,
+      "ratio": 23.7
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 570,
+      "ratio": 9.7
+    },
+    {
+      "type": "배송문의",
+      "count": 457,
+      "ratio": 7.8
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 359,
+      "ratio": 6.1
+    },
+    {
+      "type": "주문/결제",
+      "count": 246,
+      "ratio": 4.2
+    },
+    {
+      "type": "교환",
+      "count": 233,
+      "ratio": 4.0
+    },
+    {
+      "type": "기타/미분류",
+      "count": 99,
+      "ratio": 1.7
+    },
+    {
+      "type": "리뷰",
+      "count": 8,
+      "ratio": 0.1
+    }
+  ],
+  "by_inquiry_type_unclassified": {
+    "alf_unclassified_count": 1364,
+    "alf_unclassified_ratio": 24.5,
+    "note": "AI 자동처리 상담 중 키워드 룰셋으로 분류되지 않은 건수 (메시지 빈값 또는 단순 인사 등)"
   }
 }
