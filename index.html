@@ -977,7 +977,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-wrap" style="height:680px;"><canvas id="hist-cx-trend"></canvas></div>
+      <div class="chart-wrap" style="height:880px;"><canvas id="hist-cx-trend"></canvas></div>
     </div>
 
     <!-- PART 4. 반품·불량 추이 -->
@@ -1923,8 +1923,9 @@ function renderHistory() {
         borderColor: '#fff',
         borderWidth: 1.5,
         borderRadius: 3,
-        barPercentage: 0.78,
-        categoryPercentage: 0.78
+        barPercentage: 0.55,       // 막대 가로 폭 줄임
+        categoryPercentage: 0.5,   // 카테고리 폭 줄임 → 막대 더 좁아짐 (세로 비율 강조)
+        maxBarThickness: 110       // 최대 두께 제한
       };
     });
   }
