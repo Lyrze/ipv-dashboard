@@ -1388,21 +1388,21 @@ function renderOverview() {
     : '';
   drawTypeDonut('pie-cx-chart', cxOnly, cxSum, document.getElementById('pie-cx-note'), cxNote);
 
-  // ── 불량 카테고리 (불량 확정 / 불량 문의 / 유상 AS) ──
+  // ── 불량 카테고리 (V7: 불량 확정 / 불량 미확정 / 유상 AS) ──
   killChart('def-cat');
   const dr = d.by_defect_return;
   if (dr) {
-    const CAT_KEEP = ['불량 확정', '불량 문의', '유상 AS'];
+    const CAT_KEEP = ['불량 확정', '불량 미확정', '유상 AS'];
     const CAT_COLOR = {
-      '불량 확정': 'rgba(168,50,40,0.85)',
-      '불량 문의': 'rgba(154,106,31,0.85)',
-      '유상 AS':   'rgba(0,35,83,0.78)'
+      '불량 확정':   'rgba(168,50,40,0.85)',   // 진한 빨강
+      '불량 미확정': 'rgba(173,165,155,0.78)', // 그레이지 (Y/N 미확실)
+      '유상 AS':     'rgba(0,35,83,0.78)'      // 네이비
     };
     const defTypes = (dr.defect_types || []).filter(t => CAT_KEEP.includes(t.type));
+    // 카테고리 순서 강제
+    defTypes.sort((a, b) => CAT_KEEP.indexOf(a.type) - CAT_KEEP.indexOf(b.type));
     const totalCat = defTypes.reduce((s, t) => s + (t.count || 0), 0);
-    const otherCnt = (dr.defect_types || [])
-      .filter(t => !CAT_KEEP.includes(t.type))
-      .reduce((s, t) => s + (t.count || 0), 0);
+    const otherCnt = 0;  // V7에서는 별도 카테고리 없음
 
     const labelsDC = defTypes.map(t => t.type);
     const countsDC = defTypes.map(t => t.count);
@@ -1433,35 +1433,34 @@ function renderOverview() {
       }
     });
 
-    // 메모: 소음 불량 등 기타 카테고리는 별도 안내
+    // 메타 정보 (V7)
     const noteEl = document.getElementById('defect-cat-note');
     if (noteEl) {
+      const meta = dr._meta || {};
       const lines = [];
-      lines.push(`총 분류 가능 불량 상담 <b>${totalCat.toLocaleString()}건</b>`);
-      if (otherCnt > 0) lines.push(`기타 (소음 불량 등) <b>${otherCnt.toLocaleString()}건</b>은 별도 집계`);
+      lines.push(`총 <b>${totalCat.toLocaleString()}건</b>`);
+      lines.push(`<span style="color:#A83228;">불량 확정</span> · <span style="color:#857B70;">미확정 (불량 Y/N 미확인)</span> · <span style="color:#002353;">유상 AS</span>`);
       noteEl.innerHTML = lines.join(' · ');
     }
   }
 
-  // ── 반품 사유 분포 ──
+  // ── 반품 사유 분포 (V7: 4구분 — 변심 / 불량 / 100% 환불 / 사유 분류 불가) ──
   killChart('ret-rsn');
   if (dr) {
-    // 사유 미기재 → 사유 분류 불가 라벨 변경
-    const RSN_RENAME = { '사유 미기재': '사유 분류 불가' };
-    const reasons = (dr.return_reasons || []).map(r => ({
-      reason: RSN_RENAME[r.reason] || r.reason,
-      count: r.count,
-      ratio: r.ratio,
-      _isUnclassified: r.reason === '사유 미기재'
-    })).slice(0, 8);  // 상위 8개
+    const REASON_ORDER = ['단순 변심', '불량', '100% 환불 이벤트', '사유 분류 불가'];
+    const REASON_COLOR = {
+      '단순 변심':         'rgba(154,106,31,0.78)',  // 워닝 톤
+      '불량':              'rgba(168,50,40,0.78)',   // 빨강
+      '100% 환불 이벤트':  'rgba(0,35,83,0.78)',     // 네이비
+      '사유 분류 불가':    'rgba(173,165,155,0.78)'  // 그레이지
+    };
+    const reasons = (dr.return_reasons || [])
+      .filter(r => REASON_ORDER.includes(r.reason))
+      .sort((a, b) => REASON_ORDER.indexOf(a.reason) - REASON_ORDER.indexOf(b.reason));
 
     const labelsRR = reasons.map(r => r.reason);
     const countsRR = reasons.map(r => r.count);
-    const colorsRR = reasons.map(r => {
-      if (r._isUnclassified) return 'rgba(173,165,155,0.75)';   // 분류 불가는 그레이지
-      if (r.reason === '100% 환불 이벤트') return 'rgba(0,35,83,0.78)';
-      return 'rgba(168,50,40,0.72)';
-    });
+    const colorsRR = reasons.map(r => REASON_COLOR[r.reason] || 'rgba(120,120,120,0.7)');
     const totalRR = countsRR.reduce((s, n) => s + n, 0);
 
     C['ret-rsn'] = new Chart(document.getElementById('return-reason-chart'), {
@@ -2069,57 +2068,60 @@ function renderSKUMain() {
     const totalInq = inqCount;
     const launchBadge = SKU_LAUNCH[name] ? `<span style="margin-left:auto;font-size:11px;color:var(--warn);font-weight:600;">${SKU_LAUNCH[name]}</span>` : '';
 
-    // 카드 본문 (문의유형 분포 + 불량 세부)
-    const types = (p.by_type || []).filter(function(t){ return t.type !== 'ALF V2 처리'; });
-    const typeRows = types.map(function(t) {
-      const color = TYPE_COLORS[t.type] || '#ADA59B';
-      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">' +
-        '<span style="width:90px;font-size:11.5px;flex-shrink:0;">' + t.type + '</span>' +
-        '<div style="flex:1;background:#F0EEEB;border-radius:3px;height:10px;overflow:hidden;">' +
-        '<div style="width:' + t.ratio + '%;background:' + color + ';height:100%;border-radius:3px;"></div></div>' +
-        '<span style="font-size:11px;color:var(--text-muted);min-width:62px;text-align:right;">' + t.count + '건 · ' + t.ratio + '%</span></div>';
+    // 카드 본문 V7 — 문의유형 점유율 도넛 (불량 세부 사유 도넛 제거)
+    const types = (p.by_type || []).filter(function(t){
+      return t.type !== 'ALF V2 처리' && t.count > 0;
+    });
+
+    // V7 카테고리 색상 매핑
+    const SKU_TYPE_COLOR = {
+      '불량 확정':         '#A83228',
+      '불량 미확정':       '#857B70',
+      '유상 AS':           '#002353',
+      '사용법':            '#1E6B4A',
+      '제품/사용문의':     '#1E6B4A',
+      '반품/환불':         '#9A6A1F',
+      '100% 환불 이벤트':  '#C49A6C',
+      '배송문의':          '#4A6FA5',
+      '주문/결제':         '#5A8DBE',
+      '교환':              '#7B9BC4',
+      '리뷰':              '#88A892',
+      '이벤트/쿠폰':       '#D4A66B',
+      '기타':              '#ADA59B',
+      '기타/미분류':       '#ADA59B',
+    };
+
+    const skuCanvasId = 'sku-type-donut-' + idx;
+    const legendHtml = types.map(function(t) {
+      const c = SKU_TYPE_COLOR[t.type] || '#ADA59B';
+      return '<div class="legend-item">' +
+        '<div class="legend-dot" style="background:' + c + ';"></div>' +
+        '<div class="legend-info">' +
+          '<div class="name">' + t.type + '</div>' +
+          '<div class="val">' + t.count.toLocaleString() + '건 · ' + t.ratio + '%</div>' +
+        '</div></div>';
     }).join('');
 
-    let defectSection = '';
-    const dList = p.defect_detail || [];
-    if (dList.length > 0) {
-      const canvasId = 'sku-main-defect-' + idx;
-      const totalDefectAll = ((d.by_defect_return || {}).total_defect) || 0;
-      const share = totalDefectAll > 0 ? (p.defect_total / totalDefectAll * 100) : 0;
-      const shareTxt = share.toFixed(1) + '%';
-      const defColorsLocal = ['#A83228','#9A6A1F','#1A4A8A','#4A7ABF','#2E7D5E','#ADA59B','#6B5EA8','#2E7D8A'];
-
-      const legendHtml = dList.map(function(dd, i) {
-        const c = defColorsLocal[i % defColorsLocal.length];
-        return '<div class="legend-item">' +
-          '<div class="legend-dot" style="background:' + c + ';"></div>' +
-          '<div class="legend-info">' +
-            '<div class="name">' + dd.type + '</div>' +
-            '<div class="val">' + dd.count.toLocaleString() + '건 · ' + dd.ratio + '%</div>' +
-          '</div></div>';
-      }).join('');
-
-      defectSection =
-        '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #E5E2DD;">' +
-          '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:6px;flex-wrap:wrap;">' +
-            '<div style="font-size:11.5px;font-weight:600;color:var(--navy);">🔍 불량 세부 사유</div>' +
-            '<div style="font-size:10.5px;color:var(--text-muted);">전체 불량 ' + totalDefectAll.toLocaleString() + '건 중 ' +
-              '<strong style="color:var(--bad);">' + p.defect_total.toLocaleString() + '건</strong> · ' +
-              '<strong style="color:var(--bad);">' + shareTxt + ' 점유</strong></div>' +
-          '</div>' +
-          '<div class="pie-side">' +
-            '<div class="pie-canvas-wrap">' +
-              '<canvas id="' + canvasId + '"></canvas>' +
-              '<div class="pie-center">' +
-                '<div class="pc-val">' + p.defect_total + '</div>' +
-                '<div class="pc-lbl">건</div>' +
-              '</div>' +
+    const donutSection = (types.length > 0)
+      ? '<div style="font-size:11.5px;font-weight:600;color:var(--navy);margin-bottom:10px;">문의유형 점유율</div>' +
+        '<div class="pie-side">' +
+          '<div class="pie-canvas-wrap">' +
+            '<canvas id="' + skuCanvasId + '"></canvas>' +
+            '<div class="pie-center">' +
+              '<div class="pc-val">' + totalInq.toLocaleString() + '</div>' +
+              '<div class="pc-lbl">건</div>' +
             '</div>' +
-            '<div class="legend-list">' + legendHtml + '</div>' +
           '</div>' +
-        '</div>';
+          '<div class="legend-list">' + legendHtml + '</div>' +
+        '</div>'
+      : '<p style="font-size:12px;color:var(--text-muted);">분류된 문의 없음</p>';
 
-      pendingDonuts.push({ canvasId: canvasId, dList: dList, colors: defColorsLocal });
+    if (types.length > 0) {
+      pendingDonuts.push({
+        canvasId: skuCanvasId,
+        types: types,
+        colors: types.map(function(t){ return SKU_TYPE_COLOR[t.type] || '#ADA59B'; })
+      });
     }
 
     card.innerHTML =
@@ -2133,23 +2135,21 @@ function renderSKUMain() {
           '<div class="mv" style="font-size:18px;color:' + rateColor + ';">' + inqRate.toFixed(2) + '%</div>' +
           '<div class="ms">' + (rateDelta != null ? (rateDelta >= 0 ? '▲ +' : '▼ ') + Math.abs(rateDelta).toFixed(2) + '%p' : '—') + '</div></div>' +
       '</div>' +
-      '<div style="font-size:11.5px;font-weight:600;color:var(--navy);margin-bottom:8px;">문의유형 구성</div>' +
-      (typeRows || '<p style="font-size:12px;color:var(--text-muted);">태그 있는 문의 없음</p>') +
-      defectSection;
+      donutSection;
     grid.appendChild(card);
   });
 
-  // 2차: 카드 삽입 완료 후 도넛 차트 생성
+  // 2차: 카드 삽입 후 도넛 차트 생성
   pendingDonuts.forEach(function(item) {
     const el = document.getElementById(item.canvasId);
     if (!el) return;
     C[item.canvasId] = new Chart(el, {
       type: 'doughnut',
       data: {
-        labels: item.dList.map(function(x){ return x.type; }),
+        labels: item.types.map(function(t){ return t.type; }),
         datasets: [{
-          data: item.dList.map(function(x){ return x.count; }),
-          backgroundColor: item.dList.map(function(_, i){ return item.colors[i % item.colors.length]; }),
+          data: item.types.map(function(t){ return t.count; }),
+          backgroundColor: item.colors,
           borderWidth: 3, borderColor: '#fff', hoverOffset: 8
         }]
       },
@@ -2158,7 +2158,7 @@ function renderSKUMain() {
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: function(ctx){
-            const rt = item.dList[ctx.dataIndex].ratio;
+            const rt = item.types[ctx.dataIndex].ratio;
             return ' ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + rt + '%)';
           } } }
         }
