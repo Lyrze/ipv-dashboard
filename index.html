@@ -818,13 +818,6 @@
       </div>
       <div class="period-badge" id="product-badge">—</div>
     </div>
-    <div class="data-notice">
-      <span class="dn-icon">⚠</span>
-      <span>상품별 IPV는 CS 상담 <b>description 필드 키워드 기반 추정값</b>입니다.
-      전체 상담 중 약 8~13%만 상품이 특정되므로 실제 IPV보다 낮게 표시됩니다.
-      수치보다 <b>상품 간 상대적 순위</b>를 참고용으로 활용하세요.</span>
-    </div>
-
     <!-- ① 출고 대비 문의량 TOP 5 -->
     <div class="card mb-20">
       <div class="card-title" style="display:flex;align-items:center;">
@@ -1881,23 +1874,24 @@ function renderHistory() {
   });
 
   // ── PART 3b. CX 유형 월별 변동 (100% 스택 / 건수 토글) ──────
-  var CX_TYPES = ['반품/환불','불량/AS','배송문의','주문/결제','교환','이벤트/쿠폰','제품/사용문의','리뷰','기타/미분류','사유 미기재','AI 자동처리'];
-  // CX_TYPES → ALF V2 처리 제외
-  var CX_TYPES_F = CX_TYPES.filter(function(t){ return t !== 'ALF V2 처리'; });
+  // V10 카테고리 — by_inquiry_type_cx와 일치
+  var CX_TYPES = ['불량 확정','불량 미확정','유상 AS','반품/환불','100% 환불 이벤트','제품/사용문의','배송문의','주문/결제','이벤트/쿠폰','교환','리뷰','기타'];
+  var CX_TYPES_F = CX_TYPES;
 
-  // CX 유형별 색상 — 슬룸 토큰 기반
+  // CX V10 색상 매핑
   var CX_COLOR = {
-    '반품/환불':      '#A83228',   // bad
-    '불량/AS':        '#9A6A1F',   // warn
-    '배송문의':       '#4A6FA5',
-    '주문/결제':      '#5A8DBE',
-    '교환':           '#7B9BC4',
-    '이벤트/쿠폰':    '#C49A6C',
-    '제품/사용문의':  '#1E6B4A',   // good
-    '리뷰':           '#88A892',
-    '기타/미분류':    '#ADA59B',   // greige
-    '사유 미기재':    '#BFB8AE',
-    'AI 자동처리':    '#D4CEC4'
+    '불량 확정':         '#A83228',  // 진한 빨강
+    '불량 미확정':       '#D08070',  // 연한 빨강
+    '유상 AS':           '#002353',  // 슬룸 네이비
+    '반품/환불':         '#9A6A1F',  // 워닝 오렌지
+    '100% 환불 이벤트':  '#C49A6C',  // 워밍 베이지
+    '제품/사용문의':     '#1E6B4A',  // 슬룸 그린
+    '배송문의':          '#4A6FA5',  // 블루
+    '주문/결제':         '#5A8DBE',  // 라이트 블루
+    '이벤트/쿠폰':       '#D4A66B',  // 골드
+    '교환':              '#7B9BC4',  // 페일 블루
+    '리뷰':              '#88A892',  // 페일 그린
+    '기타':              '#D0CCC7',  // 연한 그레이지
   };
 
   // 데이터 생성 헬퍼
