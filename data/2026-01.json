@@ -142,48 +142,63 @@
   "by_inquiry_type_cx": [
     {
       "type": "반품/환불",
-      "count": 749,
-      "ratio": 42.4
+      "count": 513,
+      "ratio": 26.1
     },
     {
-      "type": "불량/AS",
-      "count": 523,
-      "ratio": 29.6
+      "type": "불량 확정",
+      "count": 371,
+      "ratio": 18.9
+    },
+    {
+      "type": "기타",
+      "count": 256,
+      "ratio": 13.0
+    },
+    {
+      "type": "100% 환불 이벤트",
+      "count": 212,
+      "ratio": 10.8
     },
     {
       "type": "배송문의",
-      "count": 211,
-      "ratio": 11.9
-    },
-    {
-      "type": "기타/미분류",
-      "count": 105,
-      "ratio": 5.9
-    },
-    {
-      "type": "이벤트/쿠폰",
-      "count": 97,
-      "ratio": 5.5
-    },
-    {
-      "type": "교환",
-      "count": 36,
-      "ratio": 2.0
-    },
-    {
-      "type": "주문/결제",
-      "count": 28,
-      "ratio": 1.6
+      "count": 194,
+      "ratio": 9.9
     },
     {
       "type": "제품/사용문의",
+      "count": 125,
+      "ratio": 6.4
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 113,
+      "ratio": 5.8
+    },
+    {
+      "type": "유상 AS",
+      "count": 111,
+      "ratio": 5.7
+    },
+    {
+      "type": "교환",
+      "count": 42,
+      "ratio": 2.1
+    },
+    {
+      "type": "주문/결제",
       "count": 17,
-      "ratio": 1.0
+      "ratio": 0.9
     },
     {
       "type": "리뷰",
-      "count": 1,
-      "ratio": 0.1
+      "count": 7,
+      "ratio": 0.4
+    },
+    {
+      "type": "불량 미확정",
+      "count": 3,
+      "ratio": 0.2
     }
   ],
   "by_inquiry_type_alf": {
@@ -1017,54 +1032,70 @@
   },
   "by_inquiry_type_total": [
     {
+      "type": "기타",
+      "count": 2380,
+      "ratio": 33.9
+    },
+    {
       "type": "반품/환불",
-      "count": 1850,
-      "ratio": 31.6
+      "count": 1226,
+      "ratio": 17.4
     },
     {
-      "type": "불량/AS",
-      "count": 1488,
-      "ratio": 25.4
+      "type": "불량 미확정",
+      "count": 719,
+      "ratio": 10.2
     },
     {
-      "type": "제품/사용문의",
-      "count": 840,
-      "ratio": 14.3
+      "type": "100% 환불 이벤트",
+      "count": 626,
+      "ratio": 8.9
     },
     {
       "type": "이벤트/쿠폰",
-      "count": 620,
-      "ratio": 10.6
+      "count": 517,
+      "ratio": 7.4
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 491,
+      "ratio": 7.0
+    },
+    {
+      "type": "불량 확정",
+      "count": 371,
+      "ratio": 5.3
     },
     {
       "type": "배송문의",
-      "count": 495,
-      "ratio": 8.5
+      "count": 342,
+      "ratio": 4.9
+    },
+    {
+      "type": "유상 AS",
+      "count": 122,
+      "ratio": 1.7
     },
     {
       "type": "주문/결제",
-      "count": 233,
-      "ratio": 4.0
+      "count": 121,
+      "ratio": 1.7
     },
     {
       "type": "교환",
-      "count": 221,
-      "ratio": 3.8
-    },
-    {
-      "type": "기타/미분류",
-      "count": 105,
-      "ratio": 1.8
+      "count": 101,
+      "ratio": 1.4
     },
     {
       "type": "리뷰",
-      "count": 2,
-      "ratio": 0.0
+      "count": 10,
+      "ratio": 0.1
     }
   ],
   "by_inquiry_type_unclassified": {
-    "alf_unclassified_count": 1300,
-    "alf_unclassified_ratio": 24.2,
-    "note": "AI 자동처리 상담 중 키워드 룰셋으로 분류되지 않은 건수 (메시지 빈값 또는 단순 인사 등)"
+    "classified_count": 4646,
+    "unclassified_count": 2380,
+    "total_chats": 7026,
+    "note": "V10: CX 매니저 태그 + ALF 폴백 매칭 (manager > ALF요약 > 첫메시지 > user전체)"
   }
 }
