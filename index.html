@@ -1027,6 +1027,25 @@
     <span id="sku-all-sub"></span><span id="sku-all-badge"></span>
   </div>
 
+        <div class="page-sub" id="sku-all-sub">상품별 문의유형 구성 비교</div>
+      </div>
+      <span class="period-badge" id="sku-all-badge">—</span>
+    </div>
+    <div class="data-notice">
+      <span class="dn-icon">⚠️</span>
+      <span>description 기재 건 기반 추정값. 매핑 건수가 적은 상품은 참고용으로만 활용하세요.</span>
+    </div>
+    <div class="card mb-20">
+      <div class="card-title"><span class="ct-icon">≡</span> 상품별 문의유형 구성 비교</div>
+      <div class="chart-wrap" style="height:320px"><canvas id="sku-all-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">▦</span> 전체 SKU 요약</div>
+      <div id="sku-all-table"></div>
+    </div>
+  </div>
+
+
 </main>
 
 <script>
@@ -1235,8 +1254,11 @@ document.getElementById('compare-select').addEventListener('change', function() 
 function renderAll() {
   renderOverview();
   renderInquiry();
+  renderChannel();
   renderHistory();
   renderProduct();   // 통합 페이지 (TOP5 + 주력 SKU + 전체 SKU)
+  renderSKUMain();
+  renderSKUAll();
 }
 
 // ────────────────────────────────────────────────────────
@@ -1678,18 +1700,31 @@ function renderInquiry() {
 
   // ── CX 도넛 (기준) ─────────────────────────────────
   killChart('inq-donut');
+  var cxTotalCnt = cxData.reduce(function(s,x){return s+x.count;},0);
+  var inqCenterPlugin = { id:'inqCtr', beforeDraw: function(chart){
+    var c=chart.ctx, a=chart.chartArea, cx=(a.left+a.right)/2, cy=(a.top+a.bottom)/2;
+    c.save();
+    c.font='bold 20px Noto Sans KR,sans-serif'; c.fillStyle='#002353';
+    c.textAlign='center'; c.textBaseline='middle';
+    c.fillText(cxTotalCnt.toLocaleString()+'건', cx, cy-9);
+    c.font='10.5px Noto Sans KR,sans-serif'; c.fillStyle='#6B7280';
+    c.fillText('CX 총 상담', cx, cy+13); c.restore();
+  }};
   C['inq-donut'] = new Chart(document.getElementById('inquiry-donut'), {
     type: 'doughnut',
     data: {
       labels: cxData.map(x => x.type),
       datasets: [{ data: cxData.map(x => x.count),
-        backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+        backgroundColor: cxData.map(x => TYPE_COLORS[x.type]||'#ADA59B'),
+        borderWidth: 3, borderColor: '#fff', hoverOffset: 10 }]
     },
+    plugins: [inqCenterPlugin],
     options: {
-      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${cxData[ctx.dataIndex].ratio}%)` } }
+        legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true, boxWidth:10 } },
+        tooltip: { backgroundColor:'rgba(0,35,83,0.92)', padding:10, cornerRadius:8,
+          callbacks: { label: ctx => '  ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + cxData[ctx.dataIndex].ratio + '%)' } }
       }
     }
   });
@@ -1768,6 +1803,91 @@ function renderInquiry() {
 // ────────────────────────────────────────────────────────
 //  HISTORY (월별 누적)
 // ────────────────────────────────────────────────────────
+
+function renderChannel() {
+  const d = current;
+  if (!d) return;
+  const dr = d.by_defect_return || {};
+  const label = d.period_label || d.period;
+  const chatTotal = d.summary?.chat_inquiries || 1;
+
+  document.getElementById('channel-sub').textContent = label + ' · 반품 ' + (dr.total_return||0).toLocaleString() + '건 / 불량 ' + (dr.total_defect||0).toLocaleString() + '건';
+  document.getElementById('channel-badge').textContent = label;
+
+  const retTotal = dr.total_return || 0;
+  const defTotal = dr.total_defect || 0;
+  const eventCnt = (dr.return_reasons||[]).find(function(r){ return r.reason==='100% 환불 이벤트'; })?.count || 0;
+  document.getElementById('dr-return-total').textContent = retTotal.toLocaleString() + '건';
+  document.getElementById('dr-return-ratio').textContent = '전체 CHAT ' + (chatTotal ? (retTotal/chatTotal*100).toFixed(1) : 0) + '%';
+  document.getElementById('dr-defect-total').textContent = defTotal.toLocaleString() + '건';
+  document.getElementById('dr-defect-ratio').textContent = '전체 CHAT ' + (chatTotal ? (defTotal/chatTotal*100).toFixed(1) : 0) + '%';
+  document.getElementById('dr-event-total').textContent = eventCnt.toLocaleString() + '건';
+  document.getElementById('dr-event-ratio').textContent = '반품 중 ' + (retTotal ? (eventCnt/retTotal*100).toFixed(1) : 0) + '%';
+
+  killChart('dr-return-donut');
+  const rr = (dr.return_reasons || []).filter(function(r){ return r.count > 0; });
+  if (rr.length) {
+    C['dr-return-donut'] = new Chart(document.getElementById('dr-return-donut'), {
+      type: 'doughnut',
+      data: { labels: rr.map(function(r){ return r.reason; }),
+        datasets: [{ data: rr.map(function(r){ return r.count; }),
+          backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }] },
+      options: { responsive: true, cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true } },
+          tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + rr[ctx.dataIndex].ratio + '%)'; } } } } }
+    });
+  }
+
+  killChart('dr-defect-donut');
+  const dt = (dr.defect_types || []).filter(function(t){ return t.count > 0; });
+  if (dt.length) {
+    C['dr-defect-donut'] = new Chart(document.getElementById('dr-defect-donut'), {
+      type: 'doughnut',
+      data: { labels: dt.map(function(t){ return t.type; }),
+        datasets: [{ data: dt.map(function(t){ return t.count; }),
+          backgroundColor: [PALETTE.bad, PALETTE.warn, PALETTE.navy, PALETTE.navyMid, PALETTE.navyLt, PALETTE.greige],
+          borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }] },
+      options: { responsive: true, cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true } },
+          tooltip: { callbacks: { label: function(ctx){ return ' ' + ctx.label + ': ' + ctx.raw.toLocaleString() + '건 (' + dt[ctx.dataIndex].ratio + '%)'; } } } } }
+    });
+  }
+
+  killChart('dr-trend');
+  if (allData.length > 1) {
+    const reasons = [...new Set(allData.flatMap(function(x){ return (x.by_defect_return?.return_reasons||[]).map(function(r){ return r.reason; }); }))];
+    C['dr-trend'] = new Chart(document.getElementById('dr-trend-chart'), {
+      type: 'line',
+      data: { labels: allData.map(function(x){ return x.period_label || x.period; }),
+        datasets: reasons.map(function(reason, i) { return {
+          label: reason,
+          data: allData.map(function(x){ return (x.by_defect_return?.return_reasons||[]).find(function(r){ return r.reason===reason; })?.count || 0; }),
+          borderColor: PALETTE.series[i%PALETTE.series.length],
+          backgroundColor: PALETTE.series[i%PALETTE.series.length] + '20',
+          borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false }; }) },
+      options: { responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font:{size:11}, padding:8, usePointStyle:true } } },
+        scales: { y: { beginAtZero:true, grid:{color:'#EEECe8'} }, x: { grid:{display:false} } } }
+    });
+  }
+
+  killChart('dr-product');
+  const bp = (dr.by_product || []).slice(0, 8);
+  if (bp.length) {
+    C['dr-product'] = new Chart(document.getElementById('dr-product-chart'), {
+      type: 'bar',
+      data: { labels: bp.map(function(p){ return p.name; }),
+        datasets: [
+          { label: '반품', data: bp.map(function(p){ return p.return_count; }), backgroundColor: 'rgba(168,50,40,0.7)', borderRadius: 4 },
+          { label: '불량', data: bp.map(function(p){ return p.defect_count; }), backgroundColor: 'rgba(154,106,31,0.7)', borderRadius: 4 }
+        ] },
+      options: { responsive: true, indexAxis: 'y',
+        plugins: { legend: { position: 'bottom', labels: { font:{size:11}, padding:10, usePointStyle:true } } },
+        scales: { x: { beginAtZero:true, grid:{color:'#EEECe8'} }, y: { grid:{display:false}, afterFit:function(s){s.width=140;} } } }
+    });
+  }
+}
+
 function renderHistory() {
   if (!allData.length) return;
   const labels = allData.map(function(x){ return x.period_label || x.period; });
@@ -1871,9 +1991,9 @@ function renderHistory() {
       labels: labels,
       datasets: [
         { label: '전체 IPV (%)', data: allData.map(function(x){return x.summary.ipv;}),
-          borderColor: PALETTE.navy, backgroundColor: 'rgba(0,35,83,0.08)',
-          borderWidth: 3, pointRadius: 6, pointBackgroundColor: '#fff',
-          pointBorderColor: PALETTE.navy, pointBorderWidth: 2,
+          borderColor: PALETTE.bad, backgroundColor: 'rgba(168,50,40,0.07)',
+          borderWidth: 3, pointRadius: 7, pointBackgroundColor: PALETTE.bad,
+          pointBorderColor: '#fff', pointBorderWidth: 2,
           tension: 0.3, fill: true },
         { label: 'CHAT IPV (%)', data: allData.map(function(x){return x.summary.ipv_chat || 0;}),
           borderColor: PALETTE.navyLt, backgroundColor: 'transparent',
@@ -1885,10 +2005,21 @@ function renderHistory() {
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, usePointStyle: true } } },
+      plugins: {
+        legend: { position: 'bottom', labels: { font:{size:11}, padding:14, usePointStyle:true, boxWidth:10 } },
+        tooltip: { backgroundColor:'rgba(0,35,83,0.92)', padding:12, cornerRadius:8, displayColors:true,
+          callbacks: { label: function(ctx){ return '  ' + ctx.dataset.label + ': ' + ctx.raw.toFixed(2) + '%'; },
+            afterBody: function(items) {
+              var idx = items[0].dataIndex, d = allData[idx];
+              return ['', '  출고 ' + d.summary.total_shipments.toLocaleString() + '건  |  상담 ' + d.summary.total_inquiries.toLocaleString() + '건'];
+            }
+          }
+        }
+      },
       scales: {
-        y: { beginAtZero: true, grid: { color: '#EEECe8' }, ticks: { callback: function(v){return v + '%';} } },
-        x: { grid: { display: false } }
+        y: { min: 0, grid:{color:'#EEECe8'}, ticks:{callback:function(v){return v+'%';}, font:{size:11}},
+          afterDataLimits: function(scale){ scale.max = Math.ceil(scale.max/5)*5+5; } },
+        x: { grid:{display:false}, ticks:{font:{size:11}} }
       }
     }
   });
