@@ -575,66 +575,10 @@
     {
       "name": "발편한케어 V1",
       "shipments": 0,
-      "desc_matched": 86,
-      "by_type": [
-        {
-          "type": "제품/사용문의",
-          "count": 33,
-          "ratio": 38.4
-        },
-        {
-          "type": "기타",
-          "count": 10,
-          "ratio": 11.6
-        },
-        {
-          "type": "반품/환불",
-          "count": 10,
-          "ratio": 11.6
-        },
-        {
-          "type": "불량 확정",
-          "count": 9,
-          "ratio": 10.5
-        },
-        {
-          "type": "불량 미확정",
-          "count": 7,
-          "ratio": 8.1
-        },
-        {
-          "type": "100% 환불 이벤트",
-          "count": 5,
-          "ratio": 5.8
-        },
-        {
-          "type": "유상 AS",
-          "count": 4,
-          "ratio": 4.7
-        },
-        {
-          "type": "배송문의",
-          "count": 3,
-          "ratio": 3.5
-        },
-        {
-          "type": "이벤트/쿠폰",
-          "count": 2,
-          "ratio": 2.3
-        },
-        {
-          "type": "주문/결제",
-          "count": 2,
-          "ratio": 2.3
-        },
-        {
-          "type": "교환",
-          "count": 1,
-          "ratio": 1.2
-        }
-      ],
+      "desc_matched": 0,
+      "by_type": [],
       "defect_detail": [],
-      "defect_total": 20,
+      "defect_total": 0,
       "return_detail": [],
       "return_total": 0
     },
@@ -999,41 +943,10 @@
     {
       "name": "허리베개 프로",
       "shipments": 0,
-      "desc_matched": 12,
-      "by_type": [
-        {
-          "type": "제품/사용문의",
-          "count": 7,
-          "ratio": 58.3
-        },
-        {
-          "type": "불량 미확정",
-          "count": 1,
-          "ratio": 8.3
-        },
-        {
-          "type": "기타",
-          "count": 1,
-          "ratio": 8.3
-        },
-        {
-          "type": "반품/환불",
-          "count": 1,
-          "ratio": 8.3
-        },
-        {
-          "type": "유상 AS",
-          "count": 1,
-          "ratio": 8.3
-        },
-        {
-          "type": "100% 환불 이벤트",
-          "count": 1,
-          "ratio": 8.3
-        }
-      ],
+      "desc_matched": 0,
+      "by_type": [],
       "defect_detail": [],
-      "defect_total": 2,
+      "defect_total": 0,
       "return_detail": [],
       "return_total": 0
     },
@@ -1198,7 +1111,24 @@
         "defect_count": 0
       }
     ],
-    "_recalc_note": "V7b: 4가지 케이스 + SKU 폴백 (manager > ALF요약 > 첫메시지)"
+    "_recalc_note": "V7b: 4가지 케이스 + SKU 폴백 (manager > ALF요약 > 첫메시지)",
+    "confirmed_breakdown": [
+      {
+        "type": "교환",
+        "count": 99,
+        "ratio": 29.2
+      },
+      {
+        "type": "반품·환불",
+        "count": 55,
+        "ratio": 16.2
+      },
+      {
+        "type": "미처리/확인 중",
+        "count": 185,
+        "ratio": 54.6
+      }
+    ]
   },
   "by_inquiry_type_cx": [
     {
