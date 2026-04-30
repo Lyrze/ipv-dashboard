@@ -19,76 +19,64 @@
   },
   "by_product": [
     {
-      "name": "기타 슬룸 제품",
-      "shipments": 16217,
-      "inquiries": 0,
-      "ipv": 0.0
-    },
-    {
       "name": "목베개 플러스",
       "shipments": 8781,
-      "inquiries": 270,
-      "ipv": 3.07
+      "inquiries": 564,
+      "ipv": 6.42
     },
     {
       "name": "허리편한케어 V2",
       "shipments": 3036,
-      "inquiries": 119,
-      "ipv": 3.92
+      "inquiries": 255,
+      "ipv": 8.4
     },
     {
       "name": "발편한케어 V1",
       "shipments": 2347,
-      "inquiries": 48,
-      "ipv": 2.05
-    },
-    {
-      "name": "허리베개",
-      "shipments": 1576,
-      "inquiries": 6,
-      "ipv": 0.38
+      "inquiries": 101,
+      "ipv": 4.3
     },
     {
       "name": "허리편한케어 V1",
       "shipments": 1139,
-      "inquiries": 25,
-      "ipv": 2.19
+      "inquiries": 43,
+      "ipv": 3.78
+    },
+    {
+      "name": "허리베개",
+      "shipments": 1576,
+      "inquiries": 22,
+      "ipv": 1.4
     },
     {
       "name": "목편한케어",
       "shipments": 1017,
-      "inquiries": 20,
-      "ipv": 1.97
+      "inquiries": 44,
+      "ipv": 4.33
     },
     {
       "name": "목편한케어 플라잉",
       "shipments": 958,
-      "inquiries": 32,
-      "ipv": 3.34
+      "inquiries": 66,
+      "ipv": 6.89
     },
     {
       "name": "넥숄더 프로",
       "shipments": 684,
-      "inquiries": 40,
-      "ipv": 5.85
+      "inquiries": 73,
+      "ipv": 10.67
     },
     {
       "name": "넥숄더 힐링케어",
       "shipments": 473,
-      "inquiries": 6,
-      "ipv": 1.27
+      "inquiries": 14,
+      "ipv": 2.96
     },
     {
       "name": "눈편한케어",
       "shipments": 298,
-      "inquiries": 4,
-      "ipv": 1.34
-    },
-    {
-      "name": "종아리편한케어",
-      "shipments": 5,
-      "inquiries": 0,
-      "ipv": 0.0
+      "inquiries": 11,
+      "ipv": 3.69
     }
   ],
   "by_inquiry_type": [
