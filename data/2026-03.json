@@ -17,67 +17,99 @@
   "by_product": [
     {
       "name": "목베개 플러스",
-      "shipments": 9325
+      "shipments": 9325,
+      "inquiries": 933,
+      "ipv": 10.01
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2209
+      "shipments": 2209,
+      "inquiries": 417,
+      "ipv": 18.88
     },
     {
       "name": "허리베개",
-      "shipments": 1809
+      "shipments": 1809,
+      "inquiries": 23,
+      "ipv": 1.27
     },
     {
       "name": "발편한케어",
-      "shipments": 1433
+      "shipments": 1433,
+      "inquiries": 86,
+      "ipv": 6.0
     },
     {
       "name": "허리편한케어 V1",
-      "shipments": 1146
+      "shipments": 1146,
+      "inquiries": 12,
+      "ipv": 1.05
     },
     {
       "name": "발편한케어 V2",
-      "shipments": 932
+      "shipments": 932,
+      "inquiries": 59,
+      "ipv": 6.33
     },
     {
       "name": "넥숄더 프로",
-      "shipments": 766
+      "shipments": 766,
+      "inquiries": 76,
+      "ipv": 9.92
     },
     {
       "name": "목편한케어 플라잉",
-      "shipments": 745
+      "shipments": 745,
+      "inquiries": 49,
+      "ipv": 6.58
     },
     {
       "name": "눈편한케어",
-      "shipments": 479
+      "shipments": 479,
+      "inquiries": 5,
+      "ipv": 1.04
     },
     {
       "name": "넥숄더 힐링케어",
-      "shipments": 381
+      "shipments": 381,
+      "inquiries": 37,
+      "ipv": 9.71
     },
     {
       "name": "목편한케어",
-      "shipments": 373
+      "shipments": 373,
+      "inquiries": 49,
+      "ipv": 13.14
     },
     {
       "name": "손편한케어",
-      "shipments": 276
+      "shipments": 276,
+      "inquiries": 20,
+      "ipv": 7.25
     },
     {
       "name": "넥숄더 힐링케어 V2",
-      "shipments": 129
+      "shipments": 129,
+      "inquiries": 9,
+      "ipv": 6.98
     },
     {
       "name": "종아리편한케어",
-      "shipments": 128
+      "shipments": 128,
+      "inquiries": 3,
+      "ipv": 2.34
     },
     {
       "name": "목 마사지 베개 V2",
-      "shipments": 71
+      "shipments": 71,
+      "inquiries": 4,
+      "ipv": 5.63
     },
     {
       "name": "허리편한케어 마스터",
-      "shipments": 37
+      "shipments": 37,
+      "inquiries": 6,
+      "ipv": 16.22
     }
   ],
   "by_inquiry_type": [
