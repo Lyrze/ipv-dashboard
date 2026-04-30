@@ -887,6 +887,10 @@
 
     <!-- ─ CX 문의 유형 (좌우 비교) ─ -->
     <div class="section-label">CX 문의 유형별 비중</div>
+    <div style="font-size:11.5px;color:var(--text-muted);margin:-6px 0 12px;line-height:1.55;padding:8px 12px;background:#FAF8F4;border-left:3px solid #9A6A1F;border-radius:3px;">
+      <b style="color:#9A6A1F;">반품/환불</b> 카테고리에 포함되는 문의:
+      반품 신청 방법 · 신청 후 처리 현황 · 일반 반품/환불 처리 · 회수 일정 등 (단, <b>100% 환불 이벤트</b> 관련 문의는 별도 카테고리로 분리)
+    </div>
     <div class="vs-card-pair mb-20">
       <div class="card current">
         <div class="card-title" style="display:flex;align-items:center;">
@@ -1734,13 +1738,11 @@ function renderHistory() {
   var ipvDelta = prev ? +(last.summary.ipv - prev.summary.ipv).toFixed(2) : null;
   var shipDelta = prev ? Math.round(last.summary.total_shipments - prev.summary.total_shipments) : null;
   var cxDelta = prev ? last.summary.chat_inquiries - prev.summary.chat_inquiries : null;
-  var alfRatioDelta = prev ? +(last.by_inquiry_type_alf.ratio_of_chat - prev.by_inquiry_type_alf.ratio_of_chat).toFixed(1) : null;
 
   document.getElementById('hist-kpi-row').innerHTML =
     kpiCard('IPV (구매 후 문의율)', last.summary.ipv.toFixed(2), '%', ipvDelta, '%p', function(d){ return d > 0 ? 'var(--bad)' : 'var(--good)'; }) +
     kpiCard('슬룸 출고량', last.summary.total_shipments.toLocaleString(), '건', shipDelta, '건', function(d){ return d > 0 ? 'var(--good)' : 'var(--warn)'; }) +
-    kpiCard('총 상담 건수', last.summary.total_inquiries.toLocaleString(), '건', cxDelta, '건', function(d){ return d > 0 ? 'var(--warn)' : 'var(--good)'; }) +
-    kpiCard('ALF V2 처리율', last.by_inquiry_type_alf.ratio_of_chat + '', '%', alfRatioDelta, '%p', function(d){ return 'var(--text-muted)'; });
+    kpiCard('총 상담 건수', last.summary.total_inquiries.toLocaleString(), '건', cxDelta, '건', function(d){ return d > 0 ? 'var(--warn)' : 'var(--good)'; });
 
   // ── 뱃지 · 월별 스냅샷 카드 ────────────────────────────────
   document.getElementById('hist-badge').textContent = allData[0].period_label + ' ~ ' + last.period_label;
