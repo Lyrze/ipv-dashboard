@@ -1697,6 +1697,7 @@ function renderInquiry() {
   const sortedCxData = [...cxData].sort((a,b) => b.count - a.count);
   const cxTotal4Donut = sortedCxData.reduce((s,x)=>s+x.count,0);
   const inqCenterPlugin = { id:'inqCtr', beforeDraw: function(chart){
+    if (!chart.chartArea) return;
     const c=chart.ctx, a=chart.chartArea, cx=(a.left+a.right)/2, cy=(a.top+a.bottom)/2;
     c.save();
     c.font='bold 18px Noto Sans KR,sans-serif'; c.fillStyle='#002353';
