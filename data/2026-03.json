@@ -9,6 +9,7 @@
     "total_inquiries": 8069,
     "chat_inquiries": 7997,
     "call_ob_inquiries": 72,
+    "board_inquiries": 0,
     "ipv": 32.69,
     "ipv_chat": 32.4,
     "ipv_call": 0.29
@@ -276,6 +277,58 @@
       "shipments": 36,
       "inquiries": 12,
       "ipv": 32.69
+    }
+  ],
+  "by_inquiry_type_total": [
+    {
+      "type": "ALF V2 처리",
+      "count": 5019,
+      "ratio": 62.8
+    },
+    {
+      "type": "반품/환불",
+      "count": 1198,
+      "ratio": 15.0
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 627,
+      "ratio": 7.8
+    },
+    {
+      "type": "불량/AS",
+      "count": 572,
+      "ratio": 7.2
+    },
+    {
+      "type": "기타/미분류",
+      "count": 282,
+      "ratio": 3.5
+    },
+    {
+      "type": "배송문의",
+      "count": 178,
+      "ratio": 2.2
+    },
+    {
+      "type": "주문/결제",
+      "count": 78,
+      "ratio": 1.0
+    },
+    {
+      "type": "교환",
+      "count": 28,
+      "ratio": 0.4
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 12,
+      "ratio": 0.2
+    },
+    {
+      "type": "리뷰",
+      "count": 3,
+      "ratio": 0.0
     }
   ],
   "by_product_detail": [
@@ -882,23 +935,18 @@
     "defect_types": [
       {
         "type": "불량 확정",
-        "count": 320,
-        "ratio": 46.6
+        "count": 426,
+        "ratio": 62.0
       },
       {
-        "type": "불량 문의",
-        "count": 139,
-        "ratio": 20.2
+        "type": "불량 미확정",
+        "count": 142,
+        "ratio": 20.7
       },
       {
         "type": "유상 AS",
-        "count": 117,
-        "ratio": 17.0
-      },
-      {
-        "type": "소음 불량",
-        "count": 111,
-        "ratio": 16.2
+        "count": 119,
+        "ratio": 17.3
       }
     ],
     "by_product": [
