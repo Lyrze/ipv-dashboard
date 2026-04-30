@@ -17,67 +17,99 @@
   "by_product": [
     {
       "name": "목베개 플러스",
-      "shipments": 10072
+      "shipments": 10072,
+      "inquiries": 847,
+      "ipv": 8.41
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2271
+      "shipments": 2271,
+      "inquiries": 330,
+      "ipv": 14.53
     },
     {
       "name": "허리베개",
-      "shipments": 1989
+      "shipments": 1989,
+      "inquiries": 18,
+      "ipv": 0.9
     },
     {
       "name": "발편한케어",
-      "shipments": 1647
+      "shipments": 1647,
+      "inquiries": 88,
+      "ipv": 5.34
     },
     {
       "name": "넥숄더 프로",
-      "shipments": 1105
+      "shipments": 1105,
+      "inquiries": 49,
+      "ipv": 4.43
     },
     {
       "name": "목편한케어",
-      "shipments": 785
+      "shipments": 785,
+      "inquiries": 49,
+      "ipv": 6.24
     },
     {
       "name": "목편한케어 플라잉",
-      "shipments": 666
+      "shipments": 666,
+      "inquiries": 46,
+      "ipv": 6.91
     },
     {
       "name": "허리편한케어 V1",
-      "shipments": 577
+      "shipments": 577,
+      "inquiries": 24,
+      "ipv": 4.16
     },
     {
       "name": "넥숄더 힐링케어",
-      "shipments": 472
+      "shipments": 472,
+      "inquiries": 19,
+      "ipv": 4.03
     },
     {
       "name": "눈편한케어",
-      "shipments": 459
+      "shipments": 459,
+      "inquiries": 11,
+      "ipv": 2.4
     },
     {
       "name": "손편한케어",
-      "shipments": 251
+      "shipments": 251,
+      "inquiries": 4,
+      "ipv": 1.59
     },
     {
       "name": "종아리편한케어",
-      "shipments": 96
+      "shipments": 96,
+      "inquiries": 2,
+      "ipv": 2.08
     },
     {
       "name": "발편한케어 V2",
-      "shipments": 81
+      "shipments": 81,
+      "inquiries": 16,
+      "ipv": 19.75
     },
     {
       "name": "허리편한케어 마스터",
-      "shipments": 45
+      "shipments": 45,
+      "inquiries": 0,
+      "ipv": 0.0
     },
     {
       "name": "넥숄더 힐링케어 V2",
-      "shipments": 4
+      "shipments": 4,
+      "inquiries": 2,
+      "ipv": 50.0
     },
     {
       "name": "허리베개 프로",
-      "shipments": 0
+      "shipments": 0,
+      "inquiries": 20,
+      "ipv": 0
     }
   ],
   "by_inquiry_type": [
