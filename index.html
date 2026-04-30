@@ -1233,10 +1233,10 @@ document.getElementById('compare-select').addEventListener('change', function() 
 
 // ── Master render ─────────────────────────────
 function renderAll() {
-  renderOverview();
-  renderInquiry();
-  renderHistory();
-  renderProduct();   // 통합 페이지 (TOP5 + 주력 SKU + 전체 SKU)
+  var fns = [renderOverview, renderInquiry, renderHistory, renderProduct];
+  fns.forEach(function(fn) {
+    try { fn(); } catch(e) { console.error('[renderAll] ' + fn.name + ' 오류:', e); }
+  });
 }
 
 // ────────────────────────────────────────────────────────
