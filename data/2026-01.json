@@ -17,59 +17,87 @@
   "by_product": [
     {
       "name": "목베개 플러스",
-      "shipments": 8781
+      "shipments": 8781,
+      "inquiries": 908,
+      "ipv": 10.34
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2983
+      "shipments": 2983,
+      "inquiries": 342,
+      "ipv": 11.46
     },
     {
       "name": "발편한케어",
-      "shipments": 2347
+      "shipments": 2347,
+      "inquiries": 100,
+      "ipv": 4.26
     },
     {
       "name": "허리베개",
-      "shipments": 1576
+      "shipments": 1576,
+      "inquiries": 22,
+      "ipv": 1.4
     },
     {
       "name": "허리편한케어 V1",
-      "shipments": 1139
+      "shipments": 1139,
+      "inquiries": 22,
+      "ipv": 1.93
     },
     {
       "name": "목편한케어",
-      "shipments": 1017
+      "shipments": 1017,
+      "inquiries": 47,
+      "ipv": 4.62
     },
     {
       "name": "목편한케어 플라잉",
-      "shipments": 958
+      "shipments": 958,
+      "inquiries": 37,
+      "ipv": 3.86
     },
     {
       "name": "넥숄더 프로",
-      "shipments": 684
+      "shipments": 684,
+      "inquiries": 73,
+      "ipv": 10.67
     },
     {
       "name": "넥숄더 힐링케어",
-      "shipments": 471
+      "shipments": 471,
+      "inquiries": 14,
+      "ipv": 2.97
     },
     {
       "name": "눈편한케어",
-      "shipments": 298
+      "shipments": 298,
+      "inquiries": 11,
+      "ipv": 3.69
     },
     {
       "name": "손편한케어",
-      "shipments": 251
+      "shipments": 251,
+      "inquiries": 14,
+      "ipv": 5.58
     },
     {
       "name": "허리편한케어 마스터",
-      "shipments": 53
+      "shipments": 53,
+      "inquiries": 13,
+      "ipv": 24.53
     },
     {
       "name": "종아리편한케어",
-      "shipments": 5
+      "shipments": 5,
+      "inquiries": 0,
+      "ipv": 0.0
     },
     {
       "name": "넥숄더 힐링케어 V2",
-      "shipments": 2
+      "shipments": 2,
+      "inquiries": 2,
+      "ipv": 100.0
     }
   ],
   "by_inquiry_type": [
