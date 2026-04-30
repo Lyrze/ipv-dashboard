@@ -1150,5 +1150,11 @@
     "unclassified_count": 2380,
     "total_chats": 7026,
     "note": "V10: CX 매니저 태그 + ALF 폴백 매칭 (manager > ALF요약 > 첫메시지 > user전체)"
+  },
+  "by_inquiry_type_alf": {
+    "total": 4865,
+    "ratio_of_chat": 71.2,
+    "alf_unresolved": 0,
+    "alf_error": 0
   }
 }
