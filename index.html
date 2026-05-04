@@ -1233,10 +1233,10 @@ document.getElementById('compare-select').addEventListener('change', function() 
 
 // ── Master render ─────────────────────────────
 function renderAll() {
-  var fns = [renderOverview, renderInquiry, renderHistory, renderProduct];
-  fns.forEach(function(fn) {
-    try { fn(); } catch(e) { console.error('[renderAll] ' + fn.name + ' 오류:', e); }
-  });
+  renderOverview();
+  renderInquiry();
+  renderHistory();
+  renderProduct();   // 통합 페이지 (TOP5 + 주력 SKU + 전체 SKU)
 }
 
 // ────────────────────────────────────────────────────────
@@ -1316,34 +1316,22 @@ function renderOverview() {
       datasets: [{
         label: 'IPV (%)',
         data: allData.map(x => x.summary.ipv),
-        borderColor: PALETTE.bad,
-        backgroundColor: 'rgba(168,50,40,0.07)',
-        borderWidth: 3,
+        borderColor: PALETTE.navy,
+        backgroundColor: 'rgba(0,35,83,0.06)',
+        borderWidth: 2.5,
         pointBackgroundColor: allData.map(x => x.summary.ipv >= 10 ? PALETTE.bad : x.summary.ipv >= 6 ? PALETTE.warn : PALETTE.good),
-        pointBorderColor: '#fff', pointBorderWidth: 2,
-        pointRadius: 7, pointHoverRadius: 9,
+        pointRadius: 5, pointHoverRadius: 7,
         tension: 0.35, fill: true
       }]
     },
     options: {
       responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { backgroundColor:'rgba(0,35,83,0.92)', padding:12, cornerRadius:8,
-          callbacks: {
-            title: items => items[0].label,
-            label: ctx => `  IPV: ${ctx.parsed.y.toFixed(2)}%`,
-            afterBody: items => {
-              const d = allData[items[0].dataIndex];
-              return [`  출고 ${d.summary.total_shipments.toLocaleString()}건 | 상담 ${d.summary.total_inquiries.toLocaleString()}건`];
-            }
-          }
-        }
-      },
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => `IPV: ${ctx.parsed.y.toFixed(2)}%` }
+      }},
       scales: {
-        y: { beginAtZero: true, grid:{color:'#EEECe8'}, ticks:{callback:v=>v+'%', font:{size:11}},
-             title:{display:true, text:'IPV (%)', font:{size:11}} },
-        x: { grid:{display:false}, ticks:{font:{size:11}} }
+        y: { beginAtZero: true, grid: { color: '#EEECe8' }, ticks: { callback: v => v + '%' } },
+        x: { grid: { display: false } }
       }
     }
   });
@@ -1369,10 +1357,8 @@ function renderOverview() {
     };
     killChart(canvasId);
     if (!items || !items.length) return;
-    // '기타' 제외 후 많은→적은 순 정렬
-    const filteredItems = items
-      .filter(it => it.type !== '기타' && it.type !== '기타/미분류')
-      .sort((a, b) => b.count - a.count);
+    // '기타'는 도넛 분모에서 제외 (가독성)
+    const filteredItems = items.filter(it => it.type !== '기타' && it.type !== '기타/미분류');
     const totalFiltered = filteredItems.reduce((s, it) => s + it.count, 0);
     items = filteredItems;
     totalCount = totalFiltered;
@@ -1483,7 +1469,7 @@ function renderOverview() {
           datalabels: { display: false }
         },
         scales: {
-          x: { beginAtZero: true, grid:{color:'#EEECe8'}, ticks:{font:{size:11}, callback:v=>v+'건'} },
+          x: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '건수' } },
           y: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } }
         }
       }
@@ -1542,7 +1528,7 @@ function renderOverview() {
     };
     const reasons = (dr.return_reasons || [])
       .filter(r => REASON_ORDER.includes(r.reason))
-      .sort((a, b) => b.count - a.count);  // 많은→적은 순
+      .sort((a, b) => REASON_ORDER.indexOf(a.reason) - REASON_ORDER.indexOf(b.reason));
 
     const labelsRR = reasons.map(r => r.reason);
     const countsRR = reasons.map(r => r.count);
@@ -1561,11 +1547,10 @@ function renderOverview() {
         indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { backgroundColor:'rgba(0,35,83,0.92)', padding:10, cornerRadius:8,
-            callbacks: { label: ctx => {
-              const pct = totalRR ? (ctx.raw / totalRR * 100).toFixed(1) : 0;
-              return `  ${ctx.raw.toLocaleString()}건 (${pct}%)`;
-            }}}
+          tooltip: { callbacks: { label: ctx => {
+            const pct = totalRR ? (ctx.raw / totalRR * 100).toFixed(1) : 0;
+            return ` ${ctx.raw.toLocaleString()}건 (${pct}%)`;
+          }}}
         },
         scales: {
           x: { beginAtZero: true, grid: { color: '#EEECe8' }, title: { display: true, text: '건수' } },
@@ -1693,42 +1678,18 @@ function renderInquiry() {
 
   // ── CX 도넛 (기준) ─────────────────────────────────
   killChart('inq-donut');
-  // 도넛: 많은→적은 순 정렬
-  const sortedCxData = [...cxData].sort((a,b) => b.count - a.count);
-  const cxTotal4Donut = sortedCxData.reduce((s,x)=>s+x.count,0);
-  const inqCenterPlugin = { id:'inqCtr', beforeDraw: function(chart){
-    if (!chart.chartArea) return;
-    const c=chart.ctx, a=chart.chartArea, cx=(a.left+a.right)/2, cy=(a.top+a.bottom)/2;
-    c.save();
-    c.font='bold 18px Noto Sans KR,sans-serif'; c.fillStyle='#002353';
-    c.textAlign='center'; c.textBaseline='middle';
-    c.fillText(cxTotal4Donut.toLocaleString()+'건', cx, cy-8);
-    c.font='10.5px Noto Sans KR,sans-serif'; c.fillStyle='#6B7280';
-    c.fillText('CX 상담 합계', cx, cy+12); c.restore();
-  }};
   C['inq-donut'] = new Chart(document.getElementById('inquiry-donut'), {
     type: 'doughnut',
     data: {
-      labels: sortedCxData.map(x => x.type),
-      datasets: [{ data: sortedCxData.map(x => x.count),
-        backgroundColor: sortedCxData.map(x => TYPE_COLOR_MAP[x.type]||'#ADA59B'),
-        borderWidth: 3, borderColor: '#fff', hoverOffset: 10 }]
+      labels: cxData.map(x => x.type),
+      datasets: [{ data: cxData.map(x => x.count),
+        backgroundColor: PALETTE.series, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
     },
-    plugins: [inqCenterPlugin],
     options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
       plugins: {
-        legend: { position: 'right', labels: { font:{size:10.5}, padding:8, usePointStyle:true, boxWidth:8,
-          generateLabels: chart => chart.data.labels.map((lbl,i)=>{
-            const v=chart.data.datasets[0].data[i];
-            const pct=cxTotal4Donut?(v/cxTotal4Donut*100).toFixed(1):0;
-            return { text:`${lbl}  ${pct}%`, fillStyle:chart.data.datasets[0].backgroundColor[i],
-                     strokeStyle:chart.data.datasets[0].backgroundColor[i], pointStyle:'circle', index:i };
-          })
-        }},
-        tooltip: { backgroundColor:'rgba(0,35,83,0.92)', padding:10, cornerRadius:8,
-          callbacks: { label: ctx=>`  ${ctx.raw.toLocaleString()}건 (${(cxTotal4Donut?ctx.raw/cxTotal4Donut*100:0).toFixed(1)}%)` }
-        }
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10, usePointStyle: true, boxWidth: 10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}건 (${cxData[ctx.dataIndex].ratio}%)` } }
       }
     }
   });
@@ -1972,12 +1933,7 @@ function renderHistory() {
   // ── PART 3b. CX 유형 월별 변동 (100% 스택 / 건수 토글) ──────
   // V10 카테고리 — by_inquiry_type_cx와 일치
   var CX_TYPES = ['불량 확정','불량 미확정','유상 AS','반품/환불','100% 환불 이벤트','제품/사용문의','배송문의','주문/결제','이벤트/쿠폰','교환','리뷰','기타'];
-  // CX 타입을 전체 합계 기준 많은→적은 순으로 정렬
-  var CX_TYPES_F = CX_TYPES.slice().sort(function(a,b){
-    var sa = allData.reduce(function(s,x){var r=(x.by_inquiry_type_cx||[]).find(function(t){return t.type===a;});return s+(r?r.count:0);},0);
-    var sb = allData.reduce(function(s,x){var r=(x.by_inquiry_type_cx||[]).find(function(t){return t.type===b;});return s+(r?r.count:0);},0);
-    return sb - sa;
-  });
+  var CX_TYPES_F = CX_TYPES;
 
   // CX V10 색상 매핑
   var CX_COLOR = {
@@ -2101,9 +2057,7 @@ function renderHistory() {
       labels: labels,
       datasets: [
         { label: '반품 상담', data: allData.map(function(x){return (x.by_defect_return||{}).total_return || 0;}),
-          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad + '14', borderWidth: 3,
-          tension: 0.3, pointRadius: 7, pointBackgroundColor: PALETTE.bad,
-          pointBorderColor:'#fff', pointBorderWidth:2, fill: false },
+          borderColor: PALETTE.bad, backgroundColor: PALETTE.bad + '14', borderWidth: 2.5, tension: 0.3, pointRadius: 5, fill: false },
         { label: '불량·AS 상담', data: allData.map(function(x){return (x.by_defect_return||{}).total_defect || 0;}),
           borderColor: PALETTE.warn, backgroundColor: PALETTE.warn + '14', borderWidth: 2.5, tension: 0.3, pointRadius: 5, fill: false },
         { label: '100% 환불 이벤트', data: allData.map(function(x){
