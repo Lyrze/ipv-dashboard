@@ -21,27 +21,27 @@
   "by_product": [
     {
       "name": "목베개 플러스",
-      "shipments": 10072,
+      "shipments": 10036,
       "inquiries": 1285,
-      "ipv": 12.76
+      "ipv": 12.8
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2316,
+      "shipments": 2271,
       "inquiries": 298,
-      "ipv": 12.87
-    },
-    {
-      "name": "허리베개",
-      "shipments": 1989,
-      "inquiries": 3,
-      "ipv": 0.15
+      "ipv": 13.12
     },
     {
       "name": "발편한케어 V1",
       "shipments": 1647,
       "inquiries": 120,
       "ipv": 7.29
+    },
+    {
+      "name": "허리베개",
+      "shipments": 1210,
+      "inquiries": 3,
+      "ipv": 0.25
     },
     {
       "name": "넥숄더 프로",
@@ -54,6 +54,12 @@
       "shipments": 785,
       "inquiries": 68,
       "ipv": 8.66
+    },
+    {
+      "name": "허리베개 프로",
+      "shipments": 779,
+      "inquiries": 26,
+      "ipv": 3.34
     },
     {
       "name": "목편한케어 플라잉",
@@ -69,9 +75,9 @@
     },
     {
       "name": "넥숄더 힐링케어",
-      "shipments": 476,
+      "shipments": 472,
       "inquiries": 26,
-      "ipv": 5.46
+      "ipv": 5.51
     },
     {
       "name": "눈편한케어",
@@ -80,10 +86,40 @@
       "ipv": 2.83
     },
     {
+      "name": "손편한케어",
+      "shipments": 251,
+      "inquiries": 8,
+      "ipv": 3.19
+    },
+    {
+      "name": "종아리 편한케어",
+      "shipments": 96,
+      "inquiries": 0,
+      "ipv": 0.0
+    },
+    {
       "name": "발편한케어 V2",
       "shipments": 81,
       "inquiries": 22,
       "ipv": 27.16
+    },
+    {
+      "name": "허리편한케어 마스터",
+      "shipments": 45,
+      "inquiries": 3,
+      "ipv": 6.67
+    },
+    {
+      "name": "넥숄더 힐링케어 V2",
+      "shipments": 4,
+      "inquiries": 1,
+      "ipv": 25.0
+    },
+    {
+      "name": "목베개 프로",
+      "shipments": 0,
+      "inquiries": 0,
+      "ipv": 0
     }
   ],
   "by_inquiry_type": [
@@ -269,15 +305,27 @@
     },
     {
       "channel": "기타",
-      "shipments": 28,
+      "shipments": 0,
       "inquiries": 7,
       "ipv": 26.62
+    },
+    {
+      "channel": "사방넷",
+      "shipments": 28,
+      "inquiries": 0,
+      "ipv": 0
+    },
+    {
+      "channel": "nan",
+      "shipments": 0,
+      "inquiries": 0,
+      "ipv": 0
     }
   ],
   "by_product_detail": [
     {
       "name": "목베개 플러스",
-      "shipments": 10072,
+      "shipments": 10036,
       "desc_matched": 1285,
       "by_type": [
         {
@@ -394,7 +442,7 @@
     },
     {
       "name": "허리편한케어 V2",
-      "shipments": 2316,
+      "shipments": 2271,
       "desc_matched": 298,
       "by_type": [
         {
@@ -701,7 +749,7 @@
     },
     {
       "name": "허리베개",
-      "shipments": 1989,
+      "shipments": 1210,
       "desc_matched": 3,
       "by_type": [
         {
@@ -892,7 +940,7 @@
     },
     {
       "name": "넥숄더 힐링케어",
-      "shipments": 476,
+      "shipments": 472,
       "desc_matched": 26,
       "by_type": [
         {
@@ -982,6 +1030,145 @@
       ],
       "defect_total": 7,
       "defect_detail": []
+    },
+    {
+      "name": "넥숄더 힐링케어 V2",
+      "shipments": 4,
+      "desc_matched": 1,
+      "by_type": [
+        {
+          "type": "불량 미확정",
+          "count": 1,
+          "ratio": 100.0
+        }
+      ],
+      "defect_detail": [],
+      "defect_total": 1,
+      "return_detail": [],
+      "return_total": 0
+    },
+    {
+      "name": "목베개 프로",
+      "shipments": 0,
+      "desc_matched": 0,
+      "by_type": [],
+      "defect_detail": [],
+      "defect_total": 0,
+      "return_detail": [],
+      "return_total": 0
+    },
+    {
+      "name": "손편한케어",
+      "shipments": 251,
+      "desc_matched": 8,
+      "by_type": [
+        {
+          "type": "불량 확정",
+          "count": 4,
+          "ratio": 50.0
+        },
+        {
+          "type": "불량 미확정",
+          "count": 1,
+          "ratio": 12.5
+        },
+        {
+          "type": "배송문의",
+          "count": 1,
+          "ratio": 12.5
+        },
+        {
+          "type": "이벤트/쿠폰",
+          "count": 1,
+          "ratio": 12.5
+        },
+        {
+          "type": "기타",
+          "count": 1,
+          "ratio": 12.5
+        }
+      ],
+      "defect_detail": [],
+      "defect_total": 5,
+      "return_detail": [],
+      "return_total": 0
+    },
+    {
+      "name": "종아리 편한케어",
+      "shipments": 96,
+      "desc_matched": 0,
+      "by_type": [],
+      "defect_detail": [],
+      "defect_total": 0,
+      "return_detail": [],
+      "return_total": 0
+    },
+    {
+      "name": "허리베개 프로",
+      "shipments": 779,
+      "desc_matched": 26,
+      "by_type": [
+        {
+          "type": "불량 미확정",
+          "count": 10,
+          "ratio": 38.5
+        },
+        {
+          "type": "제품/사용문의",
+          "count": 7,
+          "ratio": 26.9
+        },
+        {
+          "type": "불량 확정",
+          "count": 3,
+          "ratio": 11.5
+        },
+        {
+          "type": "기타",
+          "count": 2,
+          "ratio": 7.7
+        },
+        {
+          "type": "반품/환불",
+          "count": 2,
+          "ratio": 7.7
+        },
+        {
+          "type": "교환",
+          "count": 1,
+          "ratio": 3.8
+        },
+        {
+          "type": "유상 AS",
+          "count": 1,
+          "ratio": 3.8
+        }
+      ],
+      "defect_detail": [],
+      "defect_total": 14,
+      "return_detail": [],
+      "return_total": 0
+    },
+    {
+      "name": "허리편한케어 마스터",
+      "shipments": 45,
+      "desc_matched": 3,
+      "by_type": [
+        {
+          "type": "100% 환불 이벤트",
+          "count": 2,
+          "ratio": 66.7
+        },
+        {
+          "type": "불량 확정",
+          "count": 1,
+          "ratio": 33.3
+        }
+      ],
+      "defect_detail": [],
+      "defect_total": 1,
+      "return_detail": [],
+      "return_total": 0
     }
   ],
   "by_defect_return": {
