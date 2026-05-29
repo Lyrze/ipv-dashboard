@@ -3,7 +3,7 @@
   "period_label": "2026년 4월",
   "brand": "슬룸",
   "generated_at": "2026-04-22",
-  "note": "재계산 대기 중 (recalc_v12_fallback.py 실행 필요)",
+  "note": "V10: CX 매니저 태그 + ALF 폴백 매칭 (manager > ALF요약 > 첫메시지 > user전체) — V12 SKU + 목베개 폴백 (2026-05-04)",
   "summary": {
     "total_shipments": 0,
     "total_inquiries": 0,
@@ -16,21 +16,198 @@
     "_inquiry_note": "채널톡 7,997건 + 게시판/메일 1,618건 (게시판/메일은 유형 분류 미적용)",
     "ipv_board": 0,
     "_ipv_note": "IPV 합산 = 채널톡(32.4%) + OB콜(0.29%) + 게시판/메일(6.56%) = 39.25%",
-    "total_chats": 0
+    "total_chats": 7193
   },
   "by_product": [],
   "by_inquiry_type": [],
-  "by_inquiry_type_cx": [],
+  "by_inquiry_type_cx": [
+    {
+      "type": "100% 환불 이벤트",
+      "count": 710,
+      "ratio": 21.1
+    },
+    {
+      "type": "반품/환불",
+      "count": 584,
+      "ratio": 17.4
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 563,
+      "ratio": 16.8
+    },
+    {
+      "type": "기타",
+      "count": 529,
+      "ratio": 15.7
+    },
+    {
+      "type": "불량 확정",
+      "count": 402,
+      "ratio": 12.0
+    },
+    {
+      "type": "유상 AS",
+      "count": 205,
+      "ratio": 6.1
+    },
+    {
+      "type": "배송문의",
+      "count": 137,
+      "ratio": 4.1
+    },
+    {
+      "type": "주문/결제",
+      "count": 132,
+      "ratio": 3.9
+    },
+    {
+      "type": "교환",
+      "count": 58,
+      "ratio": 1.7
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 27,
+      "ratio": 0.8
+    },
+    {
+      "type": "불량 미확정",
+      "count": 9,
+      "ratio": 0.3
+    },
+    {
+      "type": "리뷰",
+      "count": 5,
+      "ratio": 0.1
+    }
+  ],
   "by_inquiry_type_alf": [],
   "by_channel": [],
   "by_product_detail": [],
   "by_defect_return": {
-    "total_return": 0,
-    "total_defect": 0,
-    "return_reasons": [],
-    "defect_types": [],
-    "by_product": []
+    "total_return": 1124,
+    "total_defect": 616,
+    "return_reasons": [
+      {
+        "reason": "단순 변심",
+        "count": 202,
+        "ratio": 18.0
+      },
+      {
+        "reason": "불량",
+        "count": 257,
+        "ratio": 22.9
+      },
+      {
+        "reason": "100% 환불 이벤트",
+        "count": 105,
+        "ratio": 9.3
+      },
+      {
+        "reason": "사유 분류 불가",
+        "count": 560,
+        "ratio": 49.8
+      }
+    ],
+    "defect_types": [
+      {
+        "type": "불량 확정",
+        "count": 402,
+        "ratio": 65.3
+      },
+      {
+        "type": "불량 미확정",
+        "count": 9,
+        "ratio": 1.5
+      },
+      {
+        "type": "유상 AS",
+        "count": 205,
+        "ratio": 33.3
+      }
+    ],
+    "by_product": [],
+    "_recalc_note": "V7b: 4가지 케이스 + SKU 폴백 (manager > ALF요약 > 첫메시지)",
+    "confirmed_breakdown": [
+      {
+        "type": "교환",
+        "count": 268,
+        "ratio": 66.7
+      },
+      {
+        "type": "반품·환불",
+        "count": 129,
+        "ratio": 32.1
+      },
+      {
+        "type": "미처리/확인 중",
+        "count": 5,
+        "ratio": 1.2
+      }
+    ]
   },
-  "by_inquiry_type_total": [],
+  "by_inquiry_type_total": [
+    {
+      "type": "기타",
+      "count": 2288,
+      "ratio": 31.8
+    },
+    {
+      "type": "반품/환불",
+      "count": 1346,
+      "ratio": 18.7
+    },
+    {
+      "type": "100% 환불 이벤트",
+      "count": 1239,
+      "ratio": 17.2
+    },
+    {
+      "type": "제품/사용문의",
+      "count": 803,
+      "ratio": 11.2
+    },
+    {
+      "type": "불량 확정",
+      "count": 402,
+      "ratio": 5.6
+    },
+    {
+      "type": "불량 미확정",
+      "count": 235,
+      "ratio": 3.3
+    },
+    {
+      "type": "유상 AS",
+      "count": 208,
+      "ratio": 2.9
+    },
+    {
+      "type": "배송문의",
+      "count": 195,
+      "ratio": 2.7
+    },
+    {
+      "type": "주문/결제",
+      "count": 188,
+      "ratio": 2.6
+    },
+    {
+      "type": "이벤트/쿠폰",
+      "count": 180,
+      "ratio": 2.5
+    },
+    {
+      "type": "교환",
+      "count": 100,
+      "ratio": 1.4
+    },
+    {
+      "type": "리뷰",
+      "count": 9,
+      "ratio": 0.1
+    }
+  ],
   "by_inquiry_type_unclassified": []
 }
