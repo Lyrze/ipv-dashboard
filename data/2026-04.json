@@ -6,16 +6,16 @@
   "note": "V10: CX 매니저 태그 + ALF 폴백 매칭 (manager > ALF요약 > 첫메시지 > user전체) — V12 SKU + 목베개 폴백 (2026-05-04)",
   "summary": {
     "total_shipments": 28393,
-    "total_inquiries": 7411,
+    "total_inquiries": 9104,
     "chat_inquiries": 7298,
     "call_ob_inquiries": 113,
-    "ipv": 26.1,
+    "ipv": 32.06,
     "ipv_chat": 25.7,
     "ipv_call": 0.4,
-    "board_inquiries": 0,
-    "_inquiry_note": "채널톡 7,411건 + 게시판/메일 0건 (게시판/메일은 유형 분류 미적용)",
-    "ipv_board": 0.0,
-    "_ipv_note": "IPV 합산 = 채널톡(25.7%) + OB콜(0.4%) + 게시판/메일(0.0%) = 26.1%",
+    "board_inquiries": 1693,
+    "_inquiry_note": "채널톡 7,411건 + 게시판/메일 1,693건 (게시판/메일은 유형 분류 미적용)",
+    "ipv_board": 5.96,
+    "_ipv_note": "IPV 합산 = 채널톡(25.7%) + OB콜(0.4%) + 게시판/메일(5.96%) = 32.06%",
     "total_chats": 7411
   },
   "by_product": [
