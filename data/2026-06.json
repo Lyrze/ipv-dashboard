@@ -5,25 +5,25 @@
   "generated_at": "2026-04-22",
   "note": "V10: CX 매니저 태그 + ALF 폴백 매칭 (manager > ALF요약 > 첫메시지 > user전체) — V12 SKU + 목베개 폴백 (2026-05-04)",
   "summary": {
-    "total_shipments": 1284,
+    "total_shipments": 1134,
     "total_inquiries": 5367,
     "chat_inquiries": 5360,
     "call_ob_inquiries": 7,
-    "ipv": 417.99,
-    "ipv_chat": 417.45,
-    "ipv_call": 0.55,
+    "ipv": 473.28,
+    "ipv_chat": 472.66,
+    "ipv_call": 0.62,
     "board_inquiries": 0,
     "_inquiry_note": "채널톡 5,367건 + 게시판/메일 0건 (게시판/메일은 유형 분류 미적용)",
     "ipv_board": 0.0,
-    "_ipv_note": "IPV 합산 = 채널톡(417.45%) + OB콜(0.55%) + 게시판/메일(0.0%) = 417.99%",
+    "_ipv_note": "IPV 합산 = 채널톡(472.66%) + OB콜(0.62%) + 게시판/메일(0.0%) = 473.28%",
     "total_chats": 5367
   },
   "by_product": [
     {
       "name": "허리베개 프로",
-      "shipments": 501,
+      "shipments": 351,
       "inquiries": 23,
-      "ipv": 4.59
+      "ipv": 6.55
     },
     {
       "name": "목편한케어",
@@ -188,14 +188,14 @@
       "ipv": 0
     },
     {
-      "channel": "자사몰",
-      "shipments": 155,
+      "channel": "새날마켓",
+      "shipments": 18,
       "inquiries": 0,
       "ipv": 0
     },
     {
-      "channel": "새날마켓",
-      "shipments": 18,
+      "channel": "자사몰",
+      "shipments": 5,
       "inquiries": 0,
       "ipv": 0
     },
@@ -736,7 +736,7 @@
     },
     {
       "name": "허리베개 프로",
-      "shipments": 501,
+      "shipments": 351,
       "desc_matched": 23,
       "by_type": [
         {
